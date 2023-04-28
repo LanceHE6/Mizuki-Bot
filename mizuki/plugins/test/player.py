@@ -17,26 +17,32 @@ async def new_instance(uid: str or int):
     try:
         player_level: int = user[f"{uid}"]["level"]
         player_name: str = user[f"{uid}"]["name"]
-        #player_skills: dict = user[f"{uid}"]["skills"]["1"]
+        player_skills: dict = user[f"{uid}"]["skills"]
     except KeyError:
         player_level: int = 0
         player_name: str = ''
-        #player_skills: dict = {}
-        user[f"{uid}"]={
-                "name": player_name,
-                "level": player_level,
-                "skills": {}
+        player_skills: dict = {
+            "1": {
+                "type": 1,
+                "level": 1,
+                "is_using": 1
+            }
+        }
+        user[f"{uid}"] = {
+            "name": player_name,
+            "level": player_level,
+            "skills": dict
         }
         with open(user_data, 'w', encoding='utf-8') as data:
-            json.dump(user,data)
+            json.dump(user, data)
             data.close()
 
-    return Player(player_level, player_name)
+    return Player(player_level, player_name, player_skills)
 
 
 class Player:
 
-    def __init__(self, level: int, name: str):
+    def __init__(self, level: int, name: str, skills: dict):
         self.player_name = name
         self.player_level = level
         self.max_health = 100 + 2 * level
@@ -45,16 +51,16 @@ class Player:
         self.defence = 20 + 1 * level
         self.critical_rate = 10 + 1 * level
         self.critical_damage = 50 + 5 * level
-        #self.player_skills = skills
+        self.player_skills = skills
 
-    async def get_info(self)->dict:
-        player_info={
-            "name":self.player_name,
-            "level":self.player_level,
-            "max_health":self.max_health,
-            "attack":self.attack,
-            "defence":self.defence,
-            "crit_rate":self.critical_rate,
-            "crit_damage":self.critical_damage
+    async def get_info(self) -> dict:
+        player_info = {
+            "name": self.player_name,
+            "level": self.player_level,
+            "max_health": self.max_health,
+            "attack": self.attack,
+            "defence": self.defence,
+            "crit_rate": self.critical_rate,
+            "crit_damage": self.critical_damage
         }
         return player_info
