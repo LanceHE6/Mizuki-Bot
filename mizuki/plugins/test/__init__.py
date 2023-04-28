@@ -7,8 +7,11 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, MessageSegment
 from .player import *
+from .skill import *
 
-info=on_command("info",aliases={"我的角色","角色","我的干员","干员"}, block=True, priority=2)
+info = on_command("info", aliases={"我的角色", "角色", "我的干员", "干员"}, block=True, priority=2)
+skill = on_command("skill", aliases={"我的技能", "技能"}, block=True, priority=2)
+
 
 @info.handle()
 async def _(event: GroupMessageEvent):
@@ -22,6 +25,21 @@ async def _(event: GroupMessageEvent):
     defence = user_info["defence"]
     crit_rate = user_info["crit_rate"]
     crit_damage = user_info["crit_damage"]
-    reply =MessageSegment.at(uid)+ f"\n干员:{player_name}\n等级:{player_level}\n最大生命值:{max_health}\n攻击力:{attack}\n防御力:{defence}\n暴击率:{crit_rate}%\n暴击伤害:{crit_damage}%"
+    reply = MessageSegment.at(
+        uid) + f"\n干员:{player_name}\n等级:{player_level}\n最大生命值:{max_health}\n攻击力:{attack}\n防御力:{defence}\n暴击率:{crit_rate}%\n暴击伤害:{crit_damage}% "
     await info.finish(reply)
-    #player_skills = skills
+    # player_skills = skills
+
+
+@skill.handle()
+async def _(event: GroupMessageEvent):
+    uid = event.get_user_id()
+    skills = await skill.new_instance_list(uid)
+    reply = MessageSegment.at(uid) + "您拥有的技能:"
+    for i in range(len(skills)):
+        skill_info = await skills[i].get_info()
+        skill_name = skill_info["name"]
+        skill_level = skill_info["level"]
+        skill_info = skill_info["skill_info"]
+        reply += f"\n{skill_name}\n等级:{skill_level}\n技能详情:{skill_info}"
+    await info.finish(reply)
