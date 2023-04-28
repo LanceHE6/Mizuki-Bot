@@ -31,7 +31,7 @@ async def new_instance(uid: str or int):
         user[f"{uid}"] = {
             "name": player_name,
             "level": player_level,
-            "skills": dict
+            "skills": player_skills
         }
         with open(user_data, 'w', encoding='utf-8') as data:
             json.dump(user, data)
@@ -45,12 +45,12 @@ class Player:
     def __init__(self, level: int, name: str, skills: dict):
         self.player_name = name
         self.player_level = level
-        self.max_health = 100 + 2 * level
+        self.max_health = 2000 + 30 * level
         self.health = self.max_health
-        self.attack = 40 + 2 * level
-        self.defence = 20 + 1 * level
-        self.critical_rate = 10 + 1 * level
-        self.critical_damage = 50 + 5 * level
+        self.attack = 200 + 4 * level
+        self.defence = 150 + 3 * level
+        self.critical_rate = 10 + int(level / 10)
+        self.critical_damage = 50 + level
         self.player_skills = skills
 
     async def get_info(self) -> dict:
