@@ -10,7 +10,7 @@ from .player import *
 from .skill import *
 
 info = on_command("info", aliases={"我的角色", "角色", "我的干员", "干员"}, block=True, priority=2)
-skill = on_command("skill", aliases={"我的技能", "技能"}, block=True, priority=2)
+s_info = on_command("skill", aliases={"我的技能", "技能"}, block=True, priority=2)
 
 
 @info.handle()
@@ -31,7 +31,7 @@ async def _(event: GroupMessageEvent):
     # player_skills = skills
 
 
-@skill.handle()
+@s_info.handle()
 async def _(event: GroupMessageEvent):
     uid = event.get_user_id()
     skills = await skill.new_instance_list(uid)
@@ -39,7 +39,8 @@ async def _(event: GroupMessageEvent):
     for i in range(len(skills)):
         skill_info = await skills[i].get_info()
         skill_name = skill_info["name"]
+        skill_quality = skill_info["quality"]
         skill_level = skill_info["level"]
         skill_info = skill_info["skill_info"]
-        reply += f"\n{skill_name}\n等级:{skill_level}\n技能详情:{skill_info}"
+        reply += f"\n{skill_name}\n星级:{skill_quality}\n等级:{skill_level}\n技能详情:{skill_info}"
     await info.finish(reply)
