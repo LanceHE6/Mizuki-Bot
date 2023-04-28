@@ -34,13 +34,17 @@ async def _(event: GroupMessageEvent):
 @s_info.handle()
 async def _(event: GroupMessageEvent):
     uid = event.get_user_id()
-    skills = await skill.new_instance_list(uid)
-    reply = MessageSegment.at(uid) + "您拥有的技能:"
-    for i in range(len(skills)):
-        skill_info = await skills[i].get_info()
-        skill_name = skill_info["name"]
-        skill_quality = skill_info["quality"]
-        skill_level = skill_info["level"]
-        skill_info = skill_info["skill_info"]
-        reply += f"\n{skill_name}\n星级:{skill_quality}\n等级:{skill_level}\n技能详情:{skill_info}"
-    await info.finish(reply)
+    try:
+        skills = await skill.new_instance_list(uid)
+        reply = MessageSegment.at(uid) + "您拥有的技能:"
+        for s in skills:
+            skill_info = await s.get_info()
+            skill_name = skill_info["name"]
+            skill_quality = skill_info["quality"]
+            skill_level = skill_info["level"]
+            skill_info = skill_info["skill_info"]
+            reply += f"\n{skill_name}\n星级: {skill_quality}\n等级: {skill_level}\n技能详情: {skill_info}\n"
+        await info.finish(reply)
+    except KeyError:
+        reply = MessageSegment.at(uid) + "您还未拥有干员，请输入 /干员 来初始化您的干员！"
+        await info.finish(reply)
