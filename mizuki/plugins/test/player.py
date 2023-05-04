@@ -9,6 +9,19 @@ import json
 
 user_data = Path() / 'mizuki' / 'plugins' / 'test' / 'user_data.json'
 
+"""
+数据库玩家表示例
+uid:str         level:int           operators_all                               operators_playing
+  123               10           {2:{level:10,skills:{1,2,3}},...}             {2:{level:10,skills:{1,2,3}},...} 
+  
+数据库干员表示例（只读
+type:int    name:str       base_health:int  base_atk:int  base_def:int  base_resistance:int  base_crit_rate:double  base_crit_damage:double   skills
+    10          芬                1200           200           150              10                    5.0                     50.0             [1,3]
+
+数据库技能表示例（只读
+type:int    name:str       brief_description:str         base_rate1:double    base_rate2:double
+    1         强力击            造成大量物理伤害                     2.5                 3.0
+"""
 
 async def new_instance(uid: str or int):
     with open(user_data, 'r', encoding='utf-8') as data:

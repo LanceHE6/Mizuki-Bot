@@ -4,6 +4,7 @@
 # @Time:2023/4/27 16:52
 # @Software:PyCharm
 
+from .DB import check_tables
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, MessageSegment
 from .player import *
@@ -13,8 +14,10 @@ info = on_command("info", aliases={"我的角色", "角色", "我的干员", "�
 s_info = on_command("skill", aliases={"我的技能", "技能"}, block=True, priority=2)
 
 
+
 @info.handle()
 async def _(event: GroupMessageEvent):
+    await check_tables()
     uid = event.get_user_id()
     user = await player.new_instance(uid)
     user_info = await user.get_info()
@@ -33,6 +36,7 @@ async def _(event: GroupMessageEvent):
 
 @s_info.handle()
 async def _(event: GroupMessageEvent):
+    await check_tables()
     uid = event.get_user_id()
     try:
         skills = await skill.new_instance_list(uid)

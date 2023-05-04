@@ -7,8 +7,13 @@
 from .player import user_data
 import json
 
+"""
+数据库技能表示例
+type:int         level:int        skills:text
+  123               10          [type1,type2]
+"""
 
-async def new_instance_list(uid: str | int):
+async def new_instance_list(uid: str or int):
     with open(user_data, 'r', encoding='utf-8') as data:
         user = json.load(data)
         data.close()

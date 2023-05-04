@@ -53,7 +53,6 @@ class MDataBase:
             return "ok"
         except sqlite3.DatabaseError as e:
             self.connection.rollback()
-            self.connection.close()
             return str(e)
 
     async def get_cur(self):
