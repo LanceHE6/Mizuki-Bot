@@ -8,7 +8,8 @@ from ..database.utils import MDB
 from nonebot.log import logger
 from colorama import Fore
 
-#检查所有所需表
+
+# 检查所有所需表
 async def check_tables():
     if not MDB.check_table("ArkRail_User"):
         logger.info(Fore.RED + "[ArkRail]ArkRail_User表不存在 准备创建新数据表")
