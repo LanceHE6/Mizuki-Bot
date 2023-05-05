@@ -16,12 +16,13 @@ my_account = on_command("account", aliases={"龙门币", "lmb", "我的账户", 
 
 @my_account.handle()
 async def _(event: GroupMessageEvent):
-    uid = event.get_user_id()
+    uid = int(event.get_user_id())
 
     # 用户首次使用指令，添加信息进数据库
     if not await is_user_in_table(uid):
         sql_sequence = f"Insert Into Currency_UserAccount(uid, account_num) values('{uid}',0);"
-        if await  MDB.db_execute(sql_sequence) == 'ok':
+        result = await  MDB.db_execute(sql_sequence)
+        if result == 'ok':
             logger.info(Fore.BLUE + "[Currency_Account]新用户数据已添加")
             await my_account.finish(MessageSegment.at(uid) + f"你的账户中共有0龙门币")
         else:
@@ -29,5 +30,5 @@ async def _(event: GroupMessageEvent):
     else:
         # 获取用户在数据库中的信息
         sql_sequence = f"Select account_num from Currency_UserAccount where uid={uid};"
-        account_num = await MDB.db_query(sql_sequence)
+        account_num = await MDB.db_query_column(sql_sequence)
         await my_account.finish(MessageSegment.at(uid) + f"你的账户中共有{account_num[0]}龙门币")

@@ -118,24 +118,24 @@ async def get_skill_attribute(sid: str or int, attribute: str) -> any:
 
 async def get_user_level(uid: str or int) -> int:
     sql_sequence = f"Select level from ArkRail_User where uid={uid};"
-    level = await MDB.db_query(sql_sequence)[0]
+    level = await MDB.db_query_column(sql_sequence)[0]
     return int(level)
 
 
 async def get_user_all_ops(uid: str or int) -> dict:
     sql_sequence = f"Select operators_all from ArkRail_User where uid={uid};"
-    ops = await MDB.db_query(sql_sequence)
+    ops = await MDB.db_query_column(sql_sequence)
     return eval(ops[0])
 
 
 async def get_user_playing_ops(uid: str or int) -> dict:
     sql_sequence = f"Select operators_playing from ArkRail_User where uid={uid};"
-    ops = await MDB.db_query(sql_sequence)
+    ops = await MDB.db_query_column(sql_sequence)
     return eval(ops[0])
 
 
 async def is_in_table(uid: int) -> bool:
-    uid_list = await MDB.db_query("select uid from ArkRail_User")
+    uid_list = await MDB.db_query_column("select uid from ArkRail_User")
     if uid in uid_list:
         return True
     else:

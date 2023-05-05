@@ -95,12 +95,12 @@ class MDataBase:
             return str(e)
 
     # sql查询,单行
-    async def db_query(self, sql_sequence: str) -> list:
+    async def db_query_column(self, sql_sequence: str) -> list:
         result = self.cur.execute(sql_sequence)
-        result_list = [row for row in result.fetchall()]
+        result_list = [row[0] for row in result.fetchall()]
         if not result_list:
             return []
-        return list(result_list[0])
+        return list(result_list)
 
     # sql查询语句，condition为判断条件语句，返回一个字段中符合条件的所有值的列表
     async def find_tb_by_column(self, table_name: str, column: str):

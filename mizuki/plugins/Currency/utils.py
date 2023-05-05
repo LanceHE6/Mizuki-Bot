@@ -24,7 +24,7 @@ async def get_user_account_num(uid: int or str) -> int:
     if not await is_user_in_table(uid):
         return 0
     sql_sequence = f"Select account_num from Currency_UserAccount where uid={uid};"
-    account_num = await MDB.db_query(sql_sequence)
+    account_num = await MDB.db_query_column(sql_sequence)
     return int(account_num[0])
 
 
