@@ -89,5 +89,18 @@
     "consume_plus": 0.2,
     "persistence": 0,
     "persistence_plus": 0
+  },
+  "7": {
+    "name": "二连击",
+    "brief_d": "连续对敌人造成两次伤害",
+    "detail": "连续对敌人造成两次相当于自身攻击力 115% + (4% * 技能等级) ~ 120% + (5% * 技能等级) 的伤害",
+    "rate1": 1.15,
+    "rate1_plus": 0.4,
+    "rate2": 1.2,
+    "rate2_plus": 0.5,
+    "consume": 8,
+    "consume_plus": 0.2,
+    "persistence": 0,
+    "persistence_plus": 0
   }
 }
