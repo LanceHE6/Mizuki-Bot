@@ -6,45 +6,45 @@
 
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
-from .operator import *
-from .skill import *
+from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_op_attribute, OPAttribute
 
-info = on_command("info", aliases={"我的角色", "角色", "我的干员", "干员"}, block=True, priority=2)
-s_info = on_command("skill", aliases={"我的技能", "技能"}, block=True, priority=2)
+op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
+op_info_all = on_command("info all", aliases={"所有角色", "所有干员"}, block=True, priority=2)
+op_detail = on_command("detail", aliases={"干员信息", "干员详情"}, block=True, priority=2)
 
 
-@info.handle()
+@op_info.handle()
 async def _(event: GroupMessageEvent):
-    uid = event.get_user_id()
-    user = await operator.new_instance(uid)
-    user_info = await user.get_info()
-    player_name = user_info["name"]
-    player_level = user_info["level"]
-    max_health = user_info["max_health"]
-    attack = user_info["attack"]
-    defence = user_info["defence"]
-    crit_rate = user_info["crit_rate"]
-    crit_damage = user_info["crit_damage"]
-    reply = MessageSegment.at(
-        uid) + f"\n干员:{player_name}\n等级:{player_level}\n最大生命值:{max_health}\n攻击力:{attack}\n防御力:{defence}\n暴击率:{crit_rate}%\n暴击伤害:{crit_damage}% "
-    await info.finish(reply)
+    uid = int(event.get_user_id())
+    if not await is_in_table(uid):
+        await op_info.send(MessageSegment.at(uid) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
+    playing_ops = await get_user_playing_ops(uid)
+    reply = MessageSegment.at(uid) + "您的出战干员为："
+    i = 1
+    for op in playing_ops:
+        oid = playing_ops[op]["oid"]
+        level = playing_ops[op]["level"]
+        name = await get_op_attribute(oid, OPAttribute.name)
+        reply += f"\n{i}. {name}  等级：{level}"
+        i += 1
+
+    await op_info.finish(reply)
     # player_skills = skills
 
 
-@s_info.handle()
+@op_info_all.handle()
 async def _(event: GroupMessageEvent):
-    uid = event.get_user_id()
-    try:
-        skills = await skill.new_instance_list(uid)
-        reply = MessageSegment.at(uid) + "您拥有的技能:"
-        for s in skills:
-            skill_info = await s.get_info()
-            skill_name = skill_info["name"]
-            skill_quality = skill_info["quality"]
-            skill_level = skill_info["level"]
-            skill_info = skill_info["skill_info"]
-            reply += f"\n{skill_name}\n星级: {skill_quality}\n等级: {skill_level}\n技能详情: {skill_info}\n"
-        await info.finish(reply)
-    except KeyError:
-        reply = MessageSegment.at(uid) + "您还未拥有干员，请输入 /干员 来初始化您的干员！"
-        await info.finish(reply)
+    uid = int(event.get_user_id())
+    if not await is_in_table(uid):
+        await op_info_all.send(MessageSegment.at(uid) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
+    all_ops = await get_user_all_ops(uid)
+    reply = MessageSegment.at(uid) + "您拥有的所有干员："
+
+    for op in all_ops:
+        oid = all_ops[op]["oid"]
+        level = all_ops[op]["level"]
+        name = await get_op_attribute(oid, OPAttribute.name)
+        reply += f"\n{name}  等级：{level}"
+
+    await op_info_all.finish(reply)
+    # player_skills = skills

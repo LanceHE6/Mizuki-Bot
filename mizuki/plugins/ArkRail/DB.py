@@ -124,11 +124,42 @@ async def get_user_level(uid: str or int) -> int:
 
 async def get_user_all_ops(uid: str or int) -> dict:
     sql_sequence = f"Select operators_all from ArkRail_User where uid={uid};"
-    ops = await MDB.db_query(sql_sequence)[0]
-    return dict(ops)
+    ops = await MDB.db_query(sql_sequence)
+    return eval(ops[0])
 
 
 async def get_user_playing_ops(uid: str or int) -> dict:
     sql_sequence = f"Select operators_playing from ArkRail_User where uid={uid};"
-    ops = await MDB.db_query(sql_sequence)[0]
-    return dict(ops)
+    ops = await MDB.db_query(sql_sequence)
+    return eval(ops[0])
+
+
+async def is_in_table(uid: int) -> bool:
+    uid_list = await MDB.db_query("select uid from ArkRail_User")
+    if uid in uid_list:
+        return True
+    else:
+        ops = {
+            "1": {
+                "oid": 1,
+                "level": 1,
+                "skills_level": [0]
+            },
+            "2": {
+                "oid": 2,
+                "level": 1,
+                "skills_level": [0]
+            },
+            "3": {
+                "oid": 3,
+                "level": 1,
+                "skills_level": [0]
+            },
+            "4": {
+                "oid": 4,
+                "level": 1,
+                "skills_level": [0]
+            }
+        }
+        await MDB.db_execute(f'insert into ArkRail_User values({uid}, 1, "{ops}", "{ops}")')
+        return False
