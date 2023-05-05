@@ -4,7 +4,7 @@
 # @Time:2023/5/5 17:10
 # @Software:PyCharm
 
-from Mizuki.mizuki.database.utils import MDB
+from ...database.utils import MDB
 
 #判断用户是否在Currency_UserAccount表中
 async def is_user_in_table(uid: int or str)->bool:

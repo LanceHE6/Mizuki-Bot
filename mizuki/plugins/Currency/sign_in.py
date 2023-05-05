@@ -6,7 +6,7 @@
 
 import datetime
 import random
-from Mizuki.mizuki.database.utils import MDB
+from ...database.utils import MDB
 from .utils import change_user_account_num
 from nonebot.log import logger
 from nonebot import on_command, on_keyword
