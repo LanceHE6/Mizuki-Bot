@@ -4,14 +4,18 @@
 # @Time:2023/4/27 17:00
 # @Software:PyCharm
 
-from .player import user_data
+from .operator import user_data
 import json
 
 """
-数据库技能表示例
-type:int         level:int        skills:text
-  123               10          [type1,type2]
+数据库技能表示例（只读
+type:int    name:str       brief_description:str         base_rate1:real    base_rate2:real   base_rate1_plus:real    base_rate2_plus:real
+    1         强力击            造成大量物理伤害                     2.5                 3.0                    0.03                    0.04
+    
+base_consumption int    base_persistence int    base_consumption_plus real    base_persistence_plus real
+        25                       2                          1                             0.25
 """
+
 
 async def new_instance_list(uid: str or int):
     with open(user_data, 'r', encoding='utf-8') as data:
