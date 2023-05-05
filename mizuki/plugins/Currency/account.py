@@ -8,7 +8,7 @@ from nonebot import on_command
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import GroupMessageEvent,MessageSegment
 from colorama import Fore
-from Mizuki.mizuki.database.utils import MDB
+from ...database.utils import MDB
 from .utils import is_user_in_table
 
 my_account = on_command("account", aliases={"龙门币","lmb","我的账户","我的龙门币"}, block=True, priority=2)
