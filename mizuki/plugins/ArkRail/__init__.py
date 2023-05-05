@@ -13,7 +13,6 @@ info = on_command("info", aliases={"我的角色", "角色", "我的干员", "�
 s_info = on_command("skill", aliases={"我的技能", "技能"}, block=True, priority=2)
 
 
-
 @info.handle()
 async def _(event: GroupMessageEvent):
     uid = event.get_user_id()

@@ -68,6 +68,7 @@ class MDataBase:
                 logger.info(Fore.RED + f"[ArkRail]ArkRail_User表创建失败:{e}")
 
         logger.info(Fore.BLUE + "[DB]数据表检查完成")
+
     # 检查表是否存在
     def check_table(self, table_name: str) -> bool:
 
@@ -94,7 +95,7 @@ class MDataBase:
             return str(e)
 
     # sql查询,单行
-    async def db_query(self, sql_sequence: str)->list:
+    async def db_query(self, sql_sequence: str) -> list:
         result = self.cur.execute(sql_sequence)
         result_list = [row for row in result.fetchall()]
         return list(result_list[0])
