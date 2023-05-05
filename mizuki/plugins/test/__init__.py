@@ -7,7 +7,7 @@
 from .DB import check_tables
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, MessageSegment
-from .player import *
+from .operator import *
 from .skill import *
 
 info = on_command("info", aliases={"我的角色", "角色", "我的干员", "干员"}, block=True, priority=2)
