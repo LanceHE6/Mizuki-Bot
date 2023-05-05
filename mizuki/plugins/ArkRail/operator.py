@@ -7,7 +7,7 @@
 from pathlib import Path
 import json
 
-user_data = Path() / 'mizuki' / 'plugins' / 'test' / 'user_data.json'
+user_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'user_data.json'
 
 """
 数据库玩家表示例
