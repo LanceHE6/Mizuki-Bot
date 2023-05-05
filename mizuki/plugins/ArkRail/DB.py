@@ -1,71 +1,59 @@
 # -*- coding = utf-8 -*-
-# @File:DB.py
+# @File:utils.py
 # @Author:Hycer_Lance
-# @Time:2023/5/4 17:21
+# @Time:2023/5/5 12:32
 # @Software:PyCharm
 
-from ..database.utils import MDB
-from nonebot.log import logger
-from colorama import Fore
+from pathlib import Path
+import json
 
+operators_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'operators_data.json'
+skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'skills_data.json'
+'''
+"1": {
+    "name": "芬",
+    "health": 2700,
+    "health_plus": 15,
+    "atk": 336,
+    "atk_plus": 1,
+    "def": 152,
+    "def_plus": 2,
+    "crit_r": 0.1,
+    "crit_r_plus": 0.001,
+    "crit_d": 1.0,
+    "crit_d_plus": 0.005,
+    "speed": 110,
+    "speed_plus": 0.1,
+    "atk_type": 0,
+    "skills": [1]
+'''
+class OPAttributeNotFoundError(Exception):
+    def __init__(self, error_attribute):
+        self.error_attribute=error_attribute
 
-# 检查所有所需表
-async def check_tables():
-    if not MDB.check_table("ArkRail_User"):
-        logger.info(Fore.RED + "[ArkRail]ArkRail_User表不存在 准备创建新数据表")
-        result = await MDB.db_execute(
-            "Create Table ArkRail_User(uid integer primary key Not Null,"
-            "                          level integer default 1 check ( level between 1 and 120),"
-            "                          operators_all text,"
-            "                          operators_playing text);")
-        if result == 'ok':
-            logger.info(Fore.RED + "[ArkRail]ArkRail_User表创建成功")
-        else:
-            logger.info(Fore.RED + f"[ArkRail]ArkRail_User表创建失败:{result}")
+    def __str__(self):
+        print("未知干员属性:"+self.error_attribute)
 
-    if not MDB.check_table("ArkRail_Operators"):
-        logger.info(Fore.RED + "[ArkRail]ArkRail_Operators表不存在 准备创建新数据表")
-        result = await MDB.db_execute(
-            "Create Table ArkRail_Operators(type integer primary key Not Null,"
-            "                          name text,"
-            "                          atk_type int,"
-            "                          base_health int,"
-            "                          base_atk int,"
-            "                          base_def int,"
-            "                          base_resistance real,"
-            "                          base_crit_rate real,"
-            "                          base_crit_damage real,"
-            "                          base_speed real,"
-            "                          base_health_plus int,"
-            "                          base_atk_plus int,  "
-            "                          base_def_plus int,"
-            "                          base_resistance_plus real,"
-            "                          base_crit_rate_plus real,"
-            "                          base_crit_damage_plus real,"
-            "                          base_speed_plus real,"
-            "                          skills text"
-            "                          );")
-        if result == 'ok':
-            logger.info(Fore.RED + "[ArkRail]ArkRail_Operators表创建成功")
-        else:
-            logger.info(Fore.RED + f"[ArkRail]ArkRail_Operators表创建失败:{result}")
-
-    if not MDB.check_table("ArkRail_Skills"):
-        logger.info(Fore.RED + "[ArkRail]ArkRail_Skills表不存在 准备创建新数据表")
-        result = await MDB.db_execute(
-            "Create Table ArkRail_Skills(type int primary key NOT NULL ,"
-            "                          name text,"
-            "                          brief_description text,"
-            "                          base_rate1 real,"
-            "                          base_rate2 real,"
-            "                          base_consumption int,"
-            "                          base_persistence int,"            
-            "                          base_rate1_plus real,"
-            "                          base_rate2_plus real,"
-            "                          base_consumption_plus real,"
-            "                          base_persistence_plus real,"
-            "                          );")
-        if result == 'ok':
-            logger.info(Fore.RED + "[ArkRail]ArkRail_Skills表创建成功")
-        else:
-            logger.info(Fore.RED + f"[ArkRail]ArkRail_Skills表创建失败:{result}")
+class OPAttribute:#干员属性类
+    name='name'
+    health='health'
+    health_plus='health_plus'
+    atk='atk'
+    atk_plus='atk_plus'
+    defence='def'
+    defence_plus='def_plus'
+    crit_r='crit_r'
+    crit_r_plus='crit_r_plus'
+    crit_d='crit_d'
+    crit_d_plus='crit_d_plus'
+    speed='speed'
+    speed_plus='speed_plus'
+    atk_type='atk_type'
+    skills='skills'
+async def get_op_attribute(oid:str or int, attribute: str)->any:
+    if attribute not in ["name","health","health_plus","atk","atk_plus","def","def_plus","crit_r","crit_r_plus","crit_d","crit_d_plus","speed","speed_plus","atk_type","skills"]:
+        raise OPAttributeNotFoundError(attribute)
+    with open("operators_data.json", 'r', encoding='utf-8') as data:
+        ops_data=json.load(data)
+        data.close()
+    return ops_data[f"{oid}"][f"{attribute}"]

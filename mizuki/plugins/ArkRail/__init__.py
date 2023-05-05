@@ -4,9 +4,8 @@
 # @Time:2023/4/27 16:52
 # @Software:PyCharm
 
-from .DB import check_tables
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, MessageSegment
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 from .operator import *
 from .skill import *
 
@@ -17,9 +16,8 @@ s_info = on_command("skill", aliases={"我的技能", "技能"}, block=True, pri
 
 @info.handle()
 async def _(event: GroupMessageEvent):
-    await check_tables()
     uid = event.get_user_id()
-    user = await player.new_instance(uid)
+    user = await operator.new_instance(uid)
     user_info = await user.get_info()
     player_name = user_info["name"]
     player_level = user_info["level"]
@@ -36,7 +34,6 @@ async def _(event: GroupMessageEvent):
 
 @s_info.handle()
 async def _(event: GroupMessageEvent):
-    await check_tables()
     uid = event.get_user_id()
     try:
         skills = await skill.new_instance_list(uid)
