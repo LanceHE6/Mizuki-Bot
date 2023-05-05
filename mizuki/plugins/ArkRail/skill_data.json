@@ -1,0 +1,93 @@
+{
+  "1": {
+    "name": "冲锋号令",
+    "brief_d": "立刻回复一定的技力点",
+    "detail": "立即回复 15 + ⌊0.5 * 技能等级⌋ 技力点",
+    "rate1": 15,
+    "rate1_plus": 0.5,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "consume": 0,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "2": {
+    "name": "法术附魔",
+    "brief_d": "伤害类型变为法术，攻击力少量提升，持续一段时间",
+    "detail": "伤害类型变为法术，攻击力提升 20% + (1% * 技能等级)，持续 2 + ⌊技能等级 * 0.18⌋ 回合",
+    "rate1": 0.2,
+    "rate1_plus": 0.01,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "consume": 35,
+    "consume_plus": 1,
+    "persistence": 2,
+    "persistence_plus": 0.18
+  },
+  "3": {
+    "name": "生命回复",
+    "brief_d": "立即恢复一定的生命值",
+    "detail": "立即恢复 25% + (1% * 技能等级) 的最大生命值",
+    "rate1": 0.25,
+    "rate1_plus": 0.01,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "consume": 30,
+    "consume_plus": 0.5,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "4": {
+    "name": "强力击_毁灭",
+    "brief_d": "对单个敌人造成巨额伤害",
+    "detail": "对单个敌人造成相当于自身攻击力 200% + (10% * 技能等级) ~ 210% + (11% * 技能等级)的伤害",
+    "rate1": 2.0,
+    "rate1_plus": 0.1,
+    "rate2": 2.1,
+    "rate2_plus": 0.11,
+    "consume": 10,
+    "consume_plus": 0.2,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "5": {
+    "name": "攻击力增强",
+    "brief_d": "自身攻击力提升，持续一段时间",
+    "detail": "自身攻击力提升 40% + (2% * 技能等级)，持续 2 + ⌊技能等级 * 0.18⌋ 回合",
+    "rate1": 0.4,
+    "rate1_plus": 0.02,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "consume": 25,
+    "consume_plus": 0.4,
+    "persistence": 2,
+    "persistence_plus": 0.18
+  },
+  "6": {
+    "name": "防御力增强",
+    "brief_d": "自身防御力提升，持续一段时间",
+    "detail": "自身防御力提升 60% + (3% * 技能等级)，持续 2 + ⌊技能等级 * 0.18⌋ 回合",
+    "rate1": 0.6,
+    "rate1_plus": 0.03,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "consume": 30,
+    "consume_plus": 0.4,
+    "persistence": 2,
+    "persistence_plus": 0.18
+  },
+  "7": {
+    "name": "二连击",
+    "brief_d": "连续对敌人造成两次伤害",
+    "detail": "连续对敌人造成两次相当于自身攻击力 115% + (4% * 技能等级) ~ 120% + (5% * 技能等级) 的伤害",
+    "rate1": 1.15,
+    "rate1_plus": 0.4,
+    "rate2": 1.2,
+    "rate2_plus": 0.5,
+    "consume": 8,
+    "consume_plus": 0.2,
+    "persistence": 0,
+    "persistence_plus": 0
+  }
+}
