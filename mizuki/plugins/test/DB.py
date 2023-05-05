@@ -27,13 +27,22 @@ async def check_tables():
         logger.info(Fore.RED + "[ArkRail]ArkRail_Operators表不存在 准备创建新数据表")
         result = await MDB.db_execute(
             "Create Table ArkRail_Operators(type integer primary key Not Null,"
-            "                          name text ,"
+            "                          name text,"
+            "                          atk_type int,"
             "                          base_health int,"
-            "                          base_atk int,  "
+            "                          base_atk int,"
             "                          base_def int,"
-            "                          base_resistance int,"
+            "                          base_resistance real,"
             "                          base_crit_rate real,"
             "                          base_crit_damage real,"
+            "                          base_speed real,"
+            "                          base_health_plus int,"
+            "                          base_atk_plus int,  "
+            "                          base_def_plus int,"
+            "                          base_resistance_plus real,"
+            "                          base_crit_rate_plus real,"
+            "                          base_crit_damage_plus real,"
+            "                          base_speed_plus real,"
             "                          skills text"
             "                          );")
         if result == 'ok':
@@ -48,7 +57,14 @@ async def check_tables():
             "                          name text,"
             "                          brief_description text,"
             "                          base_rate1 real,"
-            "                          base_rate2 real);")
+            "                          base_rate2 real,"
+            "                          base_consumption int,"
+            "                          base_persistence int,"            
+            "                          base_rate1_plus real,"
+            "                          base_rate2_plus real,"
+            "                          base_consumption_plus real,"
+            "                          base_persistence_plus real,"
+            "                          );")
         if result == 'ok':
             logger.info(Fore.RED + "[ArkRail]ArkRail_Skills表创建成功")
         else:
