@@ -20,12 +20,14 @@ uid:str         level:int           operators_all                               
 
 class Operator:
 
-    def __init__(self, name: str, level: int, health: int, atk: int,
+    def __init__(self, name: str, level: int, stars: int, profession: str, health: int, atk: int,
                  defence: int, res: float, crit_r: float, crit_d: float, speed: float,
                  atk_type: int, skills_list: list[Skill]):
         """
         :param name: 干员名称
         :param level: 干员等级
+        :param stars: 干员星级
+        :param profession: 干员职业
         :param health: 干员生命值(初始赋值给干员的最大生命值max_health和当前生命值health)
         :param atk: 干员攻击力
         :param defence: 干员防御力
@@ -37,6 +39,8 @@ class Operator:
         :param skills_list: 干员的技能列表
         """
         self.name = name
+        self.stars = stars
+        self.profession = profession
         self.level = level
         self.max_health = self.health = health
         self.atk = atk
@@ -73,6 +77,8 @@ async def new_instance(oid: int, level: int, skills_level: list[int]) -> Operato
     :return: 返回一个干员实例
     """
     name = await get_op_attribute(oid, OPAttribute.name)
+    stars = await get_op_attribute(oid, OPAttribute.stars)
+    profession = await get_op_attribute(oid, OPAttribute.profession)
     health = (await get_op_attribute(oid, OPAttribute.health) +
               await get_op_attribute(oid, OPAttribute.health_plus) * (level - 1))
     atk = (await get_op_attribute(oid, OPAttribute.atk) +
@@ -91,7 +97,7 @@ async def new_instance(oid: int, level: int, skills_level: list[int]) -> Operato
     sid_list = await get_op_attribute(oid, OPAttribute.skills)
     skills_list: list[Skill] = await get_skills_list(sid_list, skills_level)
 
-    return Operator(name, level, health, atk, defence, res, crit_r, crit_d, speed, atk_type, skills_list)
+    return Operator(name, level, stars, profession, health, atk, defence, res, crit_r, crit_d, speed, atk_type, skills_list)
 
 
 async def get_operator_list(uid: str or int) -> list[Operator]:
