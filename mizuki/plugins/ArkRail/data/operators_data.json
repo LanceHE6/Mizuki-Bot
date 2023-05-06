@@ -1,6 +1,8 @@
 {
   "1": {
     "name": "芬",
+    "stars": 3,
+    "profession": "先锋-中坚",
     "health": 2700,
     "health_plus": 15,
     "atk": 336,
@@ -18,8 +20,10 @@
     "atk_type": 0,
     "skills": [1]
   },
-    "2": {
+  "2": {
     "name": "月见夜",
+    "stars": 3,
+    "profession": "近卫-中坚",
     "health": 3400,
     "health_plus": 15,
     "atk": 389,
@@ -39,6 +43,8 @@
   },
   "3": {
     "name": "卡缇",
+    "stars": 3,
+    "profession": "重装-中坚",
     "health": 4775,
     "health_plus": 15,
     "atk": 215,
@@ -56,8 +62,10 @@
     "atk_type": 0,
     "skills": [3]
   },
-    "4": {
+  "4": {
     "name": "史都华德",
+    "stars": 3,
+    "profession": "术士-中坚",
     "health": 2400,
     "health_plus": 10,
     "atk": 363,
@@ -75,8 +83,10 @@
     "atk_type": 1,
     "skills": [4]
   },
-    "5": {
+  "5": {
     "name": "玫兰莎",
+    "stars": 3,
+    "profession": "近卫-攻坚",
     "health": 3215,
     "health_plus": 15,
     "atk": 452,
@@ -94,8 +104,10 @@
     "atk_type": 0,
     "skills": [5]
   },
-    "6": {
+  "6": {
     "name": "米格鲁",
+    "stars": 3,
+    "profession": "重装-中坚",
     "health": 4305,
     "health_plus": 15,
     "atk": 205,
@@ -113,8 +125,10 @@
     "atk_type": 0,
     "skills": [6]
   },
-    "7": {
+  "7": {
     "name": "克洛斯",
+    "stars": 3,
+    "profession": "狙击-中坚",
     "health": 2280,
     "health_plus": 10,
     "atk": 356,
@@ -132,8 +146,10 @@
     "atk_type": 0,
     "skills": [7]
   },
-    "8": {
+  "8": {
     "name": "安塞尔",
+    "stars": 3,
+    "profession": "医疗-中坚",
     "health": 2505,
     "health_plus": 10,
     "atk": 337,
@@ -151,8 +167,10 @@
     "atk_type": 5,
     "skills": [8]
   },
-    "9": {
+  "9": {
     "name": "清道夫",
+    "stars": 4,
+    "profession": "先锋-中坚",
     "health": 2586,
     "health_plus": 15,
     "atk": 386,
@@ -170,8 +188,10 @@
     "atk_type": 0,
     "skills": [1,9]
   },
-    "10": {
+  "10": {
     "name": "红豆",
+    "stars": 4,
+    "profession": "先锋-冲锋",
     "health": 2048,
     "health_plus": 15,
     "atk": 354,
@@ -189,8 +209,10 @@
     "atk_type": 0,
     "skills": [5,10]
   },
-    "11": {
+  "11": {
     "name": "桃金娘",
+    "stars": 4,
+    "profession": "先锋-支援",
     "health": 2380,
     "health_plus": 15,
     "atk": 306,
@@ -208,8 +230,10 @@
     "atk_type": 0,
     "skills": [11,12]
   },
-    "12": {
+  "12": {
     "name": "休谟斯",
+    "stars": 4,
+    "profession": "近卫-群攻",
     "health": 3282,
     "health_plus": 15,
     "atk": 320,
@@ -226,5 +250,195 @@
     "speed_plus": 0.1,
     "atk_type": 0,
     "skills": [5,13]
+  },
+  "13": {
+    "name": "刻刀",
+    "stars": 4,
+    "profession": "近卫-冲锋",
+    "health": 2650,
+    "health_plus": 10,
+    "atk": 320,
+    "atk_plus": 1,
+    "def": 93,
+    "def_plus": 1,
+    "res": 0,
+    "res_plus": 0,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 100,
+    "speed_plus": 0.1,
+    "atk_type": 0,
+    "skills": [14,15]
+  },
+  "14": {
+    "name": "梅",
+    "stars": 4,
+    "profession": "狙击-中坚",
+    "health": 2250,
+    "health_plus": 10,
+    "atk": 379,
+    "atk_plus": 1,
+    "def": 26,
+    "def_plus": 1,
+    "res": 0,
+    "res_plus": 0,
+    "crit_r": 0.2,
+    "crit_r_plus": 0.001,
+    "crit_d": 0.8,
+    "crit_d_plus": 0.005,
+    "speed": 105,
+    "speed_plus": 0.1,
+    "atk_type": 0,
+    "skills": [5,16]
+  },
+  "15": {
+    "name": "古米",
+    "stars": 4,
+    "profession": "重装-守护",
+    "health": 4155,
+    "health_plus": 15,
+    "atk": 271,
+    "atk_plus": 1,
+    "def": 180,
+    "def_plus": 3,
+    "res": 10,
+    "res_plus": 0.2,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 90,
+    "speed_plus": 0.1,
+    "atk_type": 0,
+    "skills": [17,18]
+  },
+  "16": {
+    "name": "蛇屠箱",
+    "stars": 4,
+    "profession": "重装-中坚",
+    "health": 3968,
+    "health_plus": 15,
+    "atk": 215,
+    "atk_plus": 1,
+    "def": 284 ,
+    "def_plus": 3,
+    "res": 0,
+    "res_plus": 0.1,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 90,
+    "speed_plus": 0.1,
+    "atk_type": 0,
+    "skills": [6,19]
+  },
+  "17": {
+    "name": "调香师",
+    "stars": 4,
+    "profession": "医疗-群愈",
+    "health": 2976,
+    "health_plus": 10,
+    "atk": 204,
+    "atk_plus": 1,
+    "def": 48,
+    "def_plus": 1,
+    "res": 0,
+    "res_plus": 0,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0,
+    "crit_d_plus": 0,
+    "speed": 100,
+    "speed_plus": 0.1,
+    "atk_type": 6,
+    "skills": [5,20]
+  },
+  "18": {
+    "name": "夜烟",
+    "stars": 4,
+    "profession": "术士-中坚",
+    "health": 2384,
+    "health_plus": 10,
+    "atk": 353,
+    "atk_plus": 2,
+    "def": 26,
+    "def_plus": 1,
+    "res": 25,
+    "res_plus": 0.4,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 100,
+    "speed_plus": 0.1,
+    "atk_type": 2,
+    "skills": [5,21]
+  },
+  "19": {
+    "name": "德克萨斯",
+    "stars": 5,
+    "profession": "先锋-中坚",
+    "health": 2505,
+    "health_plus": 15,
+    "atk": 300,
+    "atk_plus": 2,
+    "def": 170,
+    "def_plus": 1,
+    "res": 0,
+    "res_plus": 0,
+    "crit_r": 0.1,
+    "crit_r_plus": 0.001,
+    "crit_d": 0.5,
+    "crit_d_plus": 0.005,
+    "speed": 110,
+    "speed_plus": 0.1,
+    "atk_type": 0,
+    "skills": [1,22]
+  },
+  "20": {
+    "name": "拉普兰德",
+    "stars": 5,
+    "profession": "近卫-中坚",
+    "health": 3627,
+    "health_plus": 15,
+    "atk": 446,
+    "atk_plus": 2,
+    "def": 198,
+    "def_plus": 1,
+    "res": 10,
+    "res_plus": 0.2,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 100,
+    "speed_plus": 0.1,
+    "atk_type": 0,
+    "skills": [23,24]
+  },
+  "31": {
+    "name": "银灰",
+    "stars": 6,
+    "profession": "近卫-中坚",
+    "health": 4254,
+    "health_plus": 15,
+    "atk": 431,
+    "atk_plus": 2,
+    "def": 267,
+    "def_plus": 1,
+    "res": 10,
+    "res_plus": 0.2,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 100,
+    "speed_plus": 0.1,
+    "atk_type": 0,
+    "skills": [0]
   }
+
 }
