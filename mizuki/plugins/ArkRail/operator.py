@@ -6,8 +6,8 @@
 
 from pathlib import Path
 from .DB import get_user_playing_ops, get_op_attribute, OPAttribute
-from skill import get_skills_list
-from skill import Skill
+from .skill import get_skills_list
+from .skill import Skill
 
 user_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'user_data.json'
 
@@ -74,19 +74,19 @@ async def new_instance(oid: int, level: int, skills_level: list[int]) -> Operato
     """
     name = await get_op_attribute(oid, OPAttribute.name)
     health = (await get_op_attribute(oid, OPAttribute.health) +
-              await get_op_attribute(oid, OPAttribute.health_plus) * level)
+              await get_op_attribute(oid, OPAttribute.health_plus) * (level - 1))
     atk = (await get_op_attribute(oid, OPAttribute.atk) +
-           await get_op_attribute(oid, OPAttribute.atk_plus) * level)
+           await get_op_attribute(oid, OPAttribute.atk_plus) * (level - 1))
     defence = (await get_op_attribute(oid, OPAttribute.defence) +
-               await get_op_attribute(oid, OPAttribute.defence_plus) * level)
+               await get_op_attribute(oid, OPAttribute.defence_plus) * (level - 1))
     res = (await get_op_attribute(oid, OPAttribute.res) +
-           await get_op_attribute(oid, OPAttribute.res_plus) * level)
+           await get_op_attribute(oid, OPAttribute.res_plus) * (level - 1))
     crit_r = (await get_op_attribute(oid, OPAttribute.crit_r) +
-              await get_op_attribute(oid, OPAttribute.crit_r_plus) * level)
+              await get_op_attribute(oid, OPAttribute.crit_r_plus) * (level - 1))
     crit_d = (await get_op_attribute(oid, OPAttribute.crit_d) +
-              await get_op_attribute(oid, OPAttribute.crit_d_plus) * level)
+              await get_op_attribute(oid, OPAttribute.crit_d_plus) * (level - 1))
     speed = (await get_op_attribute(oid, OPAttribute.speed) +
-             await get_op_attribute(oid, OPAttribute.speed_plus) * level)
+             await get_op_attribute(oid, OPAttribute.speed_plus) * (level - 1))
     atk_type = await get_op_attribute(oid, OPAttribute.atk_type)
     sid_list = await get_op_attribute(oid, OPAttribute.skills)
     skills_list: list[Skill] = await get_skills_list(sid_list, skills_level)
