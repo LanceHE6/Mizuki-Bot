@@ -20,7 +20,7 @@
     "rate1_plus": 0.01,
     "rate2": 0,
     "rate2_plus": 0,
-    "consume": 35,
+    "consume": 25,
     "consume_plus": 1,
     "persistence": 2,
     "persistence_plus": 0.18
@@ -34,7 +34,7 @@
     "rate2": 0,
     "rate2_plus": 0,
     "consume": 30,
-    "consume_plus": 0.5,
+    "consume_plus": 0.4,
     "persistence": 0,
     "persistence_plus": 0
   },
@@ -232,6 +232,110 @@
     "consume_plus": 0.2,
     "persistence": 2,
     "persistence_plus": 0.18
+  },
+  "19": {
+    "name": "壳状防御",
+    "brief_d": "停止攻击，自身防御力提升，每回合恢复一定血量，持续一段时间",
+    "detail": "自身防御力提升 70% + (3% * 技能等级)，每回合恢复最大生命的 6% + (0.2% * 技能等级)，持续 2 + ⌊技能等级 * 0.18⌋ 回合，技能持续期间将自动跳过该干员的回合",
+    "rate1": 0.7,
+    "rate1_plus": 0.03,
+    "rate2": 0.06,
+    "rate2_plus": 0.002,
+    "consume": 40,
+    "consume_plus": 0.5,
+    "persistence": 2,
+    "persistence_plus": 0.18
+  },
+  "20": {
+    "name": "精调",
+    "brief_d": "立即使我方所有干员恢复大量生命值",
+    "detail": "立即使我方所有干员恢复相当于自身攻击力 200% + (5% * 技能等级) 的生命值",
+    "rate1": 2.0,
+    "rate1_plus": 0.05,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "consume": 20,
+    "consume_plus": 0.2,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "21": {
+    "name": "赤色之瞳",
+    "brief_d": "立刻流失部分自身当前生命值，使自身攻击力和速度大幅提升，持续一段时间",
+    "detail": "立刻流失40%自身当前生命值，使自身攻击力提高 50% + (3% * 技能等级)，速度提升 10 + (0.5 * 技能等级)，持续2回合",
+    "rate1": 0.5,
+    "rate1_plus": 0.03,
+    "rate2": 10,
+    "rate2_plus": 0.5,
+    "consume": 20,
+    "consume_plus": 0.2,
+    "persistence": 2,
+    "persistence_plus": 0
+  },
+  "22": {
+    "name": "剑雨",
+    "brief_d": "立即获得一定的技力点，并对所有敌人造成一次法术伤害",
+    "detail": "立即获得 13 + ⌊0.4 * 技能等级⌋ 技力点，并对所有敌人造成一次相当于自身攻击力 80% + (2% * 技能等级) 的法术伤害",
+    "rate1": 13,
+    "rate1_plus": 0.4,
+    "rate2": 0.8,
+    "rate2_plus": 0.02,
+    "consume": 4,
+    "consume_plus": 0.18,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "23": {
+    "name": "精神摧毁",
+    "brief_d": "对一名敌人造成一次物理伤害并使其沉默，持续一段时间",
+    "detail": "对一名敌人造成相当于自身攻击力 100% + (4% * 技能等级) 的物理伤害并使其无法使用技能，持续1回合",
+    "rate1": 1.0,
+    "rate1_plus": 0.4,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "consume": 0,
+    "consume_plus": 0,
+    "persistence": 1,
+    "persistence_plus": 0
+  },
+  "24": {
+    "name": "狼魂",
+    "brief_d": "伤害类型变为法术，攻击力大幅提升，持续一段时间",
+    "detail": "伤害类型变为法术，攻击力提升 60% + (3% * 技能等级)，持续2回合",
+    "rate1": 0.5,
+    "rate1_plus": 0.04,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "consume": 40,
+    "consume_plus": 0.4,
+    "persistence": 2,
+    "persistence_plus": 0
+  },
+  "101": {
+    "name": "雪境生存法则",
+    "brief_d": "自身防御力提升，每回合恢复一定生命值但速度降低，持续一段时间",
+    "detail": "自身防御力提升 60% + (2% * 技能等级)，每回合恢复 8% + (0.2% * 技能等级) 生命值但速度降低10点，持续 2 + ⌊技能等级 * 0.18⌋ 回合",
+    "rate1": 0.6,
+    "rate1_plus": 0.02,
+    "rate2": 0.08,
+    "rate2_plus": 0.002,
+    "consume": 30,
+    "consume_plus": 0.4,
+    "persistence": 2,
+    "persistence_plus": 0.18
+  },
+  "102": {
+    "name": "真银斩",
+    "brief_d": "自身防御力大幅降低，攻击力大幅增加，攻击类型变为物理群体攻击，持续一段时间",
+    "detail": "自身防御力降低 90% - (2% * 技能等级)，攻击力增加 100% + (2% * 技能等级)，攻击类型变为物理群体攻击，持续2 + ⌊技能等级 * 0.15⌋ 回合",
+    "rate1": 0.9,
+    "rate1_plus": -0.02,
+    "rate2": 1.0,
+    "rate2_plus": 0.2,
+    "consume": 100,
+    "consume_plus": 1,
+    "persistence": 2,
+    "persistence_plus": 0.15
   }
 
 }
