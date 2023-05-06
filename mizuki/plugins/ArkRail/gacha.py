@@ -3,11 +3,10 @@
 # @Author:Hycer_Lance
 # @Time:2023/5/6 21:14
 # @Software:PyCharm
-import datetime
-import time
 
+import time
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment,Message
 from pathlib import Path
 from PIL import Image, ImageFont, ImageDraw
 from .DB import get_op_attribute, get_ops_list_by_stars, OPAttribute
@@ -49,7 +48,7 @@ async def gacha(ten_type: bool = False)->list:
     return oid_list
 
 #绘制抽卡图片，返回图片地址
-async def draw_img_ten(oid_list: list, uid: int or str)-> str:
+async def draw_img_ten(oid_list: list, uid: int or str)-> Path:
     bg = Image.open(bg_img)
     image = Image.new('RGB', bg.size, (255, 0, 0))
     image.paste(bg, (0, 0))
@@ -61,7 +60,7 @@ async def draw_img_ten(oid_list: list, uid: int or str)-> str:
         profession = await get_op_attribute(oid , OPAttribute.profession)
         stars = await get_op_attribute(oid, OPAttribute.stars)
         image.paste(op_img, (248 + i * 185, 80))
-        draw.text((248 + i * 185, 420), profession, font=font, color=(102, 102, 256))
+        draw.text((248 + i * 185, 450), profession, font=font, color=(102, 102, 256))
         i += 1
 
     # 文字样式（微软雅黑），可以自定义ttf格式文字样式
@@ -69,7 +68,10 @@ async def draw_img_ten(oid_list: list, uid: int or str)-> str:
 
     draw.text((2100, 430), f"{uid}", font=font)
     draw.text((2100, 460), f'{time.strftime("%m-%d %H:%M:%S",time.localtime())}', font=font)
+    now_time = int(time.time())
+    image.save(f"gacha_{now_time}.png")
     image.show()
+    return Path() / 'mizuki' / 'plugins' / 'ArkRail' / f'gacha_{now_time}.png'
 #单抽
 @single.handle()
 async def _(event: GroupMessageEvent):
@@ -81,5 +83,8 @@ async def _(event: GroupMessageEvent):
 async def _(event: GroupMessageEvent):
     uid = event.get_user_id()
     oid_list = await gacha(True)
+    gacha_img = await draw_img_ten(oid_list, uid)
+
+    await ten.finish(MessageSegment.at(uid)+Message(f"[CQ:img,file={gacha_img}]"))
 
 
