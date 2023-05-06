@@ -98,8 +98,8 @@
     "rate1_plus": 0,
     "rate2": 0,
     "rate2_plus": 0,
-    "consume": 6,
-    "consume_plus": 0.1,
+    "consume": 8,
+    "consume_plus": 0.18,
     "persistence": 0,
     "persistence_plus": 0
   },
@@ -108,11 +108,11 @@
     "brief_d": "攻击力少量提升，每回合回复一定的技力点，持续一段时间",
     "detail": "自身攻击力提升 10% + (0.5% * 技能等级)，每回合回复 8 + ⌊技能等级 * 0.18⌋ 技力点 ，持续2回合",
     "rate1": 0.1,
-    "rate1_plus": 0.05,
+    "rate1_plus": 0.005,
     "rate2": 8,
     "rate2_plus": 0.18,
-    "consume": 0,
-    "consume_plus": 0,
+    "consume": 5,
+    "consume_plus": 0.18,
     "persistence": 2,
     "persistence_plus": 0
   },
@@ -132,9 +132,9 @@
   "11": {
     "name": "支援号令",
     "brief_d": "停止攻击，每回合回复一定技力点，持续一段时间",
-    "detail": "每回合回复12 + ⌊技能等级 * 0.2⌋ 技力点，持续2回合，技能持续期间将自动跳过该干员的回合",
+    "detail": "每回合回复12 + ⌊技能等级 * 0.25⌋ 技力点，持续2回合，技能持续期间将自动跳过该干员的回合",
     "rate1": 12,
-    "rate1_plus": 0.2,
+    "rate1_plus": 0.25,
     "rate2": 0,
     "rate2_plus": 0,
     "consume": 0,
@@ -152,7 +152,7 @@
     "rate2_plus": 0.01,
     "consume": 6,
     "consume_plus": 0.18,
-    "persistence": 2,
+    "persistence": 3,
     "persistence_plus": 0
   },
   "13": {
