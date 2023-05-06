@@ -42,7 +42,7 @@ class Skill:
         self.persistence = persistence
 
 
-async def get_skills_list(sid_list: list[int], skills_level: list[int]):
+async def get_skills_list(sid_list: list[int], skills_level: list[int]) -> list[Skill]:
     """
     获取单个干员的技能列表的函数
 
@@ -59,7 +59,7 @@ async def get_skills_list(sid_list: list[int], skills_level: list[int]):
     return skills_list
 
 
-async def new_instance(sid: int, level: int):
+async def new_instance(sid: int, level: int) -> Skill:
     """
     通过传入的技能id和技能等级生成一个Skill实例，通常不需要直接调用这个方法
 
