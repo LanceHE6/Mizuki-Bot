@@ -17,7 +17,20 @@ base_consumption int    base_persistence int    base_consumption_plus real    ba
 
 
 class Skill:
-    def __init__(self, sid, name, level, brief_d, detail, rate1, rate2, consume, persistence):
+    def __init__(self, sid: int, name: str, level: int,
+                 brief_d: str, detail: str, rate1: float,
+                 rate2: float, consume: int, persistence: int):
+        """
+        :param sid: 技能id
+        :param name: 技能名称
+        :param level: 技能等级
+        :param brief_d: 技能简述
+        :param detail: 技能详述
+        :param rate1: 技能倍率1(对于某些不需要用到这个值的技能，这个值为0)
+        :param rate2: 技能倍率2(对于某些不需要用到这个值的技能，这个值为0)
+        :param consume: 释放技能的消耗
+        :param persistence: 技能持续回合(对于非持续性技能，这个值为0)
+        """
         self.sid = sid
         self.name = name
         self.level = level
@@ -30,6 +43,13 @@ class Skill:
 
 
 async def get_skills_list(sid_list: list[int], skills_level: list[int]):
+    """
+    获取单个干员的技能列表的函数
+
+    :param sid_list: 技能id的列表，格式为[1]、[3,4]、[1,5,8]等
+    :param skills_level: 技能等级的列表，大小应该与技能id列表相同，与技能id列表的格式相同
+    :return: 返回一个Skill类型的列表，表示干员可以使用的技能
+    """
     j = 0
     skills_list: list[Skill] = []
     for i in sid_list:
@@ -39,7 +59,14 @@ async def get_skills_list(sid_list: list[int], skills_level: list[int]):
     return skills_list
 
 
-async def new_instance(sid, level):
+async def new_instance(sid: int, level: int):
+    """
+    通过传入的技能id和技能等级生成一个Skill实例，通常不需要直接调用这个方法
+
+    :param sid: 技能id，详见skills_data.json文件
+    :param level: 技能等级
+    :return: 返回一个Skill实例
+    """
     name = await get_skill_attribute(sid, SkillAttribute.name)
     brief_d = await get_skill_attribute(sid, SkillAttribute.brief_d)
     detail = await get_skill_attribute(sid, SkillAttribute.detail)
