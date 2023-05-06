@@ -7,7 +7,7 @@
 import datetime
 import random
 from ...database.utils import MDB
-from .utils import change_user_account_num
+from .utils import change_user_lmc_num
 from nonebot.log import logger
 from nonebot import on_command, on_keyword
 from nonebot.rule import to_me
@@ -41,7 +41,7 @@ async def sign_func(event: GroupMessageEvent):
         if await  MDB.db_execute(sql_sequence) == 'ok':
             logger.info(Fore.BLUE + "[Currency_Sign_in]新用户数据已添加")
             profit = random.randint(2, 10) * 1000  # 随机获得2-10k龙门币
-            change_result = await change_user_account_num(uid, profit)
+            change_result = await change_user_lmc_num(uid, profit)
             logger.info(Fore.BLUE + f"[Currency_Sign_in]{change_result}")
             reply = MessageSegment.at(uid) + f"签到成功！获得{profit}龙门币"
             return reply
@@ -70,7 +70,7 @@ async def sign_func(event: GroupMessageEvent):
         else:
             return "签到出错"
         profit = random.randint(2, 10) * 1000  # 随机获得2-10k龙门币
-        change_result = await change_user_account_num(uid, profit)
+        change_result = await change_user_lmc_num(uid, profit)
         logger.info(Fore.BLUE + f"[Currency_Sign_in]{change_result}")
         reply = MessageSegment.at(uid) + f"签到成功！获得{profit}龙门币"
         if sign_days >= 3:

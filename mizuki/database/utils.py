@@ -29,12 +29,13 @@ class MDataBase:
         self.connection = sqlite3.Connection(db_file)
         self.cur = self.connection.cursor()
         logger.info(Fore.BLUE + "[DB]数据库已连接")
+
         logger.info(Fore.BLUE + "[DB]检查数据表...")
         if not self.check_table("Currency_UserAccount"):
             logger.info(Fore.RED + "[Currency]用户账户数据表不存在 准备创建新数据表")
             try:
                 self.cur.execute(
-                    "Create Table Currency_UserAccount(uid integer primary key Not Null,account_num integer check ( account_num >=0));")
+                    "Create Table Currency_UserAccount(uid integer primary key Not Null,LongMenCoin integer check (LongMenCoin >=0), Synthetic_Jade integer check (Synthetic_Jade >=0));")
                 self.connection.commit()
                 logger.info(Fore.RED + "[Currency]Currency_UserAccount表创建成功")
             except sqlite3.DatabaseError as e:
