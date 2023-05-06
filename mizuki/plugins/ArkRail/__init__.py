@@ -47,4 +47,11 @@ async def _(event: GroupMessageEvent):
         reply += f"\n{name}  等级：{level}"
 
     await op_info_all.finish(reply)
-    # player_skills = skills
+
+
+@op_detail.handle()
+async def _(event: GroupMessageEvent):
+    uid = int(event.get_user_id())
+    if not await is_in_table(uid):
+        await op_info.send(MessageSegment.at(uid) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
+
