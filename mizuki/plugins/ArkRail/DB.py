@@ -8,8 +8,8 @@ from pathlib import Path
 import json
 from ...database.utils import MDB
 
-operators_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' /'operators_data.json'
-skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' /'skills_data.json'
+operators_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'operators_data.json'
+skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'skills_data.json'
 '''
 "1": {
    "1": {
@@ -164,8 +164,9 @@ async def is_in_table(uid: int) -> bool:
         await MDB.db_execute(f'insert into ArkRail_User values({uid}, 1, "{ops}", "{ops}")')
         return False
 
-#通过名字在所有干员数据中找oid,返回-1未找到
-async def get_oid_by_name(name: str)->int:
+
+# 通过名字在所有干员数据中找oid,返回-1未找到
+async def get_oid_by_name(name: str) -> int:
     with open(operators_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
         data.close()
@@ -174,9 +175,10 @@ async def get_oid_by_name(name: str)->int:
             return int(oid)
     return -1
 
-async def is_op_owned(uid: int or str, oid: int)->bool:
+
+async def is_op_owned(uid: int or str, oid: int) -> bool:
     user_ops = await get_user_all_ops(uid)
-    for user_oid in user_ops:
-        if int(user_oid) == oid:
+    for number in user_ops:
+        if int(user_ops[number]["oid"]) == oid:
             return True
     return False
