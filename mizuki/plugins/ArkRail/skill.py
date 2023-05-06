@@ -74,7 +74,7 @@ async def new_instance(sid: int, level: int) -> Skill:
              await get_skill_attribute(sid, SkillAttribute.rate1_plus) * level)
     rate2 = (await get_skill_attribute(sid, SkillAttribute.rate2) +
              await get_skill_attribute(sid, SkillAttribute.rate2_plus) * level)
-    consume = (await get_skill_attribute(sid, SkillAttribute.consume) +
+    consume = (await get_skill_attribute(sid, SkillAttribute.consume) -
                await get_skill_attribute(sid, SkillAttribute.consume_plus) * level)
     persistence = (await get_skill_attribute(sid, SkillAttribute.persistence) +
                    await get_skill_attribute(sid, SkillAttribute.persistence_plus) * level)
