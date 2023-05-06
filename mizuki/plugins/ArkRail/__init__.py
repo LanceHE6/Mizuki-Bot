@@ -63,7 +63,6 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await op_detail.finish(MessageSegment.at(uid) + f"没有名为{name}的干员")
 
     op: Operator
-    tip: str = ""
     if await is_op_owned(uid, oid):
         # 玩家拥有该干员
         tip = "干员的详细信息为："
