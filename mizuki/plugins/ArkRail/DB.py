@@ -64,6 +64,8 @@ class SkillAttributeNotFoundError(Exception):
 
 class OPAttribute:  # 干员属性类
     name = 'name'
+    stars = 'stars'
+    profession = 'profession'
     health = 'health'
     health_plus = 'health_plus'
     atk = 'atk'
@@ -98,7 +100,7 @@ class SkillAttribute:  # 技能属性类
 
 async def get_op_attribute(oid: str or int, attribute: str) -> any:
     if attribute not in ["name", "health", "health_plus", "atk", "atk_plus", "def", "def_plus", "crit_r", "crit_r_plus",
-                         "crit_d", "crit_d_plus", "speed", "speed_plus", "atk_type", "skills", "res", "res_plus"]:
+                         "crit_d", "crit_d_plus", "speed", "speed_plus", "atk_type", "skills", "res", "res_plus", "profession", "stars"]:
         raise OPAttributeNotFoundError(attribute)
     with open(operators_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
@@ -182,3 +184,14 @@ async def is_op_owned(uid: int or str, oid: int) -> bool:
         if int(user_ops[number]["oid"]) == oid:
             return True
     return False
+
+#获取指定星级的干员id列表
+async def get_ops_list_by_stars(stars: int = 3 or 4 or 5 or 6)->list:
+    with open(operators_data, 'r', encoding='utf-8') as data:
+        ops_data = json.load(data)
+        data.close()
+    ops_list = []
+    for oid in ops_data:
+        if int(ops_data[oid]["stars"]) == stars:
+            ops_list.append(oid)
+    return ops_list
