@@ -49,7 +49,7 @@ class Operator:
         self.skills_list = skills_list
 
 
-async def new_instance(oid, level, skills_level):
+async def new_instance(oid, level, skills_level) -> Operator:
     """
     通过传入的干员id、干员等级以及干员技能等级列表生成一个干员实例
 
