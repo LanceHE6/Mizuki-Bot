@@ -30,8 +30,6 @@ async def _(event: GroupMessageEvent):
         i += 1
 
     await op_info.finish(reply)
-    # player_skills = skills
-
 
 @op_info_all.handle()
 async def _(event: GroupMessageEvent):
@@ -64,15 +62,16 @@ async def _(event: GroupMessageEvent):
     op = await operator.new_instance(oid, level, skills_level)
     reply_op_info = MessageSegment.at(uid) + "您的第一个出战干员的详细信息为：\n" \
                                              f"{op.name}\n等级：{op.level}  最大生命值：{op.max_health}\n" \
-                                             f"攻击力：{op.atk}  攻击方式：{op.atk_type_str}\n" \
-                                             f"防御力：{op.defence}  法抗：{op.res}" \
-                                             f"暴击率：{op.crit_r}  暴击伤害：{op.crit_d}" \
+                                             f"攻击力：{op.atk}\n攻击方式：{op.atk_type_str}\n" \
+                                             f"防御力：{op.defence}\n法抗：{op.res}\n" \
+                                             f"暴击率：{100 * op.crit_r}%\n暴击伤害：{100 * op.crit_d}%\n" \
                                              f"速度：{op.speed}"
     op_skills_list = op.skills_list
-    reply_skills_info = MessageSegment.at(uid) + "干员技能数据为："
+    reply_skills_info = MessageSegment.at(uid) + f"{op.name}的技能数据为："
     i = 1
     for skill in op_skills_list:
         reply_skills_info += f"\n{i}. {skill.name}  等级：{skill.level}\n" \
+                             f"技力消耗：{int(skill.consume)}\n" \
                              f"{skill.detail}"
     await op_detail.send(reply_op_info)
     await op_detail.send(reply_skills_info)
