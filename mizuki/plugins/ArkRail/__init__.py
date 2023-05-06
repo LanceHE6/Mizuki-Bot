@@ -5,8 +5,10 @@
 # @Software:PyCharm
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
-from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_op_attribute, OPAttribute
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment, Message
+from nonebot.params import CommandArg, ArgPlainText
+from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_op_attribute,get_oid_by_name ,OPAttribute
+from .DB import is_op_owned
 from .operator import new_instance
 
 op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
@@ -50,11 +52,22 @@ async def _(event: GroupMessageEvent):
 
 
 @op_detail.handle()
-async def _(event: GroupMessageEvent):
+async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     uid = int(event.get_user_id())
     if not await is_in_table(uid):
         await op_info.send(MessageSegment.at(uid) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
 
+    name = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
+    oid = await get_oid_by_name(name)
+    if oid == -1:
+        await op_detail.finish(MessageSegment.at(uid) + f"没有名为{name}的干员")
+
+    if is_op_owned(uid, oid):
+        pass
+        #玩家拥有该干员
+    else:
+        pass
+        #玩家未拥有该干员
     playing_ops = await get_user_playing_ops(uid)
     first_op = playing_ops["1"]
     oid = first_op["oid"]

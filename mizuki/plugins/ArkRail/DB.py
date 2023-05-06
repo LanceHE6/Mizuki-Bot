@@ -163,3 +163,20 @@ async def is_in_table(uid: int) -> bool:
         }
         await MDB.db_execute(f'insert into ArkRail_User values({uid}, 1, "{ops}", "{ops}")')
         return False
+
+#通过名字在所有干员数据中找oid,返回-1未找到
+async def get_oid_by_name(name: str)->int:
+    with open(operators_data, 'r', encoding='utf-8') as data:
+        ops_data = json.load(data)
+        data.close()
+    for oid in ops_data:
+        if ops_data[f"{oid}"]["name"] == name:
+            return int(oid)
+    return -1
+
+async def is_op_owned(uid: int or str, oid: int)->bool:
+    user_ops = await get_user_all_ops(uid)
+    for user_oid in user_ops:
+        if int(user_oid) == oid:
+            return True
+    return False
