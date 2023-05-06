@@ -8,8 +8,8 @@ from pathlib import Path
 import json
 from ...database.utils import MDB
 
-operators_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'operators_data.json'
-skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'skills_data.json'
+operators_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' /'operators_data.json'
+skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' /'skills_data.json'
 '''
 "1": {
    "1": {
