@@ -31,6 +31,7 @@ async def _(event: GroupMessageEvent):
 
     await op_info.finish(reply)
 
+
 @op_info_all.handle()
 async def _(event: GroupMessageEvent):
     uid = int(event.get_user_id())
