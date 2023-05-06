@@ -54,4 +54,3 @@ async def _(event: GroupMessageEvent):
     uid = int(event.get_user_id())
     if not await is_in_table(uid):
         await op_info.send(MessageSegment.at(uid) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
-
