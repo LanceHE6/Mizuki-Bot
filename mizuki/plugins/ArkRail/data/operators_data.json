@@ -438,7 +438,7 @@
     "speed": 100,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [0]
+    "skills": [4, 101, 102]
   }
 
 }
