@@ -53,7 +53,7 @@ async def new_instance(oid, level, skills_level) -> Operator:
     """
     通过传入的干员id、干员等级以及干员技能等级列表生成一个干员实例
 
-    :param oid: 干员id
+    :param oid: 干员id，详情见operators_data.json文件
     :param level: 干员等级
     :param skills_level: 干员技能等级列表
     :return: 返回一个干员实例
