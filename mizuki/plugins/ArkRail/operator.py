@@ -46,10 +46,24 @@ class Operator:
         self.crit_d = crit_d
         self.speed = speed
         self.atk_type = atk_type
+        self.atk_type_str = "-"
         self.skills_list = skills_list
 
+        if atk_type == 0:
+            self.atk_type_str = "物理单体"
+        elif atk_type == 1:
+            self.atk_type_str = "法术单体"
+        elif atk_type == 2:
+            self.atk_type_str = "物理群体"
+        elif atk_type == 3:
+            self.atk_type_str = "法术群体"
+        elif atk_type == 4:
+            self.atk_type_str = "治疗单体"
+        elif atk_type == 5:
+            self.atk_type_str = "治疗群体"
 
-async def new_instance(oid, level, skills_level) -> Operator:
+
+async def new_instance(oid: int, level: int, skills_level: list[int]) -> Operator:
     """
     通过传入的干员id、干员等级以及干员技能等级列表生成一个干员实例
 
