@@ -85,7 +85,8 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         # 玩家未拥有该干员
 
     reply_op_info = MessageSegment.at(uid) + f"{tip}\n" \
-                                             f"{op.name}\n等级：{op.level}  最大生命值：{op.max_health}\n" \
+                                             f"{op.name}\n等级：{op.level}  星级：{op.stars}\n" \
+                                             f"职业：{op.profession}\n最大生命值：{op.max_health}\n" \
                                              f"攻击力：{op.atk}\n攻击方式：{op.atk_type_str}\n" \
                                              f"防御力：{op.defence}\n法抗：{op.res}\n" \
                                              f"暴击率：{100 * op.crit_r}%\n暴击伤害：{100 * op.crit_d}%\n" \
