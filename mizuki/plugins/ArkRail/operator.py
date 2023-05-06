@@ -23,9 +23,22 @@ class Operator:
     def __init__(self, name: str, level: int, health: int, atk: int,
                  defence: int, res: float, crit_r: float, crit_d: float, speed: float,
                  atk_type: int, skills_list: list[Skill]):
+        """
+        :param name: 干员名称
+        :param level: 干员等级
+        :param health: 干员生命值(初始赋值给干员的最大生命值max_health和当前生命值health)
+        :param atk: 干员攻击力
+        :param defence: 干员防御力
+        :param res: 干员法抗
+        :param crit_r: 干员暴击率
+        :param crit_d: 干员暴击伤害倍率
+        :param speed: 干员速度
+        :param atk_type: 干员攻击方式
+        :param skills_list: 干员的技能列表
+        """
         self.name = name
         self.level = level
-        self.health = health
+        self.max_health = self.health = health
         self.atk = atk
         self.defence = defence
         self.res = res
@@ -37,6 +50,14 @@ class Operator:
 
 
 async def new_instance(oid, level, skills_level):
+    """
+    通过传入的干员id、干员等级以及干员技能等级列表生成一个干员实例
+
+    :param oid: 干员id
+    :param level: 干员等级
+    :param skills_level: 干员技能等级列表
+    :return: 返回一个干员实例
+    """
     name = await get_op_attribute(oid, OPAttribute.name)
     health = (await get_op_attribute(oid, OPAttribute.health) +
               await get_op_attribute(oid, OPAttribute.health_plus) * level)
@@ -60,6 +81,12 @@ async def new_instance(oid, level, skills_level):
 
 
 async def get_operator_list(uid: str or int) -> list[Operator]:
+    """
+    通过传入的用户id，返回该用户当前出战干员的列表
+
+    :param uid: 用户id
+    :return: 返回用户当前出战干员的列表
+    """
     playing_ops_dict = await get_user_playing_ops(uid)
     playing_ops_list: list[Operator] = []
 
