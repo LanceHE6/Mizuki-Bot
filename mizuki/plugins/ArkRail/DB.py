@@ -195,3 +195,18 @@ async def get_ops_list_by_stars(stars: int = 3 or 4 or 5 or 6)->list:
         if int(ops_data[oid]["stars"]) == stars:
             ops_list.append(oid)
     return ops_list
+
+async def add_op_to_user(uid: int or str, oid: int or str):
+    uid = int (uid)
+    oid = int (oid)
+    owned_ops_list = await get_user_all_ops(uid)
+    number = 1
+    for _ in owned_ops_list:
+        number += 1
+    owned_ops_list[f"{number}"]={
+        "oid": oid,
+        "level": 1,
+        "skills_level": [0]
+    }
+    await MDB.db_execute(f'Update ArkRail_User set operators_all="{owned_ops_list}" Where uid="{uid}";')
+
