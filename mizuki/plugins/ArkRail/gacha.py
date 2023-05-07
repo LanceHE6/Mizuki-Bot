@@ -3,15 +3,19 @@
 # @Author:Hycer_Lance
 # @Time:2023/5/6 21:14
 # @Software:PyCharm
+
 import os
 import time
+from colorama import Fore
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
+from nonebot.log import logger
 from pathlib import Path
 from PIL import Image, ImageFont, ImageDraw
 from .DB import get_op_attribute, get_ops_list_by_stars, OPAttribute, is_op_owned, add_op_to_user
 from ..Currency.utils import change_user_sj_num, sj_is_enough, change_user_lmc_num
 import random
+
 """
 概率：
 6* 2%
@@ -146,11 +150,14 @@ async def _(event: GroupMessageEvent):
     if not await sj_is_enough(uid, num=600):
         await single.finish(MessageSegment.at(uid)+"你的合成玉余额不足600")
 
-
+    logger.info("[Gacha]开始抽卡制图")
     oid_list = await gacha()
     try:
         gacha_img = await draw_img_single(oid_list, uid)
+        logger.info("[Gacha]抽卡制图完成")
     except IndexError:
+        gacha_img = None
+        logger.info(Fore.RED + "[Gacha]抽卡制图出错")
         await single.finish(MessageSegment.at(uid)+"请先发送/干员初始化你的数据")
 
     await single.send(MessageSegment.at(uid) + MessageSegment.image(file=gacha_img))
@@ -164,14 +171,16 @@ async def _(event: GroupMessageEvent):
     if not await sj_is_enough(uid, num=6000):
         await ten.finish(MessageSegment.at(uid)+"你的合成玉余额不足6000")
 
-
+    logger.info("[Gacha]开始抽卡制图")
     oid_list = await gacha(True)
     try:
         gacha_img = await draw_img_ten(oid_list, uid)
+        logger.info("[Gacha]抽卡制图完成")
     except IndexError:
+        gacha_img=None
+        logger.info(Fore.RED+"[Gacha]抽卡制图出错")
         await ten.finish(MessageSegment.at(uid) + "请先发送/干员初始化你的数据")
     await ten.send(MessageSegment.at(uid)+MessageSegment.image(file=gacha_img))
     await change_user_sj_num(uid, -6000)
     os.remove(gacha_img)
     await ten.finish()
-
