@@ -145,22 +145,22 @@ async def is_in_table(uid: int) -> bool:
             "1": {
                 "oid": 1,
                 "level": 1,
-                "skills_level": [0]
+                "skills_level": [0, 0, 0]
             },
             "2": {
                 "oid": 2,
                 "level": 1,
-                "skills_level": [0]
+                "skills_level": [0, 0, 0]
             },
             "3": {
                 "oid": 3,
                 "level": 1,
-                "skills_level": [0]
+                "skills_level": [0, 0, 0]
             },
             "4": {
                 "oid": 4,
                 "level": 1,
-                "skills_level": [0]
+                "skills_level": [0, 0, 0]
             }
         }
         await MDB.db_execute(f'insert into ArkRail_User values({uid}, 1, "{ops}", "{ops}")')
@@ -206,7 +206,7 @@ async def add_op_to_user(uid: int or str, oid: int or str):
     owned_ops_list[f"{number}"]={
         "oid": oid,
         "level": 1,
-        "skills_level": [0]
+        "skills_level": [0, 0, 0]
     }
     await MDB.db_execute(f'Update ArkRail_User set operators_all="{owned_ops_list}" Where uid="{uid}";')
 
