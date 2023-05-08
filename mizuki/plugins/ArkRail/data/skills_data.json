@@ -467,6 +467,71 @@
     "persistence": 0,
     "persistence_plus": 0
   },
+  "37": {
+    "name": "灵魂吸取",
+    "brief_d": "对一名敌人造成法术伤害的同时恢复所有我方干员的生命值",
+    "detail": "对一名敌人造成相当于自身攻击力 100% + (3% * 技能等级) 的法术伤害，同时恢复所有我方干员相当于自身攻击力 40% + (2% * 技能等级) 的生命值",
+    "rate1": 1.0,
+    "rate1_plus": 0.03,
+    "rate2": 0.4,
+    "rate2_plus": 0.02,
+    "consume": 15,
+    "consume_plus": 0.2,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "38": {
+    "name": "夜魇魔影",
+    "brief_d": "对一名敌人造成真实伤害，同时使其减速",
+    "detail": "对一名敌人造成相当于自身攻击力 150% + (5% * 技能等级) 的真实伤害，同时使其速度减少 10 + (0.5 * 技能等级)",
+    "rate1": 1.5,
+    "rate1_plus": 0.05,
+    "rate2": 10,
+    "rate2_plus": 0.5,
+    "consume": 15,
+    "consume_plus": 0.2,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "39": {
+    "name": "天坠之火",
+    "brief_d": "对所有敌人造成大量法术伤害",
+    "detail": "对所有敌人造成相当于自身攻击力 160% + (4% * 技能等级) 的法术伤害",
+    "rate1": 1.6,
+    "rate1_plus": 0.04,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "consume": 25,
+    "consume_plus": 0.3,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "40": {
+    "name": "精神爆发",
+    "brief_d": "连续攻击数次，每次对随机一名敌人造成一定的法术伤害",
+    "detail": "连续攻击 6 + ⌊0.2 * 技能等级⌋ 次，每次对随机一名敌人造成相当于自身攻击力 40% + (1% * 技能等级) 的法术伤害",
+    "rate1": 6,
+    "rate1_plus": 0.2,
+    "rate2": 0.4,
+    "rate2_plus": 0.01,
+    "consume": 18,
+    "consume_plus": 0.3,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "41": {
+    "name": "奇美拉",
+    "brief_d": "伤害类型变为真实，生命上限和攻击力大幅增加，持续一段时间，技能结束后自身血量归零",
+    "detail": "伤害类型变为真实，生命上限增加 50% + (3% * 技能等级)，攻击力增加 100% + (5% * 技能等级)，持续 2 + ⌊技能等级 * 0.15⌋ 回合，技能结束后自身血量归零",
+    "rate1": 0.5,
+    "rate1_plus": 0.03,
+    "rate2": 1.0,
+    "rate2_plus": 0.05,
+    "consume": 120,
+    "consume_plus": 2,
+    "persistence": 2,
+    "persistence_plus": 0.15
+  },
 
   "101": {
     "name": "雪境生存法则",
