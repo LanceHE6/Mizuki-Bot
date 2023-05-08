@@ -164,7 +164,7 @@
     "crit_d_plus": 0,
     "speed": 100,
     "speed_plus": 0.1,
-    "atk_type": 5,
+    "atk_type": 4,
     "skills": [8]
   },
   "9": {
@@ -248,7 +248,7 @@
     "crit_d_plus": 0,
     "speed": 100,
     "speed_plus": 0.1,
-    "atk_type": 0,
+    "atk_type": 1,
     "skills": [5,13]
   },
   "13": {
@@ -353,7 +353,7 @@
     "crit_d_plus": 0,
     "speed": 100,
     "speed_plus": 0.1,
-    "atk_type": 6,
+    "atk_type": 5,
     "skills": [5,20]
   },
   "18": {
@@ -374,7 +374,7 @@
     "crit_d_plus": 0,
     "speed": 100,
     "speed_plus": 0.1,
-    "atk_type": 2,
+    "atk_type": 1,
     "skills": [5,21]
   },
   "19": {
@@ -458,7 +458,7 @@
     "crit_d_plus": 0,
     "speed": 100,
     "speed_plus": 0.1,
-    "atk_type": 3,
+    "atk_type": 2,
     "skills": [5,26]
   },
   "23": {
@@ -542,7 +542,7 @@
     "crit_d_plus": 0,
     "speed": 90,
     "speed_plus": 0.1,
-    "atk_type": 3,
+    "atk_type": 2,
     "skills": [30, 31]
   },
   "28": {
@@ -584,7 +584,7 @@
     "crit_d_plus": 0,
     "speed": 100,
     "speed_plus": 0.1,
-    "atk_type": 5,
+    "atk_type": 4,
     "skills": [33, 34]
   },
   "30": {
@@ -607,6 +607,69 @@
     "speed_plus": 0.1,
     "atk_type": 1,
     "skills": [35, 36]
+  },
+  "31": {
+    "name": "夜魔",
+    "stars": 5,
+    "profession": "术士-中坚",
+    "health": 2586,
+    "health_plus": 10,
+    "atk": 411,
+    "atk_plus": 2,
+    "def": 26,
+    "def_plus": 1,
+    "res": 25,
+    "res_plus": 0.4,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 95,
+    "speed_plus": 0.1,
+    "atk_type": 1,
+    "skills": [37, 38]
+  },
+  "32": {
+    "name": "天火",
+    "stars": 5,
+    "profession": "术士-扩散",
+    "health": 2124,
+    "health_plus": 10,
+    "atk": 319,
+    "atk_plus": 2,
+    "def": 12,
+    "def_plus": 1,
+    "res": 25,
+    "res_plus": 0.4,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 90,
+    "speed_plus": 0.1,
+    "atk_type": 3,
+    "skills": [5, 39]
+  },
+  "33": {
+    "name": "阿米娅",
+    "stars": 5,
+    "profession": "术士-中坚",
+    "health": 2988,
+    "health_plus": 15,
+    "atk": 407,
+    "atk_plus": 2,
+    "def": 21,
+    "def_plus": 1,
+    "res": 25,
+    "res_plus": 0.4,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 90,
+    "speed_plus": 0.1,
+    "atk_type": 1,
+    "skills": [35, 40, 41]
   },
 
   "41": {
