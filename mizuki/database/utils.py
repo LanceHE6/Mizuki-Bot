@@ -31,6 +31,7 @@ class MDataBase:
         logger.info(Fore.BLUE + "[DB]数据库已连接")
 
         logger.info(Fore.BLUE + "[DB]检查数据表...")
+
         if not self.check_table("Currency_UserAccount"):
             logger.info(Fore.RED + "[Currency]用户账户数据表不存在 准备创建新数据表")
             try:
@@ -67,6 +68,24 @@ class MDataBase:
             except sqlite3.DatabaseError as e:
                 self.connection.rollback()
                 logger.info(Fore.RED + f"[ArkRail]ArkRail_User表创建失败:{e}")
+
+        if not self.check_table("ArkRail_GachaUser"):
+            logger.info(Fore.RED + "[ArkRail]ArkRail_GachaUser表不存在 准备创建新数据表")
+            try:
+                self.cur.execute(
+                    "Create Table ArkRail_GachaUser(uid integer primary key Not Null,"
+                    "                          all_pool_num integer,"
+                    "                          cur_pool_num integer,"
+                    "                          all_pool_6s text,"
+                    "                          cur_pool_6s text,"
+                    "                          all_pool_5s text,"
+                    "                          cur_pool_5s text);")
+                self.connection.commit()
+                logger.info(Fore.RED + "[ArkRail]ArkRail_GachaUser表创建成功")
+
+            except sqlite3.DatabaseError as e:
+                self.connection.rollback()
+                logger.info(Fore.RED + f"[ArkRail]ArkRail_GachaUser表创建失败:{e}")
 
         logger.info(Fore.BLUE + "[DB]数据表检查完成")
 

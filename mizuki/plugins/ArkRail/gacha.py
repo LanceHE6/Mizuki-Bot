@@ -12,7 +12,9 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 from nonebot.log import logger
 from pathlib import Path
 from PIL import Image, ImageFont, ImageDraw
-from .DB import get_op_attribute, get_ops_list_by_stars, OPAttribute, is_op_owned, add_op_to_user
+from .DB import get_op_attribute, get_ops_list_by_stars, OPAttribute, is_op_owned, add_op_to_user, add_op_to_user_db
+from .DB import add_user_pool_num
+from .pool_config import PoolConfig
 from ..Currency.utils import change_user_sj_num, sj_is_enough, change_user_lmc_num
 import random
 
@@ -24,12 +26,7 @@ import random
 3* 40%
 """
 
-stars_values_lmc = {
-    3: 600,
-    4: 800,
-    5: 3000,
-    6: 20000
-}
+
 
 op_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'ops_img'
 new_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'new.png'
@@ -50,10 +47,26 @@ async def gacha(ten_type: bool = False) -> list:
         flag = random.randint(0, 1001)
         if flag <= 20:
             """6*"""
-            oid_list.append(random.choice(await get_ops_list_by_stars(6)))
+            _6s_ops_list = await get_ops_list_by_stars(6)
+            for up in PoolConfig.up_6s:
+                _6s_ops_list.remove(up)
+            up_flag = random.choice([0, 1])
+            if up_flag == 1:
+                oid_list.append(random.choice(PoolConfig.up_6s))
+            else:
+                oid_list.append(random.choice(_6s_ops_list))
+
         elif flag <= 100:
             """5*"""
-            oid_list.append(random.choice(await get_ops_list_by_stars(5)))
+            _5s_ops_list = await get_ops_list_by_stars(5)
+            for up in PoolConfig.up_5s:
+                _5s_ops_list.remove(up)
+            up_flag = random.choice([0, 1])
+            if up_flag == 1:
+                oid_list.append(random.choice(PoolConfig.up_5s))
+            else:
+                oid_list.append(random.choice(_5s_ops_list))
+
         elif flag <= 600:
             """4*"""
             oid_list.append(random.choice(await get_ops_list_by_stars(4)))
@@ -82,13 +95,15 @@ async def draw_img_ten(oid_list: list, uid: int or str) -> Path:
         image.paste(op_img, (172 + i * 200, 230))  # 干员
         flash_img = Image.open(stars_img_path / f'{stars}flash.png')
         image.paste(flash_img, (172 + i * 200, -10))  # 上光效
+        if stars == 5 or stars == 6:
+            await add_op_to_user_db(uid, oid, stars)  # 写入获取记录表中
         if not await is_op_owned(int(uid), int(oid)):  # new标识
             font = ImageFont.truetype('simhei', 48)
             draw.text((238 + i * 200, 180), "NEW", font=font, fill='red')
             await add_op_to_user(uid, oid)  # 写入数据库
         else:
             # 转换为龙门币
-            await change_user_lmc_num(uid, stars_values_lmc[stars])
+            await change_user_lmc_num(uid, PoolConfig.stars_values_lmc[f"{stars}"])
         image.paste(flash_img.rotate(180), (172 + i * 200, 630))  # 下光效
         image.paste(pro_img, (224 + i * 200, 600))  # 职业
         image.paste(stars_img, (185 + i * 200, 220), mask=stars_img)  # 星级
@@ -131,12 +146,15 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
     draw.text((110, 790), f"{''.join(list(profession)[0:2])}", font=font, fill=(0, 0, 0), stroke_fill=(0, 0, 0), stroke_width=2)  # 职业文字
     font = ImageFont.truetype('simsun', 120)
     draw.text((460, 765), name, font=font, stroke_fill='gray', stroke_width=1)  # 干员名字
+    if stars == 5 or stars == 6:
+        await add_op_to_user_db(uid, oid, stars)  # 写入获取记录表中
     if not await is_op_owned(int(uid), int(oid)):  # new标识
         image.paste(new_img, (320, 886), mask=new_img)
         await add_op_to_user(uid, oid)
+
     else:
         # 转换为龙门币
-        await change_user_lmc_num(uid, stars_values_lmc[stars])
+        await change_user_lmc_num(uid, PoolConfig.stars_values_lmc[f"{stars}"])
     # 文字样式（微软雅黑），可以自定义ttf格式文字样式
     font = ImageFont.truetype('simhei', 22)
     draw.text((950, 990), f"{uid}", font=font)
@@ -154,8 +172,8 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
 @single.handle()
 async def _(event: GroupMessageEvent):
     uid = event.get_user_id()
-    # if not await sj_is_enough(uid, num=600):
-    #     await single.finish(MessageSegment.at(uid) + "你的合成玉余额不足600")
+    if not await sj_is_enough(uid, num=600):
+        await single.finish(MessageSegment.at(uid) + "你的合成玉余额不足600")
 
     logger.info("[Gacha]开始抽卡制图")
     oid_list = await gacha()
@@ -169,6 +187,7 @@ async def _(event: GroupMessageEvent):
 
     await single.send(MessageSegment.at(uid) + MessageSegment.image(file=gacha_img))
     await change_user_sj_num(uid, -600)
+    await add_user_pool_num(uid, 1)  # 记录抽数
     os.remove(gacha_img)
     await single.finish()
 
@@ -177,8 +196,8 @@ async def _(event: GroupMessageEvent):
 @ten.handle()
 async def _(event: GroupMessageEvent):
     uid = event.get_user_id()
-    # if not await sj_is_enough(uid, num=6000):
-    #     await ten.finish(MessageSegment.at(uid) + "你的合成玉余额不足6000")
+    if not await sj_is_enough(uid, num=6000):
+        await ten.finish(MessageSegment.at(uid) + "你的合成玉余额不足6000")
 
     logger.info("[Gacha]开始抽卡制图")
     oid_list = await gacha(True)
@@ -191,5 +210,6 @@ async def _(event: GroupMessageEvent):
         await ten.finish(MessageSegment.at(uid) + "请先发送/干员初始化你的数据")
     await ten.send(MessageSegment.at(uid) + MessageSegment.image(file=gacha_img))
     await change_user_sj_num(uid, -6000)
+    await add_user_pool_num(uid, 10)  # 记录抽数
     os.remove(gacha_img)
     await ten.finish()
