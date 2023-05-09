@@ -532,6 +532,71 @@
     "persistence": 2,
     "persistence_plus": 0.15
   },
+  "42": {
+    "name": "处决",
+    "brief_d": "对一名敌人造成真实伤害",
+    "detail": "对一名敌人造成相当于自身攻击力 50% + (3% * 技能等级) 和 20% + (1% * 技能等级) 目标已损生命值的真实伤害",
+    "rate1": 0.5,
+    "rate1_plus": 0.03,
+    "rate2": 0.2,
+    "rate2_plus": 0.01,
+    "consume": 15,
+    "consume_plus": 0.2,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "43": {
+    "name": "淬影突袭",
+    "brief_d": "对一名敌人造成法术伤害，并回复一定技力点",
+    "detail": "对一名敌人造成相当于自身攻击力 40% + (2% * 技能等级) 的法术伤害，并回复 7 + ⌊0.25 * 技能等级⌋ 技力点",
+    "rate1": 0.4,
+    "rate1_plus": 0.02,
+    "rate2": 7,
+    "rate2_plus": 0.25,
+    "consume": 0,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "44": {
+    "name": "潜入暗影",
+    "brief_d": "自身攻击力提升，进入隐匿状态，持续一定时间",
+    "detail": "自身攻击力提升 30% + (1.5% * 技能等级)，无法被敌方指向性技能或普攻选中，持续2回合",
+    "rate1": 0.3,
+    "rate1_plus": 0.015,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "consume": 15,
+    "consume_plus": 0.2,
+    "persistence": 2,
+    "persistence_plus": 0
+  },
+  "45": {
+    "name": "独影归途",
+    "brief_d": "对所有敌人造成一定物理伤害，每对一个敌人造成伤害则回复一定技力点",
+    "detail": "对所有敌人造成相当于自身攻击力 50% + (3% * 技能等级) 的物理伤害，每对一个敌人造成伤害则回复 2 + ⌊0.18 * 技能等级⌋ 技力点",
+    "rate1": 0.5,
+    "rate1_plus": 0.03,
+    "rate2": 2,
+    "rate2_plus": 0.18,
+    "consume": 0,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0
+  },
+  "46": {
+    "name": "闭膛连发",
+    "brief_d": "自身攻击力和防御力大幅增加，但速度减小，持续一段时间",
+    "detail": "自身攻击力和防御力增加 70% + (3% * 技能等级)，但速度减小10，持续 2 + ⌊0.18 * 技能等级⌋ 回合",
+    "rate1": 0.7,
+    "rate1_plus": 0.03,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "consume": 45,
+    "consume_plus": 0.5,
+    "persistence": 2,
+    "persistence_plus": 0.18
+  },
 
   "101": {
     "name": "雪境生存法则",
