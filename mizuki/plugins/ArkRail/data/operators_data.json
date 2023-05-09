@@ -482,6 +482,27 @@
     "atk_type": 0,
     "skills": [3, 27]
   },
+  "24": {
+    "name": "羽毛笔",
+    "stars": 5,
+    "profession": "近卫-群攻",
+    "health": 3596,
+    "health_plus": 15,
+    "atk": 359,
+    "atk_plus": 1,
+    "def": 211,
+    "def_plus": 1,
+    "res": 0,
+    "res_plus": 0,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 100,
+    "speed_plus": 0.1,
+    "atk_type": 1,
+    "skills": [7,35]
+  },
   "25": {
     "name": "寒芒克洛丝",
     "stars": 5,
