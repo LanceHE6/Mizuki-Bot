@@ -5,6 +5,7 @@
 # @Software:PyCharm
 
 from ...database.utils import MDB
+from PIL import Image, ImageFont, ImageDraw
 
 
 # 判断用户是否在Currency_UserAccount表中
@@ -90,3 +91,4 @@ async def change_user_sj_num(uid: int or str, num: int) -> str:
         sql_sequence = f"Update Currency_UserAccount Set Synthetic_Jade=Synthetic_Jade+{num} where uid={uid};"
         result = await MDB.db_execute(sql_sequence)
     return result
+
