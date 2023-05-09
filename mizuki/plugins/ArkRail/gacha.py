@@ -13,7 +13,7 @@ from nonebot.log import logger
 from pathlib import Path
 from PIL import Image, ImageFont, ImageDraw
 from .DB import get_op_attribute, get_ops_list_by_stars, OPAttribute, is_op_owned, add_op_to_user, add_op_to_user_db
-from .DB import add_user_pool_num
+from .DB import add_user_pool_num, get_user_cur_pool_num, reset_user_cur_pool_num
 from .pool_config import PoolConfig
 from ..Currency.utils import change_user_sj_num, sj_is_enough, change_user_lmc_num
 import random
@@ -37,7 +37,7 @@ single = on_command("单抽", aliases={"抽卡", "寻访"}, block=True, priority
 ten = on_command("十连", aliases={"十连抽", "十连寻访"}, block=True, priority=3)
 
 
-async def gacha(ten_type: bool = False) -> list:
+async def gacha(uid, ten_type: bool = False) -> list:
     if ten_type:
         num = 10
     else:
@@ -45,34 +45,46 @@ async def gacha(ten_type: bool = False) -> list:
     oid_list = []
     for i in range(0, num):
         flag = random.randint(0, 1001)
-        if flag <= 20:
+        now_pool_num = await get_user_cur_pool_num(uid)
+        if now_pool_num > 50:
+            prob_imp = (now_pool_num-PoolConfig.prob_improvement)*20
+        else:
+            prob_imp = 0
+        if flag <= 20+prob_imp:
             """6*"""
             _6s_ops_list = await get_ops_list_by_stars(6)
             for up in PoolConfig.up_6s:
-                _6s_ops_list.remove(up)
+                _6s_ops_list.remove(f'{up}')
             up_flag = random.choice([0, 1])
             if up_flag == 1:
                 oid_list.append(random.choice(PoolConfig.up_6s))
             else:
-                oid_list.append(random.choice(_6s_ops_list))
-
-        elif flag <= 100:
+                if not _6s_ops_list:
+                    oid_list.append(random.choice(PoolConfig.up_6s))
+                else:
+                    oid_list.append(random.choice(_6s_ops_list))
+            await reset_user_cur_pool_num(uid)#重置保底数
+        elif 20 + prob_imp < flag <= 100 + prob_imp:
             """5*"""
             _5s_ops_list = await get_ops_list_by_stars(5)
             for up in PoolConfig.up_5s:
-                _5s_ops_list.remove(up)
+                _5s_ops_list.remove(f'{up}')
             up_flag = random.choice([0, 1])
             if up_flag == 1:
                 oid_list.append(random.choice(PoolConfig.up_5s))
             else:
-                oid_list.append(random.choice(_5s_ops_list))
+                if not _5s_ops_list:
+                    oid_list.append(random.choice(PoolConfig.up_5s))
+                else:
+                    oid_list.append(random.choice(_5s_ops_list))
 
-        elif flag <= 600:
+        elif 100 + prob_imp< flag <= 600+ prob_imp:
             """4*"""
             oid_list.append(random.choice(await get_ops_list_by_stars(4)))
         else:
             """3*"""
             oid_list.append(random.choice(await get_ops_list_by_stars(3)))
+        await add_user_pool_num(uid, 1)  # 记录抽数
     return oid_list
 
 
@@ -176,7 +188,7 @@ async def _(event: GroupMessageEvent):
         await single.finish(MessageSegment.at(uid) + "你的合成玉余额不足600")
 
     logger.info("[Gacha]开始抽卡制图")
-    oid_list = await gacha()
+    oid_list = await gacha(uid)
     try:
         gacha_img = await draw_img_single(oid_list, uid)
         logger.info("[Gacha]抽卡制图完成")
@@ -200,7 +212,7 @@ async def _(event: GroupMessageEvent):
         await ten.finish(MessageSegment.at(uid) + "你的合成玉余额不足6000")
 
     logger.info("[Gacha]开始抽卡制图")
-    oid_list = await gacha(True)
+    oid_list = await gacha(uid, True)
     try:
         gacha_img = await draw_img_ten(oid_list, uid)
         logger.info("[Gacha]抽卡制图完成")
@@ -210,6 +222,6 @@ async def _(event: GroupMessageEvent):
         await ten.finish(MessageSegment.at(uid) + "请先发送/干员初始化你的数据")
     await ten.send(MessageSegment.at(uid) + MessageSegment.image(file=gacha_img))
     await change_user_sj_num(uid, -6000)
-    await add_user_pool_num(uid, 10)  # 记录抽数
+
     os.remove(gacha_img)
     await ten.finish()
