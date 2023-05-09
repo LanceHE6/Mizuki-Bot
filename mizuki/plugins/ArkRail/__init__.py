@@ -6,11 +6,12 @@
 
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment, Message
-from nonebot.params import CommandArg, ArgPlainText
+from nonebot.params import CommandArg
 from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_op_attribute, get_oid_by_name, OPAttribute
 from .DB import is_op_owned
 from .operator import new_instance, Operator
 from .gacha import *
+from .pool_config import change_up_6s_comm,change_up_5s_comm
 
 op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
 op_info_all = on_command("info all", aliases={"所有角色", "所有干员"}, block=True, priority=2)

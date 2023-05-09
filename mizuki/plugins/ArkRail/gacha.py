@@ -49,23 +49,29 @@ async def gacha(ten_type: bool = False) -> list:
             """6*"""
             _6s_ops_list = await get_ops_list_by_stars(6)
             for up in PoolConfig.up_6s:
-                _6s_ops_list.remove(up)
+                _6s_ops_list.remove(f'{up}')
             up_flag = random.choice([0, 1])
             if up_flag == 1:
                 oid_list.append(random.choice(PoolConfig.up_6s))
             else:
-                oid_list.append(random.choice(_6s_ops_list))
+                if not _6s_ops_list:
+                    oid_list.append(random.choice(PoolConfig.up_6s))
+                else:
+                    oid_list.append(random.choice(_6s_ops_list))
 
         elif flag <= 100:
             """5*"""
             _5s_ops_list = await get_ops_list_by_stars(5)
             for up in PoolConfig.up_5s:
-                _5s_ops_list.remove(up)
+                _5s_ops_list.remove(f'{up}')
             up_flag = random.choice([0, 1])
             if up_flag == 1:
                 oid_list.append(random.choice(PoolConfig.up_5s))
             else:
-                oid_list.append(random.choice(_5s_ops_list))
+                if not _5s_ops_list:
+                    oid_list.append(random.choice(PoolConfig.up_5s))
+                else:
+                    oid_list.append(random.choice(_5s_ops_list))
 
         elif flag <= 600:
             """4*"""
