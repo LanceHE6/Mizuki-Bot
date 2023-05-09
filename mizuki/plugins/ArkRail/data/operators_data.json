@@ -692,7 +692,7 @@
     "atk_type": 0,
     "skills": [5,42]
   },
-"35": {
+  "35": {
     "name": "伊内丝",
     "stars": 6,
     "profession": "先锋-中坚",
@@ -713,7 +713,7 @@
     "atk_type": 0,
     "skills": [43,44,45]
   },
-"36": {
+  "36": {
     "name": "风笛",
     "stars": 6,
     "profession": "先锋-冲锋",
@@ -734,7 +734,90 @@
     "atk_type": 0,
     "skills": [5,7,46]
   },
-
+  "37": {
+    "name": "玛恩纳",
+    "stars": 6,
+    "profession": "近卫-蓄能",
+    "health": 4524,
+    "health_plus": 30,
+    "atk": 244,
+    "atk_plus": 1,
+    "def": 306,
+    "def_plus": 1,
+    "res": 15,
+    "res_plus": 0.2,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 100,
+    "speed_plus": 0.1,
+    "atk_type": 7,
+    "skills": [47,7,48]
+  },
+  "38": {
+    "name": "耀骑士临光",
+    "stars": 6,
+    "profession": "近卫-攻坚",
+    "health": 4840,
+    "health_plus": 15,
+    "atk": 481,
+    "atk_plus": 2,
+    "def": 138,
+    "def_plus": 1,
+    "res": 0,
+    "res_plus": 0,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 100,
+    "speed_plus": 0.1,
+    "atk_type": 0,
+    "skills": [49,50,51]
+  },
+  "39": {
+    "name": "山",
+    "stars": 6,
+    "profession": "近卫-拳手",
+    "health": 4829,
+    "health_plus": 15,
+    "atk": 416,
+    "atk_plus": 1,
+    "def": 229,
+    "def_plus": 1,
+    "res": 0,
+    "res_plus": 0,
+    "crit_r": 0.1,
+    "crit_r_plus": 0.001,
+    "crit_d": 0.5,
+    "crit_d_plus": 0.005,
+    "speed": 100,
+    "speed_plus": 0.1,
+    "atk_type": 0,
+    "skills": [4,52,7]
+  },
+  "40": {
+    "name": "史尔特尔",
+    "stars": 6,
+    "profession": "近卫-术战",
+    "health": 4857,
+    "health_plus": 15,
+    "atk": 362,
+    "atk_plus": 2,
+    "def": 229,
+    "def_plus": 1,
+    "res": 10,
+    "res_plus": 0.2,
+    "crit_r": 0,
+    "crit_r_plus": 0,
+    "crit_d": 0.5,
+    "crit_d_plus": 0,
+    "speed": 100,
+    "speed_plus": 0.1,
+    "atk_type": 1,
+    "skills": [4,53,54]
+  },
   "41": {
     "name": "银灰",
     "stars": 6,
@@ -754,6 +837,6 @@
     "speed": 100,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [4, 101, 102]
+    "skills": [4, 55, 56]
   }
 }
