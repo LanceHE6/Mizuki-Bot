@@ -272,3 +272,8 @@ async def add_user_pool_num(uid:int or str, num: int):
     await MDB.db_execute(sql_sequence)
     sql_sequence = f'Update ArkRail_GachaUser Set all_pool_num=all_pool_num+{num} Where uid="{uid}";'
     await MDB.db_execute(sql_sequence)
+
+async def reset_user_cur_pool_num(uid:int or str):
+    """重置用户当前池子抽数-用于保底判断"""
+    sql_sequence = f'Update ArkRail_GachaUser Set cur_pool_num=0 Where uid="{uid}";'
+    await MDB.db_execute(sql_sequence)
