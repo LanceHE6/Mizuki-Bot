@@ -222,6 +222,16 @@ async def is_op_owned(uid: int or str, oid: int) -> bool:
     return False
 
 
+async def is_map_exist(mid: str) -> bool:
+    with open(maps_data, 'r', encoding='utf-8') as data:
+        m_data = json.load(data)
+        data.close()
+    for m in m_data:
+        if m == mid:
+            return True
+    return False
+
+
 # 获取指定星级的干员id列表
 async def get_ops_list_by_stars(stars: int = 3 or 4 or 5 or 6) -> list:
     with open(operators_data, 'r', encoding='utf-8') as data:
