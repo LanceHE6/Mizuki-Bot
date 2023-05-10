@@ -3,7 +3,7 @@
 # @Author:Hycer_Lance
 # @Time:2023/4/27 16:55
 # @Software:PyCharm
-
+import random
 from pathlib import Path
 from .DB import get_user_playing_ops, get_op_attribute, OPAttribute
 from .skill import get_skills_list
@@ -28,27 +28,29 @@ class Operator:
         :param level: 干员等级
         :param stars: 干员星级
         :param profession: 干员职业
-        :param health: 干员生命值(初始赋值给干员的最大生命值max_health和当前生命值health)
-        :param atk: 干员攻击力
-        :param defence: 干员防御力
-        :param res: 干员法抗
-        :param crit_r: 干员暴击率
-        :param crit_d: 干员暴击伤害倍率
-        :param speed: 干员速度
+        :param health: 干员初始生命值(初始赋值给干员的最大生命值max_health和当前生命值health)
+        :param atk: 干员初始攻击力
+        :param defence: 干员初始防御力
+        :param res: 干员初始法抗
+        :param crit_r: 干员初始暴击率
+        :param crit_d: 干员初始暴击伤害倍率
+        :param speed: 干员初始速度
         :param atk_type: 干员攻击方式
         :param skills_list: 干员的技能列表
+
+        后面有_p的变量表示干员战斗时该变量的实际值(xxx_p = xxx * (1 + xxx_add_f) + xxx_add_d)
         """
         self.name = name
         self.stars = stars
         self.profession = profession
         self.level = level
-        self.max_health = self.health = health
-        self.atk = atk
-        self.defence = defence
-        self.res = res
-        self.crit_r = crit_r
-        self.crit_d = crit_d
-        self.speed = speed
+        self.max_health = self.health = self.max_health_p = health
+        self.atk = self.atk_p = atk
+        self.defence = self.defence_p = defence
+        self.res = self.res_p = res
+        self.crit_r = self.crit_r_p = crit_r
+        self.crit_d = self.crit_d_p = crit_d
+        self.speed = self.speed_p = speed
         self.atk_type = atk_type
         self.atk_type_str = "-"
         self.skills_list = skills_list
@@ -97,6 +99,8 @@ class Operator:
         invincible: 无敌(无法受到任何伤害)
         mocked: 被嘲讽(攻击时只能攻击指定单位)
         mocking_obj: 嘲讽者(被嘲讽时只能攻击的单位)
+        
+        next_operators: 身边的干员(包括自己)
         """
 
         self.health_add_f: float = 0.0
@@ -122,6 +126,69 @@ class Operator:
         self.invincible: int = 0
         self.mocked: int = 0
         self.mocking_obj: Operator
+
+        self.next_operators: list[Operator] = [self]
+
+    async def attack(self, obj, is_crit: bool):
+        """
+        干员进行普攻的函数，会根据atk_type来进行不同的操作
+
+        :param obj: 目标
+        :param is_crit: 是否暴击
+        """
+        if self.atk_type == 0:
+            damage = (self.atk_p - obj.defence_p) \
+                if (self.atk_p - obj.defence_p > self.atk_p * 0.05) \
+                else (self.atk_p * 0.05)  # 5%攻击力的保底伤害
+            damage += damage * is_crit * (1.0 + self.crit_d_p)
+            obj.health -= damage
+        elif self.atk_type == 1:
+            damage = (self.atk_p * ((100 - obj.res_p) / 100))  # 法抗90封顶
+            damage += damage * is_crit * (1.0 + self.crit_d_p)
+            obj.health -= damage
+        elif self.atk_type == 2:
+            for op in obj.next_operators:
+                damage = (self.atk_p - op.defence_p) \
+                    if (self.atk_p - op.defence_p > self.atk_p * 0.05) \
+                    else (self.atk_p * 0.05)
+                damage += damage * is_crit * (1.0 + self.crit_d_p)
+                op.health -= damage
+        elif self.atk_type == 3:
+            for op in obj.next_operators:
+                damage = (self.atk_p * ((100 - op.res_p) / 100))
+                damage += damage * is_crit * (1.0 + self.crit_d_p)
+                op.health -= damage
+        elif self.atk_type == 4:
+            obj.health += self.atk_p
+            if obj.health > obj.max_health_p:
+                obj.health = obj.max_health_p
+        elif self.atk_type == 5:
+            for op in self.next_operators:
+                op.health += self.atk_p
+                if op.health > op.max_health_p:
+                    op.health = op.max_health_p
+        elif self.atk_type == 6:
+            damage = self.atk_p
+            damage += damage * is_crit * (1.0 + self.crit_d_p)
+            obj.health -= damage
+        elif self.atk_type == 7:
+            pass
+
+    async def is_crit(self) -> bool:
+        """
+        判断干员是否暴击的函数
+
+        :return: 干员是否暴击
+        """
+        num = random.randint(1, 10000)
+        return num <= self.crit_r_p * 10000
+
+    async def die(self):
+        """
+        干员被击倒时调用的函数
+        """
+        for op in self.next_operators:
+            op.next_operators.remove(self)
 
 
 async def new_instance(oid: int, level: int, skills_level: list[int]) -> Operator:
