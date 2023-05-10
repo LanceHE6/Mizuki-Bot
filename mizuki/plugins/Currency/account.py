@@ -64,26 +64,26 @@ async def draw_img(uid, user_nick_name: str) -> Path:
     box = Image.open(src_path/"box.png")  # 内框
     user_avatar = circle_corner(Image.open(src_path/'user_avatar.png').resize((200, 200)), 100)  # 用户头像
     os.remove(src_path/'user_avatar.png')#删除临时文件
-    lmc_img = Image.open(src_path/"lmc.png").resize((200, 200))
-    sj_img = Image.open(src_path/"sj.png").resize((200, 200))
+    lmc_img = Image.open(src_path/"lmc.png").resize((300, 300))
+    sj_img = Image.open(src_path/"sj.png").resize((300, 300))
 
     img.paste(bg_img, (0, 0), mask=bg_img)
     img.paste(box, (248, 180), mask=box)
     img.paste(user_avatar, (400, 300), mask=user_avatar)
-    img.paste(lmc_img, (640, 540), mask=lmc_img)
-    img.paste(sj_img, (640, 840), mask=sj_img)
+    img.paste(lmc_img, (480, 520), mask=lmc_img)
+    img.paste(sj_img, (480, 880), mask=sj_img)
 
     draw = ImageDraw.Draw(img)
     draw_font = ImageFont.truetype("simhei", 80)
     draw.text((640, 360), f"{user_nick_name}", font=draw_font)  # 用户昵称
 
     draw_font = ImageFont.truetype("simhei", 48)
-    draw.text((670, 750), "龙门币", font=draw_font)
-    draw.text((670, 1050), "合成玉", font=draw_font)
+    draw.text((560, 815), "龙门币", font=draw_font)
+    draw.text((560, 1170), "合成玉", font=draw_font)
 
     draw_font = ImageFont.truetype("simhei", 120)
-    draw.text((880, 600), f"X  {lmc_num}", font=draw_font, fill=(0, 179, 245))
-    draw.text((880, 900), f"X  {sj_num}", font=draw_font, fill='red')
+    draw.text((840, 620), f"X  {lmc_num}", font=draw_font, fill=(0, 179, 245))
+    draw.text((840, 970), f"X  {sj_num}", font=draw_font, fill='red')
     save_path =  Path() / 'mizuki' / 'plugins' / 'Currency' / f'{uid}_account.png'
     img.save(save_path)
     return save_path
