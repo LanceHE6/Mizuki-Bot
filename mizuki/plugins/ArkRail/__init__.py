@@ -11,11 +11,13 @@ from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_op_attr
 from .DB import is_op_owned
 from .operator import new_instance, Operator
 from .gacha import *
-from .pool_config import change_up_6s_comm,change_up_5s_comm
+from .pool_config import change_up_6s_comm, change_up_5s_comm
 
 op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
 op_info_all = on_command("info all", aliases={"所有角色", "所有干员"}, block=True, priority=2)
 op_detail = on_command("detail", aliases={"干员信息", "干员详情"}, block=True, priority=2)
+
+play = on_command("play", aliases={"副本", "刷本"}, block=True, priority=1)
 
 
 @op_info.handle()
@@ -104,3 +106,9 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     await op_detail.send(reply_op_info)
     await op_detail.send(reply_skills_info)
     await op_detail.finish()
+
+
+@play.handle
+async def _(event: GroupMessageEvent, args: Message = CommandArg()):
+    uid = int(event.get_user_id())
+    map_name = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
