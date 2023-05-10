@@ -62,9 +62,66 @@ class Operator:
         elif atk_type == 3:
             self.atk_type_str = "法术群体"
         elif atk_type == 4:
-            self.atk_type_str = "治疗单体"
+            self.atk_type_str = "单体治疗"
         elif atk_type == 5:
-            self.atk_type_str = "治疗群体"
+            self.atk_type_str = "群体治疗"
+        elif atk_type == 6:
+            self.atk_type_str = "真实单体"
+        elif atk_type == 7:
+            self.atk_type_str = "不进行普攻"
+
+        """
+        以下是干员战斗时特有的属性:
+        
+        health_add_f: 最大生命值百分比加成
+        atk_add_f: 攻击力百分比加成
+        def_add_f: 防御力百分比加成
+        res_add_f: 法抗百分比加成
+        crit_r_add_f: 暴击率百分比加成
+        crit_d_add_f: 暴击伤害百分比加成
+        speed_f: 速度百分比加成
+        
+        health_add_d: 最大生命值数值加成
+        atk_add_d: 攻击力数值加成
+        def_add_d: 防御力数值加成
+        res_add_d: 法抗数值加成
+        crit_r_add_d: 暴击率数值加成
+        crit_d_add_d: 暴击伤害数值加成
+        speed_d: 速度数值加成
+        
+        特殊状态(数值表示持续回合，大于0时生效，效果生效时每回合减1)
+        immobile: 无法行动(无法普攻和使用技能，跳过该干员回合)
+        silent: 沉默(无法使用技能)
+        hidden: 隐匿(无法被敌方指向性技能选中)
+        deathless: 不死(血量最多降为1)
+        invincible: 无敌(无法受到任何伤害)
+        mocked: 被嘲讽(攻击时只能攻击指定单位)
+        mocking_obj: 嘲讽者(被嘲讽时只能攻击的单位)
+        """
+
+        self.health_add_f: float = 0.0
+        self.atk_add_f: float = 0.0
+        self.def_add_f: float = 0.0
+        self.res_add_f: float = 0.0
+        self.crit_r_add_f: float = 0.0
+        self.crit_d_add_f: float = 0.0
+        self.speed_add_f: float = 0.0
+
+        self.health_add_d: int = 0
+        self.atk_add_d: int = 0
+        self.def_add_d: int = 0
+        self.res_add_d: int = 0
+        self.crit_r_add_d: int = 0
+        self.crit_d_add_d: int = 0
+        self.speed_add_d: int = 0
+
+        self.immobile: int = 0
+        self.silent: int = 0
+        self.hidden: int = 0
+        self.deathless: int = 0
+        self.invincible: int = 0
+        self.mocked: int = 0
+        self.mocking_obj: Operator
 
 
 async def new_instance(oid: int, level: int, skills_level: list[int]) -> Operator:
@@ -97,7 +154,8 @@ async def new_instance(oid: int, level: int, skills_level: list[int]) -> Operato
     sid_list = await get_op_attribute(oid, OPAttribute.skills)
     skills_list: list[Skill] = await get_skills_list(sid_list, skills_level)
 
-    return Operator(name, level, stars, profession, health, atk, defence, res, crit_r, crit_d, speed, atk_type, skills_list)
+    return Operator(name, level, stars, profession, health, atk, defence, res, crit_r, crit_d, speed, atk_type,
+                    skills_list)
 
 
 async def get_operator_list(uid: str or int) -> list[Operator]:
