@@ -52,8 +52,8 @@ async def get_skills_list(sid_list: list[int], skills_level: list[int]) -> list[
     """
     j = 0
     skills_list: list[Skill] = []
-    for i in sid_list:
-        skill_instance = await new_instance(i, skills_level[j])
+    for sid in sid_list:
+        skill_instance = await new_instance(sid, skills_level[j])
         skills_list.append(skill_instance)
         j += 1
     return skills_list
@@ -78,7 +78,7 @@ async def new_instance(sid: int, level: int) -> Skill:
     persistence: int = (await get_skill_attribute(sid, SkillAttribute.persistence) +
                         await get_skill_attribute(sid, SkillAttribute.persistence_plus) * level)
     detail: str = await get_skill_attribute(sid, SkillAttribute.detail)
-    detail.replace("${r1_int}", str(int(rate1)))\
+    detail = detail.replace("${r1_int}", str(int(rate1)))\
         .replace("${r2_int}", str(int(rate2)))\
         .replace("${r1_float}", str(rate1 * 100) + "%")\
         .replace("${r2_float}", str(rate2 * 100) + "%")\
