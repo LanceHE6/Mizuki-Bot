@@ -15,6 +15,9 @@ from sqlite3 import DatabaseError
 
 operators_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'operators_data.json'
 skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'skills_data.json'
+maps_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'maps_data.json'
+enemies_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'enemies_data.json'
+enemy_skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'enemy_skills_data.json'
 '''
 "1": {
    "1": {
@@ -103,25 +106,49 @@ class SkillAttribute:  # 技能属性类
     persistence_plus = "persistence_plus"
 
 
-async def get_op_attribute(oid: str or int, attribute: str) -> any:
+class MapAttribute:  # 地图属性类
+    enemies = "enemies"
+    reward = "reward"
+
+
+async def get_op_attribute(oid: str or int, attribute: str, is_enemy: bool = False) -> any:
     if attribute not in ["name", "health", "health_plus", "atk", "atk_plus", "def", "def_plus", "crit_r", "crit_r_plus",
                          "crit_d", "crit_d_plus", "speed", "speed_plus", "atk_type", "skills", "res", "res_plus",
                          "profession", "stars"]:
         raise OPAttributeNotFoundError(attribute)
-    with open(operators_data, 'r', encoding='utf-8') as data:
+    with open(operators_data if not is_enemy else enemies_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
         data.close()
     return ops_data[f"{oid}"][f"{attribute}"]
 
 
-async def get_skill_attribute(sid: str or int, attribute: str) -> any:
+async def get_skill_attribute(sid: str or int, attribute: str, is_enemy: bool = False) -> any:
     if attribute not in ["name", "brief_d", "detail", "rate1", "rate1_plus", "rate2", "rate2_plus", "consume",
                          "consume_plus", "persistence", "persistence_plus"]:
         raise SkillAttributeNotFoundError(attribute)
-    with open(skills_data, 'r', encoding='utf-8') as data:
+    with open(skills_data if not is_enemy else enemy_skills_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
         data.close()
     return ops_data[f"{sid}"][f"{attribute}"]
+
+
+async def get_map_enemies_list(mid: str, attribute: str) -> any:
+    if attribute not in ["enemies", "reward"]:
+        raise SkillAttributeNotFoundError(attribute)
+    with open(maps_data, 'r', encoding='utf-8') as data:
+        m_data = json.load(data)
+        data.close()
+    e_data = m_data[f"{mid}"][f"{attribute}"]  # 关卡数据
+    if attribute is "enemies":
+        enemies_data_list: list[list[int]] = []  # 返回值,包含敌人id列表和敌人等级列表
+        eid_list: list[int] = []  # 敌人id列表
+        level_list: list[int] = []  # 敌人等级列表
+        for n in e_data:
+            eid_list.append(e_data[n]["eid"])
+            level_list.append(e_data[n]["level"])
+        return enemies_data_list
+    else:
+        return [e_data["name"], e_data["amount"]]  # 返回值,包含报酬名称和报酬数量
 
 
 async def get_user_level(uid: str or int) -> int:
