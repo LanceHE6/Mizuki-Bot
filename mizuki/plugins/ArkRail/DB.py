@@ -132,20 +132,22 @@ async def get_skill_attribute(sid: str or int, attribute: str, is_enemy: bool = 
     return ops_data[f"{sid}"][f"{attribute}"]
 
 
-async def get_map_enemies_list(mid: str, attribute: str) -> any:
+async def get_map_attribute(mid: str, attribute: str) -> any:
     if attribute not in ["enemies", "reward"]:
         raise SkillAttributeNotFoundError(attribute)
     with open(maps_data, 'r', encoding='utf-8') as data:
         m_data = json.load(data)
         data.close()
     e_data = m_data[f"{mid}"][f"{attribute}"]  # 关卡数据
-    if attribute is "enemies":
+    if attribute == "enemies":
         enemies_data_list: list[list[int]] = []  # 返回值,包含敌人id列表和敌人等级列表
         eid_list: list[int] = []  # 敌人id列表
         level_list: list[int] = []  # 敌人等级列表
         for n in e_data:
             eid_list.append(e_data[n]["eid"])
             level_list.append(e_data[n]["level"])
+        enemies_data_list.append(eid_list)
+        enemies_data_list.append(level_list)
         return enemies_data_list
     else:
         return [e_data["name"], e_data["amount"]]  # 返回值,包含报酬名称和报酬数量

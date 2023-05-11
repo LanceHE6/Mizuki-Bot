@@ -7,7 +7,8 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment, Message
 from nonebot.params import CommandArg
-from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_op_attribute, get_oid_by_name, OPAttribute
+from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_op_attribute, get_oid_by_name, OPAttribute, \
+    is_map_exist, get_map_attribute, MapAttribute
 from .DB import is_op_owned
 from .operator import new_instance, Operator
 from .gacha import *
@@ -16,6 +17,7 @@ from .pool_config import change_up_6s_comm, change_up_5s_comm
 op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
 op_info_all = on_command("info all", aliases={"所有角色", "所有干员"}, block=True, priority=2)
 op_detail = on_command("detail", aliases={"干员信息", "干员详情"}, block=True, priority=2)
+map_info = on_command("map", aliases={"地图", "地图信息"}, block=True, priority=2)
 
 play = on_command("play", aliases={"副本", "刷本"}, block=True, priority=1)
 
@@ -106,6 +108,25 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     await op_detail.send(reply_op_info)
     await op_detail.send(reply_skills_info)
     await op_detail.finish()
+
+
+@map_info.handle()
+async def _(event: GroupMessageEvent, args: Message = CommandArg()):
+    uid = int(event.get_user_id())
+    mid = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
+
+    if not is_map_exist:
+        await op_detail.finish(MessageSegment.at(uid) + f"没有{mid}这张地图")
+
+    reply = MessageSegment.at(uid) + f"{mid}\n敌人数据"
+    enemies_data_list = await get_map_attribute(mid, MapAttribute.enemies)
+    reward_list = await get_map_attribute(mid, MapAttribute.reward)
+    for i in range(len(enemies_data_list[0])):
+        e_name = await get_op_attribute(enemies_data_list[0][i], OPAttribute.name, True)
+        reply += f"\n{e_name}    等级：{enemies_data_list[1][i]}"
+    reply += f"\n\n关卡报酬：\n{reward_list[0]}\n数量：{reward_list[1]}"
+
+    await op_info_all.finish(reply)
 
 
 @play.handle
