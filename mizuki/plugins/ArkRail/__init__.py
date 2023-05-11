@@ -91,8 +91,8 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                                              f"职业：{op.profession}\n最大生命值：{op.max_health}\n" \
                                              f"攻击力：{op.atk}\n攻击方式：{op.atk_type_str}\n" \
                                              f"防御力：{op.defence}\n法抗：{op.res}\n" \
-                                             f"暴击率：{100 * op.crit_r}%\n暴击伤害：{100 * op.crit_d}%\n" \
-                                             f"速度：{op.speed}"
+                                             f"暴击率：{round(100 * op.crit_r, 1)}%\n暴击伤害：{round(100 * op.crit_d, 1)}%\n" \
+                                             f"速度：{round(op.speed, 1)}"
     op_skills_list = op.skills_list
     reply_skills_info = MessageSegment.at(uid) + f"{op.name}的技能数据为："
     i = 1
