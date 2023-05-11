@@ -16,6 +16,7 @@ from .DB import get_op_attribute, get_ops_list_by_stars, OPAttribute, is_op_owne
 from .DB import add_user_pool_num, get_user_cur_pool_num, reset_user_cur_pool_num
 from .pool_config import PoolConfig
 from ..Currency.utils import change_user_sj_num, sj_is_enough, change_user_lmc_num
+from .utils import get_op_img
 import random
 
 """
@@ -28,7 +29,6 @@ import random
 
 
 
-op_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'ops_img'
 new_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'new.png'
 profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'profession'
 stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'stars'
@@ -98,13 +98,15 @@ async def draw_img_ten(oid_list: list, uid: int or str) -> Path:
     draw = ImageDraw.Draw(image)
     i = 0
     for oid in oid_list:
-        op_img = Image.open(op_img_path / f"{oid}.png")
+        op_img_path =await get_op_img(int(oid))
+        op_img = Image.open(op_img_path)
         profession = await get_op_attribute(oid, OPAttribute.profession)
         pro_img = Image.open(profession_img_path / f"{''.join(list(profession)[0:2])}.png")
         stars = await get_op_attribute(oid, OPAttribute.stars)
         stars_img = Image.open(stars_img_path / f'{stars}.png')
 
         image.paste(op_img, (172 + i * 200, 230))  # 干员
+        os.remove(op_img_path)#删除临时干员图片文件
         flash_img = Image.open(stars_img_path / f'{stars}flash.png')
         image.paste(flash_img, (172 + i * 200, -10))  # 上光效
         if stars == 5 or stars == 6:
@@ -142,7 +144,8 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
 
     draw = ImageDraw.Draw(image)
     oid = oid_list[0]
-    op_img = Image.open(op_img_path / f"{oid}_big.png")
+    op_img_path =await get_op_img(int(oid), is_big=1)
+    op_img = Image.open(op_img_path)
     new_img = Image.open(new_img_path)
     profession = await get_op_attribute(oid, OPAttribute.profession)
     pro_img = Image.open(profession_img_path / f"{''.join(list(profession)[0:2])}_big.png")
@@ -151,6 +154,7 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
     stars_img = Image.open(stars_img_path / f'{stars}_big.png')
 
     image.paste(op_img, (80, 10), mask=op_img)  # 干员
+    os.remove(op_img_path)  # 删除临时干员图片文件
     image.paste(stars_img, (160, 550), mask=stars_img)  # 星级
     image.paste(pro_img, (320, 750))  # 职业标志
 
