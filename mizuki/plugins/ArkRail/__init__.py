@@ -13,13 +13,14 @@ from .DB import is_op_owned
 from .operator import new_instance, Operator
 from .gacha import *
 from .pool_config import change_up_6s_comm, change_up_5s_comm
+from .playing_manager import PlayingManager, new_instance
 
 op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
 op_info_all = on_command("info all", aliases={"所有角色", "所有干员"}, block=True, priority=2)
 op_detail = on_command("detail", aliases={"干员信息", "干员详情"}, block=True, priority=2)
 map_info = on_command("map", aliases={"地图", "地图信息"}, block=True, priority=2)
 
-play = on_command("play", aliases={"副本", "刷本"}, block=True, priority=1)
+play = on_command("play", aliases={"副本", "刷本"}, block=True, priority=2)
 
 
 @op_info.handle()
@@ -33,7 +34,7 @@ async def _(event: GroupMessageEvent):
     for op in playing_ops:
         oid = playing_ops[op]["oid"]
         level = playing_ops[op]["level"]
-        name = await get_op_attribute(oid, OPAttribute.name)
+        name = await get_op_attribute(oid, OPAttribute.name, False)
         reply += f"\n{i}. {name}  等级：{level}"
         i += 1
 
@@ -51,7 +52,7 @@ async def _(event: GroupMessageEvent):
     for op in all_ops:
         oid = all_ops[op]["oid"]
         level = all_ops[op]["level"]
-        name = await get_op_attribute(oid, OPAttribute.name)
+        name = await get_op_attribute(oid, OPAttribute.name, False)
         reply += f"\n{name}  等级：{level}"
 
     await op_info_all.finish(reply)
@@ -133,6 +134,8 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     uid = int(event.get_user_id())
     mid = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
-
+    await play.send("play:" + str(await is_map_exist(mid)))
     if not await is_map_exist(mid):
-        await op_detail.finish(MessageSegment.at(uid) + f"没有{mid}这张地图！")
+        await play.finish(MessageSegment.at(uid) + f"没有{mid}这张地图！")
+
+    p_m = await playing_manager.new_instance(uid, mid)
