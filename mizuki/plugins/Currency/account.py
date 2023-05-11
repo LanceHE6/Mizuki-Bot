@@ -18,8 +18,7 @@ from .utils import is_user_in_table, get_user_lmc_num, get_user_sj_num
 src_path = Path() / 'mizuki' / 'plugins' / 'Currency' / 'src'
 my_account = on_command("account", aliases={"我的账户", "账户"}, block=True, priority=2)
 
-#获取用户qq头像地址及昵称    ——糖豆子api
-qq_info_api =Template("http://api.tangdouz.com/qq.php?qq=${uid}")
+
 
 def circle_corner(img: Image, radii: int) -> Image:
     """
@@ -84,6 +83,8 @@ async def draw_img(uid, user_nick_name: str) -> Path:
     draw_font = ImageFont.truetype("simhei", 120)
     draw.text((840, 620), f"X  {lmc_num}", font=draw_font, fill=(0, 179, 245))
     draw.text((840, 970), f"X  {sj_num}", font=draw_font, fill='red')
+    draw_font = ImageFont.truetype("simhei", 36)
+    draw.text((1210, 1220), "Create By Mizuki-Bot", font=draw_font, fill=(0, 162, 255))
     save_path =  Path() / 'mizuki' / 'plugins' / 'Currency' / f'{uid}_account.png'
     img.save(save_path)
     return save_path
@@ -99,15 +100,27 @@ async def _(event: GroupMessageEvent):
     if not check:
         logger.info(Fore.BLUE + "[Currency_Account]新用户数据已添加")
 
-    # 获取用户在数据库中的信息
-    qq_info = json.loads(requests.get(url=qq_info_api.substitute(uid= uid), headers=headers).content)
-    if qq_info["code"] != 1:
+    # # 获取用户qq头像地址及昵称    ——糖豆子api（暂时不能用）
+    # qq_info_api = f"http://api.tangdouz.com/qq.php?qq={uid}"
+    # qq_info = json.loads(requests.get(url=qq_info_api, headers=headers).content)
+    # if qq_info["code"] != 1:
+    #     await my_account.finish("获取用户信息失败，请稍后再试")
+    # nick_name = qq_info["name"]
+    # img_data = requests.get(qq_info["imgurl"]).content
+    # with open(src_path/"user_avatar.png", 'wb') as data:
+    #     data.write(img_data)
+    #     data.close()
+    #获取用户qq头像地址及昵称备用api
+    qq_info_api = f"https://api.usuuu.com/qq/{uid}"
+    qq_info = json.loads(requests.get(url=qq_info_api, headers=headers).content)
+    if qq_info["code"] != "200":
         await my_account.finish("获取用户信息失败，请稍后再试")
-    nick_name = qq_info["name"]
-    img_data = requests.get(qq_info["imgurl"]).content
-    with open(src_path/"user_avatar.png", 'wb') as data:
+    nick_name = qq_info["data"]["name"]
+    img_data = requests.get(qq_info["data"]["avatar"]).content
+    with open(src_path / "user_avatar.png", 'wb') as data:
         data.write(img_data)
         data.close()
+
     logger.info("[Currency]开始绘制账户信息图片")
     img = await draw_img(uid , nick_name)
     logger.info("[Currency]账户信息图片绘制完成")
