@@ -111,7 +111,7 @@ class MapAttribute:  # 地图属性类
     reward = "reward"
 
 
-async def get_op_attribute(oid: str or int, attribute: str, is_enemy: bool) -> any:
+async def get_op_attribute(oid: str or int, attribute: str, is_enemy: bool = False) -> any:
     if attribute not in ["name", "health", "health_plus", "atk", "atk_plus", "def", "def_plus", "crit_r", "crit_r_plus",
                          "crit_d", "crit_d_plus", "speed", "speed_plus", "atk_type", "skills", "res", "res_plus",
                          "profession", "stars"]:
@@ -122,7 +122,7 @@ async def get_op_attribute(oid: str or int, attribute: str, is_enemy: bool) -> a
     return ops_data[f"{oid}"][f"{attribute}"]
 
 
-async def get_skill_attribute(sid: str or int, attribute: str, is_enemy: bool) -> any:
+async def get_skill_attribute(sid: str or int, attribute: str, is_enemy: bool = False) -> any:
     if attribute not in ["name", "brief_d", "detail", "rate1", "rate1_plus", "rate2", "rate2_plus", "consume",
                          "consume_plus", "persistence", "persistence_plus"]:
         raise SkillAttributeNotFoundError(attribute)
