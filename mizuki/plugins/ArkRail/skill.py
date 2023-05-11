@@ -42,45 +42,47 @@ class Skill:
         self.persistence = persistence
 
 
-async def get_skills_list(sid_list: list[int], skills_level: list[int]) -> list[Skill]:
+async def get_skills_list(sid_list: list[int], skills_level: list[int], is_enemy: bool) -> list[Skill]:
     """
     获取单个干员的技能列表的函数
 
     :param sid_list: 技能id的列表，格式为[1]、[3,4]、[1,5,8]等
     :param skills_level: 技能等级的列表，大小应该与技能id列表相同，与技能id列表的格式相同
+    :param is_enemy: 是否为敌人的技能列表，默认为False
     :return: 返回一个Skill类型的列表，表示干员可以使用的技能
     """
     j = 0
     skills_list: list[Skill] = []
     for sid in sid_list:
-        skill_instance = await new_instance(sid, skills_level[j])
+        skill_instance = await new_instance(sid, skills_level[j], is_enemy)
         skills_list.append(skill_instance)
         j += 1
     return skills_list
 
 
-async def new_instance(sid: int, level: int) -> Skill:
+async def new_instance(sid: int, level: int, is_enemy: bool) -> Skill:
     """
     通过传入的技能id和技能等级生成一个Skill实例，通常不需要直接调用这个方法
 
     :param sid: 技能id，详见skills_data.json文件
     :param level: 技能等级
+    :param is_enemy: 是否为敌人的技能，默认为False
     :return: 返回一个Skill实例
     """
-    name: str = await get_skill_attribute(sid, SkillAttribute.name)
-    brief_d: str = await get_skill_attribute(sid, SkillAttribute.brief_d)
-    rate1: float = (await get_skill_attribute(sid, SkillAttribute.rate1) +
-                    await get_skill_attribute(sid, SkillAttribute.rate1_plus) * level)
-    rate2: float = (await get_skill_attribute(sid, SkillAttribute.rate2) +
-                    await get_skill_attribute(sid, SkillAttribute.rate2_plus) * level)
-    consume: int = (await get_skill_attribute(sid, SkillAttribute.consume) -
-                    await get_skill_attribute(sid, SkillAttribute.consume_plus) * level)
-    persistence: int = (await get_skill_attribute(sid, SkillAttribute.persistence) +
-                        await get_skill_attribute(sid, SkillAttribute.persistence_plus) * level)
-    detail: str = await get_skill_attribute(sid, SkillAttribute.detail)
+    name: str = await get_skill_attribute(sid, SkillAttribute.name, is_enemy)
+    brief_d: str = await get_skill_attribute(sid, SkillAttribute.brief_d, is_enemy)
+    rate1: float = (await get_skill_attribute(sid, SkillAttribute.rate1, is_enemy) +
+                    await get_skill_attribute(sid, SkillAttribute.rate1_plus, is_enemy) * level)
+    rate2: float = (await get_skill_attribute(sid, SkillAttribute.rate2, is_enemy) +
+                    await get_skill_attribute(sid, SkillAttribute.rate2_plus, is_enemy) * level)
+    consume: int = (await get_skill_attribute(sid, SkillAttribute.consume, is_enemy) -
+                    await get_skill_attribute(sid, SkillAttribute.consume_plus, is_enemy) * level)
+    persistence: int = (await get_skill_attribute(sid, SkillAttribute.persistence, is_enemy) +
+                        await get_skill_attribute(sid, SkillAttribute.persistence_plus, is_enemy) * level)
+    detail: str = await get_skill_attribute(sid, SkillAttribute.detail, is_enemy)
     detail = detail.replace("${r1_int}", str(int(rate1)))\
         .replace("${r2_int}", str(int(rate2)))\
         .replace("${r1_float}", str(rate1 * 100) + "%")\
         .replace("${r2_float}", str(rate2 * 100) + "%")\
-        .replace("${persistence}", str(persistence))
+        .replace("${persistence}", str(int(persistence)))
     return Skill(sid, name, level, brief_d, detail, rate1, rate2, consume, persistence)

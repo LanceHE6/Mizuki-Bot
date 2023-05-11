@@ -132,4 +132,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 @play.handle
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     uid = int(event.get_user_id())
-    map_name = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
+    mid = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
+
+    if not await is_map_exist(mid):
+        await op_detail.finish(MessageSegment.at(uid) + f"没有{mid}这张地图！")
