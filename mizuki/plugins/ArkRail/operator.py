@@ -129,25 +129,32 @@ class Operator:
 
         self.next_operators: list[Operator] = [self]
 
-    async def attack(self, obj, is_crit: bool):
+    async def attack(self, obj) -> bool:
         """
         干员进行普攻的函数，会根据atk_type来进行不同的操作
 
         :param obj: 目标
-        :param is_crit: 是否暴击
+        :return: 是否暴击
         """
+        is_crit: bool = random.randint(1, 10000) <= self.crit_r_p * 10000  # 是否暴击
+
         if self.atk_type == 0:
             damage = (self.atk_p - obj.defence_p) \
                 if (self.atk_p - obj.defence_p > self.atk_p * 0.05) \
                 else (self.atk_p * 0.05)  # 5%攻击力的保底伤害
             damage += damage * is_crit * (1.0 + self.crit_d_p)
+            if self.profession == "重装-中坚" and random.randint(1, 100) < 50:  # 中坚重装普攻有概率嘲讽敌方单位
+                obj.mocked = 1
+                obj.mocking_obj = self
             if not obj.invincible:
                 obj.health -= damage
+                obj.is_die()
         elif self.atk_type == 1:
             damage = (self.atk_p * ((100 - obj.res_p) / 100))  # 法抗90封顶
             damage += damage * is_crit * (1.0 + self.crit_d_p)
             if not obj.invincible:
                 obj.health -= damage
+                obj.is_die()
         elif self.atk_type == 2:
             for op in obj.next_operators:
                 damage = (self.atk_p - op.defence_p) \
@@ -156,12 +163,14 @@ class Operator:
                 damage += damage * is_crit * (1.0 + self.crit_d_p)
                 if not op.invincible:
                     op.health -= damage
+                    op.is_die()
         elif self.atk_type == 3:
             for op in obj.next_operators:
                 damage = (self.atk_p * ((100 - op.res_p) / 100))
                 damage += damage * is_crit * (1.0 + self.crit_d_p)
                 if not op.invincible:
                     op.health -= damage
+                    op.is_die()
         elif self.atk_type == 4:
             obj.health += self.atk_p
             if obj.health > obj.max_health_p:
@@ -176,24 +185,31 @@ class Operator:
             damage += damage * is_crit * (1.0 + self.crit_d_p)
             if not obj.invincible:
                 obj.health -= damage
+                obj.is_die()
         elif self.atk_type == 7:
             pass
+        self.speed_p = 0
+        return is_crit
 
-    async def is_crit(self) -> bool:
+    async def use_skill(self, skill, obj1, obj2=None):
         """
-        判断干员是否暴击的函数
+        使用技能
 
-        :return: 干员是否暴击
+        :param skill: 使用的技能
+        :param obj1: 目标对象1
+        :param obj2: 目标对象2(可选)
         """
-        num = random.randint(1, 10000)
-        return num <= self.crit_r_p * 10000
+        pass
 
-    async def die(self) -> bool:
+    async def is_die(self) -> bool:
         """
-        干员血量小于0时调用的函数
+        判断干员是否被击倒的函数
 
         :return: 干员是否被击倒(如果干员处于不死状态则不会被击倒)
         """
+        if self.health > 0:  # 血量大于0直接返回False
+            return False
+
         if self.deathless:  # 如果干员处于不死状态，则将其血量恢复为1
             self.health = 1
             return False
