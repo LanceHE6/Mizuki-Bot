@@ -115,8 +115,8 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     uid = int(event.get_user_id())
     mid = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
 
-    if not is_map_exist:
-        await op_detail.finish(MessageSegment.at(uid) + f"没有{mid}这张地图")
+    if not await is_map_exist(mid):
+        await op_detail.finish(MessageSegment.at(uid) + f"没有{mid}这张地图！")
 
     reply = MessageSegment.at(uid) + f"{mid}\n敌人数据"
     enemies_data_list = await get_map_attribute(mid, MapAttribute.enemies)
