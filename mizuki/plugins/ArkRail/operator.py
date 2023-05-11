@@ -5,7 +5,7 @@
 # @Software:PyCharm
 import random
 from pathlib import Path
-from .DB import get_user_playing_ops, get_op_attribute, OPAttribute
+from .DB import get_user_playing_ops, get_op_attribute, OPAttribute, get_map_attribute, MapAttribute
 from .skill import get_skills_list
 from .skill import Skill
 
@@ -141,36 +141,41 @@ class Operator:
                 if (self.atk_p - obj.defence_p > self.atk_p * 0.05) \
                 else (self.atk_p * 0.05)  # 5%攻击力的保底伤害
             damage += damage * is_crit * (1.0 + self.crit_d_p)
-            obj.health -= damage
+            if not obj.invincible:
+                obj.health -= damage
         elif self.atk_type == 1:
             damage = (self.atk_p * ((100 - obj.res_p) / 100))  # 法抗90封顶
             damage += damage * is_crit * (1.0 + self.crit_d_p)
-            obj.health -= damage
+            if not obj.invincible:
+                obj.health -= damage
         elif self.atk_type == 2:
             for op in obj.next_operators:
                 damage = (self.atk_p - op.defence_p) \
                     if (self.atk_p - op.defence_p > self.atk_p * 0.05) \
                     else (self.atk_p * 0.05)
                 damage += damage * is_crit * (1.0 + self.crit_d_p)
-                op.health -= damage
+                if not op.invincible:
+                    op.health -= damage
         elif self.atk_type == 3:
             for op in obj.next_operators:
                 damage = (self.atk_p * ((100 - op.res_p) / 100))
                 damage += damage * is_crit * (1.0 + self.crit_d_p)
-                op.health -= damage
+                if not op.invincible:
+                    op.health -= damage
         elif self.atk_type == 4:
             obj.health += self.atk_p
             if obj.health > obj.max_health_p:
                 obj.health = obj.max_health_p
         elif self.atk_type == 5:
-            for op in self.next_operators:
+            for op in obj.next_operators:
                 op.health += self.atk_p
                 if op.health > op.max_health_p:
                     op.health = op.max_health_p
         elif self.atk_type == 6:
             damage = self.atk_p
             damage += damage * is_crit * (1.0 + self.crit_d_p)
-            obj.health -= damage
+            if not obj.invincible:
+                obj.health -= damage
         elif self.atk_type == 7:
             pass
 
@@ -183,43 +188,50 @@ class Operator:
         num = random.randint(1, 10000)
         return num <= self.crit_r_p * 10000
 
-    async def die(self):
+    async def die(self) -> bool:
         """
-        干员被击倒时调用的函数
+        干员血量小于0时调用的函数
+
+        :return: 干员是否被击倒(如果干员处于不死状态则不会被击倒)
         """
+        if self.deathless:  # 如果干员处于不死状态，则将其血量恢复为1
+            self.health = 1
+            return False
         for op in self.next_operators:
             op.next_operators.remove(self)
+        return True
 
 
-async def new_instance(oid: int, level: int, skills_level: list[int]) -> Operator:
+async def new_instance(oid: int, level: int, skills_level: list[int], is_enemy: bool = False) -> Operator:
     """
     通过传入的干员id、干员等级以及干员技能等级列表生成一个干员实例
 
     :param oid: 干员id，详情见operators_data.json文件
     :param level: 干员等级
     :param skills_level: 干员技能等级列表
+    :param is_enemy: 是否是敌人，默认为False
     :return: 返回一个干员实例
     """
-    name = await get_op_attribute(oid, OPAttribute.name)
-    stars = await get_op_attribute(oid, OPAttribute.stars)
-    profession = await get_op_attribute(oid, OPAttribute.profession)
-    health = (await get_op_attribute(oid, OPAttribute.health) +
-              await get_op_attribute(oid, OPAttribute.health_plus) * (level - 1))
-    atk = (await get_op_attribute(oid, OPAttribute.atk) +
-           await get_op_attribute(oid, OPAttribute.atk_plus) * (level - 1))
-    defence = (await get_op_attribute(oid, OPAttribute.defence) +
-               await get_op_attribute(oid, OPAttribute.defence_plus) * (level - 1))
-    res = (await get_op_attribute(oid, OPAttribute.res) +
-           await get_op_attribute(oid, OPAttribute.res_plus) * (level - 1))
-    crit_r = (await get_op_attribute(oid, OPAttribute.crit_r) +
-              await get_op_attribute(oid, OPAttribute.crit_r_plus) * (level - 1))
-    crit_d = (await get_op_attribute(oid, OPAttribute.crit_d) +
-              await get_op_attribute(oid, OPAttribute.crit_d_plus) * (level - 1))
-    speed = (await get_op_attribute(oid, OPAttribute.speed) +
-             await get_op_attribute(oid, OPAttribute.speed_plus) * (level - 1))
-    atk_type = await get_op_attribute(oid, OPAttribute.atk_type)
-    sid_list = await get_op_attribute(oid, OPAttribute.skills)
-    skills_list: list[Skill] = await get_skills_list(sid_list, skills_level)
+    name = await get_op_attribute(oid, OPAttribute.name, is_enemy)
+    stars = await get_op_attribute(oid, OPAttribute.stars, is_enemy)
+    profession = await get_op_attribute(oid, OPAttribute.profession, is_enemy)
+    health = (await get_op_attribute(oid, OPAttribute.health, is_enemy) +
+              await get_op_attribute(oid, OPAttribute.health_plus, is_enemy) * (level - 1))
+    atk = (await get_op_attribute(oid, OPAttribute.atk, is_enemy) +
+           await get_op_attribute(oid, OPAttribute.atk_plus, is_enemy) * (level - 1))
+    defence = (await get_op_attribute(oid, OPAttribute.defence, is_enemy) +
+               await get_op_attribute(oid, OPAttribute.defence_plus, is_enemy) * (level - 1))
+    res = (await get_op_attribute(oid, OPAttribute.res, is_enemy) +
+           await get_op_attribute(oid, OPAttribute.res_plus, is_enemy) * (level - 1))
+    crit_r = (await get_op_attribute(oid, OPAttribute.crit_r, is_enemy) +
+              await get_op_attribute(oid, OPAttribute.crit_r_plus, is_enemy) * (level - 1))
+    crit_d = (await get_op_attribute(oid, OPAttribute.crit_d, is_enemy) +
+              await get_op_attribute(oid, OPAttribute.crit_d_plus, is_enemy) * (level - 1))
+    speed = (await get_op_attribute(oid, OPAttribute.speed, is_enemy) +
+             await get_op_attribute(oid, OPAttribute.speed_plus, is_enemy) * (level - 1))
+    atk_type = await get_op_attribute(oid, OPAttribute.atk_type, is_enemy)
+    sid_list = await get_op_attribute(oid, OPAttribute.skills, is_enemy)
+    skills_list: list[Skill] = await get_skills_list(sid_list, skills_level, is_enemy)
 
     return Operator(name, level, stars, profession, health, atk, defence, res, crit_r, crit_d, speed, atk_type,
                     skills_list)
@@ -243,3 +255,20 @@ async def get_operator_list(uid: str or int) -> list[Operator]:
         playing_ops_list.append(op_instance)
 
     return playing_ops_list
+
+
+async def get_enemies_list(mid: str) -> list[Operator]:
+    """
+    通过传入的地图id，返回地图敌人列表
+
+    :param mid: 地图id
+    :return: 返回地图中的敌人列表
+    """
+    map_enemies_data_list = await get_map_attribute(mid, MapAttribute.enemies)
+    map_enemies_list: list[Operator] = []
+
+    for i in range(len(map_enemies_data_list[0])):
+        op_instance = await new_instance(map_enemies_data_list[0][i], map_enemies_data_list[1][i], [0, 0, 0], True)
+        map_enemies_list.append(op_instance)
+
+    return map_enemies_list

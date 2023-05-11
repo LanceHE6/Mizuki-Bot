@@ -15,6 +15,9 @@ from sqlite3 import DatabaseError
 
 operators_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'operators_data.json'
 skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'skills_data.json'
+maps_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'maps_data.json'
+enemies_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'enemies_data.json'
+enemy_skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'enemy_skills_data.json'
 '''
 "1": {
    "1": {
@@ -103,24 +106,51 @@ class SkillAttribute:  # 技能属性类
     persistence_plus = "persistence_plus"
 
 
-async def get_op_attribute(oid: str or int, attribute: str) -> any:
+class MapAttribute:  # 地图属性类
+    enemies = "enemies"
+    reward = "reward"
+
+
+async def get_op_attribute(oid: str or int, attribute: str, is_enemy: bool) -> any:
     if attribute not in ["name", "health", "health_plus", "atk", "atk_plus", "def", "def_plus", "crit_r", "crit_r_plus",
-                         "crit_d", "crit_d_plus", "speed", "speed_plus", "atk_type", "skills", "res", "res_plus", "profession", "stars"]:
+                         "crit_d", "crit_d_plus", "speed", "speed_plus", "atk_type", "skills", "res", "res_plus",
+                         "profession", "stars"]:
         raise OPAttributeNotFoundError(attribute)
-    with open(operators_data, 'r', encoding='utf-8') as data:
+    with open(operators_data if not is_enemy else enemies_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
         data.close()
     return ops_data[f"{oid}"][f"{attribute}"]
 
 
-async def get_skill_attribute(sid: str or int, attribute: str) -> any:
+async def get_skill_attribute(sid: str or int, attribute: str, is_enemy: bool) -> any:
     if attribute not in ["name", "brief_d", "detail", "rate1", "rate1_plus", "rate2", "rate2_plus", "consume",
                          "consume_plus", "persistence", "persistence_plus"]:
         raise SkillAttributeNotFoundError(attribute)
-    with open(skills_data, 'r', encoding='utf-8') as data:
+    with open(skills_data if not is_enemy else enemy_skills_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
         data.close()
     return ops_data[f"{sid}"][f"{attribute}"]
+
+
+async def get_map_attribute(mid: str, attribute: str) -> any:
+    if attribute not in ["enemies", "reward"]:
+        raise SkillAttributeNotFoundError(attribute)
+    with open(maps_data, 'r', encoding='utf-8') as data:
+        m_data = json.load(data)
+        data.close()
+    e_data = m_data[f"{mid}"][f"{attribute}"]  # 关卡数据
+    if attribute == "enemies":
+        enemies_data_list: list[list[int]] = []  # 返回值,包含敌人id列表和敌人等级列表
+        eid_list: list[int] = []  # 敌人id列表
+        level_list: list[int] = []  # 敌人等级列表
+        for n in e_data:
+            eid_list.append(e_data[n]["eid"])
+            level_list.append(e_data[n]["level"])
+        enemies_data_list.append(eid_list)
+        enemies_data_list.append(level_list)
+        return enemies_data_list
+    else:
+        return [e_data["name"], e_data["amount"]]  # 返回值,包含报酬名称和报酬数量
 
 
 async def get_user_level(uid: str or int) -> int:
@@ -168,7 +198,7 @@ async def is_in_table(uid: int) -> bool:
                 "skills_level": [0, 0, 0]
             }
         }
-        #初始化用户数据和抽卡数据
+        # 初始化用户数据和抽卡数据
         await MDB.db_execute(f'insert into ArkRail_User values({uid}, 1, "{ops}", "{ops}");')
 
         await MDB.db_execute(f'Insert Into ArkRail_GachaUser values ({uid},0,0,"[]","[]","[]","[]");')
@@ -193,8 +223,19 @@ async def is_op_owned(uid: int or str, oid: int) -> bool:
             return True
     return False
 
-#获取指定星级的干员id列表
-async def get_ops_list_by_stars(stars: int = 3 or 4 or 5 or 6)->list:
+
+async def is_map_exist(mid: str) -> bool:
+    with open(maps_data, 'r', encoding='utf-8') as data:
+        m_data = json.load(data)
+        data.close()
+    for m in m_data:
+        if m == mid:
+            return True
+    return False
+
+
+# 获取指定星级的干员id列表
+async def get_ops_list_by_stars(stars: int = 3 or 4 or 5 or 6) -> list:
     with open(operators_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
         data.close()
@@ -204,45 +245,51 @@ async def get_ops_list_by_stars(stars: int = 3 or 4 or 5 or 6)->list:
             ops_list.append(oid)
     return ops_list
 
+
 async def add_op_to_user(uid: int or str, oid: int or str):
-    uid = int (uid)
-    oid = int (oid)
+    uid = int(uid)
+    oid = int(oid)
     owned_ops_list = await get_user_all_ops(uid)
     number = 1
     for _ in owned_ops_list:
         number += 1
-    owned_ops_list[f"{number}"]={
+    owned_ops_list[f"{number}"] = {
         "oid": oid,
         "level": 1,
         "skills_level": [0, 0, 0]
     }
     await MDB.db_execute(f'Update ArkRail_User set operators_all="{owned_ops_list}" Where uid="{uid}";')
 
-async def get_user_all_pool_num(uid:int or str) -> int:
+
+async def get_user_all_pool_num(uid: int or str) -> int:
     """返回用户所有池子的抽数"""
     uid = int(uid)
     num = await MDB.db_query_column(f'Select all_pool_num From ArkRail_GachaUser Where uid="{uid}";')
     return int(num[0])
 
-async def get_user_cur_pool_num(uid:int or str) -> int:
+
+async def get_user_cur_pool_num(uid: int or str) -> int:
     """返回用户当前池子的抽数"""
     uid = int(uid)
     num = await MDB.db_query_column(f'Select cur_pool_num From ArkRail_GachaUser Where uid="{uid}";')
     return int(num[0])
 
-async def get_user_all_pool_ops(uid:int or str, stars: int = 6 or 5) -> list:
+
+async def get_user_all_pool_ops(uid: int or str, stars: int = 6 or 5) -> list:
     """返回用户所有池子抽到的6星或者5星的列表"""
     uid = int(uid)
     list_text = await MDB.db_query_column(f'Select all_pool_{stars}s From ArkRail_GachaUser Where uid="{uid}";')
     return eval(list_text[0])
 
-async def get_user_cur_pool_ops(uid:int or str, stars: int = 6 or 5) -> list:
+
+async def get_user_cur_pool_ops(uid: int or str, stars: int = 6 or 5) -> list:
     """返回用户当前池子抽到的6星或者5星的列表"""
     uid = int(uid)
     list_text = await MDB.db_query_column(f'Select cur_pool_{stars}s From ArkRail_GachaUser Where uid="{uid}";')
     return eval(list_text[0])
 
-async def add_op_to_user_db(uid:int or str, oid: int or str, stars: int = 6 or 5):
+
+async def add_op_to_user_db(uid: int or str, oid: int or str, stars: int = 6 or 5):
     """
     将6/5星干员id添加进用户的获取干员的数据库中
     :param uid
@@ -264,16 +311,18 @@ async def add_op_to_user_db(uid:int or str, oid: int or str, stars: int = 6 or 5
         await MDB.db_execute(sql_sequence)
         logger.info("[Gacha]获取记录添加进用户数据库")
     except DatabaseError as e:
-        logger.info(Fore.RED+f"[Gacha]获取记录添加失败:{e}")
+        logger.info(Fore.RED + f"[Gacha]获取记录添加失败:{e}")
 
-async def add_user_pool_num(uid:int or str, num: int):
+
+async def add_user_pool_num(uid: int or str, num: int):
     """用户获取记录增加num抽"""
     sql_sequence = f'Update ArkRail_GachaUser Set cur_pool_num=cur_pool_num+{num} Where uid="{uid}";'
     await MDB.db_execute(sql_sequence)
     sql_sequence = f'Update ArkRail_GachaUser Set all_pool_num=all_pool_num+{num} Where uid="{uid}";'
     await MDB.db_execute(sql_sequence)
 
-async def reset_user_cur_pool_num(uid:int or str):
+
+async def reset_user_cur_pool_num(uid: int or str):
     """重置用户当前池子抽数-用于保底判断"""
     sql_sequence = f'Update ArkRail_GachaUser Set cur_pool_num=0 Where uid="{uid}";'
     await MDB.db_execute(sql_sequence)

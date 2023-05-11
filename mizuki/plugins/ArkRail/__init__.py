@@ -11,7 +11,6 @@ from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_op_attr
 from .DB import is_op_owned
 from .operator import new_instance, Operator
 from .gacha import *
-from .battle import *
 from .pool_config import change_up_6s_comm,change_up_5s_comm
 
 op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
