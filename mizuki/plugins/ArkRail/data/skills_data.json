@@ -696,7 +696,7 @@
     "rate1_plus": 0.05,
     "rate2": 0,
     "rate2_plus": 0,
-    "consume": 50,
+    "consume": 60,
     "consume_plus": 0.5,
     "persistence": 250,
     "persistence_plus": 0
