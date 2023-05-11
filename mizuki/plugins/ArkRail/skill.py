@@ -82,7 +82,7 @@ async def new_instance(sid: int, level: int, is_enemy: bool) -> Skill:
     detail: str = await get_skill_attribute(sid, SkillAttribute.detail, is_enemy)
     detail = detail.replace("${r1_int}", str(int(rate1)))\
         .replace("${r2_int}", str(int(rate2)))\
-        .replace("${r1_float}", str(rate1 * 100) + "%")\
-        .replace("${r2_float}", str(rate2 * 100) + "%")\
+        .replace("${r1_float}", str(round(rate1 * 100.0, 1)) + "%")\
+        .replace("${r2_float}", str(round(rate2 * 100.0, 1)) + "%")\
         .replace("${persistence}", str(int(persistence)))
     return Skill(sid, name, level, brief_d, detail, rate1, rate2, consume, persistence)
