@@ -5,7 +5,6 @@
 # @Software:PyCharm
 import json
 import os
-from string import Template
 from nonebot import on_command
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
@@ -17,7 +16,6 @@ from .utils import is_user_in_table, get_user_lmc_num, get_user_sj_num
 
 src_path = Path() / 'mizuki' / 'plugins' / 'Currency' / 'src'
 my_account = on_command("account", aliases={"我的账户", "账户"}, block=True, priority=2)
-
 
 
 def circle_corner(img: Image, radii: int) -> Image:
