@@ -55,7 +55,6 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
 
 打开.env文件并修改相应配置
 
-``
 
 ```
 HOST=127.0.0.1  # 主机地址
