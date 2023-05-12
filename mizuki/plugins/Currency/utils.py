@@ -5,7 +5,6 @@
 # @Software:PyCharm
 
 from ...database.utils import MDB
-from PIL import Image, ImageFont, ImageDraw
 
 
 # 判断用户是否在Currency_UserAccount表中
