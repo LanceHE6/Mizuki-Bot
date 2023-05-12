@@ -3,7 +3,6 @@
 # @Author:Hycer_Lance
 # @Time:2023/4/27 16:55
 # @Software:PyCharm
-import random
 from pathlib import Path
 from .DB import get_user_playing_ops, get_op_attribute, OPAttribute, get_map_attribute, MapAttribute
 from .skill import get_skills_list
@@ -125,71 +124,9 @@ class Operator:
         self.deathless: int = 0
         self.invincible: int = 0
         self.mocked: int = 0
-        self.mocking_obj: Operator
+        self.mocking_obj = None
 
         self.next_operators: list[Operator] = [self]
-
-    async def attack(self, obj) -> bool:
-        """
-        干员进行普攻的函数，会根据atk_type来进行不同的操作
-
-        :param obj: 目标
-        :return: 是否暴击
-        """
-        is_crit: bool = random.randint(1, 10000) <= self.crit_r_p * 10000  # 是否暴击
-
-        if self.atk_type == 0:
-            damage = (self.atk_p - obj.defence_p) \
-                if (self.atk_p - obj.defence_p > self.atk_p * 0.05) \
-                else (self.atk_p * 0.05)  # 5%攻击力的保底伤害
-            damage += damage * is_crit * (1.0 + self.crit_d_p)
-            if self.profession == "重装-中坚" and random.randint(1, 100) < 50:  # 中坚重装普攻有概率嘲讽敌方单位
-                obj.mocked = 1
-                obj.mocking_obj = self
-            if not obj.invincible:
-                obj.health -= damage
-                obj.is_die()
-        elif self.atk_type == 1:
-            damage = (self.atk_p * ((100 - obj.res_p) / 100))  # 法抗90封顶
-            damage += damage * is_crit * (1.0 + self.crit_d_p)
-            if not obj.invincible:
-                obj.health -= damage
-                obj.is_die()
-        elif self.atk_type == 2:
-            for op in obj.next_operators:
-                damage = (self.atk_p - op.defence_p) \
-                    if (self.atk_p - op.defence_p > self.atk_p * 0.05) \
-                    else (self.atk_p * 0.05)
-                damage += damage * is_crit * (1.0 + self.crit_d_p)
-                if not op.invincible:
-                    op.health -= damage
-                    op.is_die()
-        elif self.atk_type == 3:
-            for op in obj.next_operators:
-                damage = (self.atk_p * ((100 - op.res_p) / 100))
-                damage += damage * is_crit * (1.0 + self.crit_d_p)
-                if not op.invincible:
-                    op.health -= damage
-                    op.is_die()
-        elif self.atk_type == 4:
-            obj.health += self.atk_p
-            if obj.health > obj.max_health_p:
-                obj.health = obj.max_health_p
-        elif self.atk_type == 5:
-            for op in obj.next_operators:
-                op.health += self.atk_p
-                if op.health > op.max_health_p:
-                    op.health = op.max_health_p
-        elif self.atk_type == 6:
-            damage = self.atk_p
-            damage += damage * is_crit * (1.0 + self.crit_d_p)
-            if not obj.invincible:
-                obj.health -= damage
-                obj.is_die()
-        elif self.atk_type == 7:
-            pass
-        self.speed_p = 0
-        return is_crit
 
     async def use_skill(self, skill, obj1, obj2=None):
         """
@@ -216,6 +153,25 @@ class Operator:
         for op in self.next_operators:
             op.next_operators.remove(self)
         return True
+
+    async def finish_turn(self):
+        """
+        干员结束当前回合时需要执行的函数
+        """
+        if self.immobile:
+            self.immobile -= 1
+        if self.silent:
+            self.silent -= 1
+        if self.hidden:
+            self.hidden -= 1
+        if self.deathless:
+            self.deathless -= 1
+        if self.invincible:
+            self.invincible -= 1
+        if self.mocked:
+            self.mocked -= 1
+            if self.mocked == 0:
+                self.mocking_obj = None
 
 
 async def new_instance(oid: int, level: int, skills_level: list[int], is_enemy: bool = False) -> Operator:
