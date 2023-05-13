@@ -1,7 +1,8 @@
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.params import CommandArg
 
-from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_oid_by_name
+from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_oid_by_name, is_map_exist, get_map_attribute, \
+    MapAttribute
 from .gacha import *
 from .operator import Operator, new_instance
 from .utils import get_op_img, get_op_model, line_break
@@ -12,6 +13,7 @@ stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'stars'
 op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
 op_info_all = on_command("info all", aliases={"所有角色", "所有干员"}, block=True, priority=2)
 op_detail = on_command("detail", aliases={"干员信息", "干员详情"}, block=True, priority=2)
+map_info = on_command("map", aliases={"地图", "地图信息"}, block=True, priority=2)
 
 
 @op_info.handle()
@@ -88,6 +90,25 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     await op_info.send(MessageSegment.at(uid) + tip + MessageSegment.image(img_path))
     os.remove(img_path)
     await op_info.finish()
+
+
+@map_info.handle()
+async def _(event: GroupMessageEvent, args: Message = CommandArg()):
+    uid = int(event.get_user_id())
+    mid = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
+
+    if not await is_map_exist(mid):
+        await op_detail.finish(MessageSegment.at(uid) + f"没有{mid}这张地图！")
+
+    reply = MessageSegment.at(uid) + f"{mid}\n敌人数据"
+    enemies_data_list = await get_map_attribute(mid, MapAttribute.enemies)
+    reward_list = await get_map_attribute(mid, MapAttribute.reward)
+    for i in range(len(enemies_data_list[0])):
+        e_name = await get_op_attribute(enemies_data_list[0][i], OPAttribute.name, True)
+        reply += f"\n{e_name}    等级：{enemies_data_list[1][i]}"
+    reply += f"\n\n关卡报酬：\n{reward_list[0]}\n数量：{reward_list[1]}"
+
+    await op_info_all.finish(reply)
 
 
 async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) -> Path:
