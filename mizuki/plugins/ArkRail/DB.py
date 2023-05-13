@@ -96,11 +96,13 @@ class SkillAttribute:  # 技能属性类
     name = "name"
     brief_d = "brief_d"
     detail = "detail"
-    obj_type = "obj_type"
     rate1 = "rate1"
     rate1_plus = "rate1_plus"
     rate2 = "rate2"
     rate2_plus = "rate2_plus"
+    rate3 = "rate3"
+    rate3_plus = "rate3_plus"
+    obj_type = "obj_type"
     consume = "consume"
     consume_plus = "consume_plus"
     persistence = "persistence"
@@ -124,8 +126,8 @@ async def get_op_attribute(oid: str or int, attribute: str, is_enemy: bool = Fal
 
 
 async def get_skill_attribute(sid: str or int, attribute: str, is_enemy: bool = False) -> any:
-    if attribute not in ["name", "brief_d", "detail", "obj_type", "rate1", "rate1_plus", "rate2", "rate2_plus", "consume",
-                         "consume_plus", "persistence", "persistence_plus"]:
+    if attribute not in ["name", "brief_d", "detail", "rate1", "rate1_plus", "rate2", "rate2_plus", "rate3", "rate3_plus",
+                         "obj_type", "consume", "consume_plus", "persistence", "persistence_plus"]:
         raise SkillAttributeNotFoundError(attribute)
     with open(skills_data if not is_enemy else enemy_skills_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
