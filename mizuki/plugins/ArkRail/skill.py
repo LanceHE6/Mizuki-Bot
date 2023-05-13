@@ -64,7 +64,7 @@ async def new_instance(sid: int, level: int, is_enemy: bool) -> Skill:
     """
     通过传入的技能id和技能等级生成一个Skill实例，通常不需要直接调用这个方法
 
-    :param sid: 技能id，详见skills_data.json文件
+    :param sid: 技能id，详见skills_data.json文件和enemy_skills_data.json文件，敌人技能id从-1开始往下减
     :param level: 技能等级
     :param is_enemy: 是否为敌人的技能，默认为False
     :return: 返回一个Skill实例
@@ -85,4 +85,6 @@ async def new_instance(sid: int, level: int, is_enemy: bool) -> Skill:
         .replace("${r1_float}", str(round(rate1 * 100.0, 1)) + "%")\
         .replace("${r2_float}", str(round(rate2 * 100.0, 1)) + "%")\
         .replace("${persistence}", str(int(persistence)))
+    if is_enemy:
+        sid *= -1
     return Skill(sid, name, level, brief_d, detail, rate1, rate2, consume, persistence)
