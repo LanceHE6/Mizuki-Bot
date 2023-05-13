@@ -3,6 +3,7 @@
     "name": "溅射法术",
     "brief_d": "对所有敌方单位造成法术伤害",
     "detail": "对所有敌方单位造成相当于自身攻击力${r1_float}的法术伤害",
+    "obj_type": 0,
     "rate1": 1.0,
     "rate1_plus": 0,
     "rate2": 0,
