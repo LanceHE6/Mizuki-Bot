@@ -3,6 +3,7 @@
 # @Author:Hycer_Lance
 # @Time:2023/4/27 16:52
 # @Software:PyCharm
+import os
 
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.params import CommandArg
@@ -11,7 +12,10 @@ from .DB import is_op_owned
 from .operator import new_instance, Operator
 from .gacha import *
 from .pool_config import pool_info
+from .utils import get_op_img, get_op_model, line_break
 
+attribute_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'op_info'
+stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'stars'
 
 op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
 op_info_all = on_command("info all", aliases={"所有角色", "所有干员"}, block=True, priority=2)
@@ -67,7 +71,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     op: Operator
     if await is_op_owned(uid, oid):
         # 玩家拥有该干员
-        tip = "干员的详细信息为："
+        tip = ''
         user_all_ops = await get_user_all_ops(uid)
         index = "1"
         for i in user_all_ops:
@@ -81,26 +85,104 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         skills_level = select_op["skills_level"]
         op = await operator.new_instance(oid, level, skills_level)
     else:
-        tip = "您未拥有该干员，以下是该干员的初始状态信息"
-        op = await operator.new_instance(oid, 1, [0, 0, 0])
-        pass
+        tip = '\n你未拥有该干员，以下为干员初始状态'
+        level = 1
+        op = await operator.new_instance(oid, level, [0, 0, 0])
         # 玩家未拥有该干员
+    await op_info.send("开始绘制干员信息图片，请稍等。。。")
+    logger.info("[op_info]开始绘制干员信息图片")
+    img_path = await draw_op_info_img(oid, level, op, uid)
+    logger.info("[op_info]干员信息图片完成")
+    await op_info.send(MessageSegment.at(uid)+ tip +MessageSegment.image(img_path))
+    os.remove(img_path)
+    await op_info.finish()
 
-    reply_op_info = MessageSegment.at(uid) + f"{tip}\n" \
-                                             f"{op.name}\n等级：{op.level}  星级：{op.stars}\n" \
-                                             f"职业：{op.profession}\n最大生命值：{op.max_health}\n" \
-                                             f"攻击力：{op.atk}\n攻击方式：{op.atk_type_str}\n" \
-                                             f"防御力：{op.defence}\n法抗：{op.res}\n" \
-                                             f"暴击率：{round(100 * op.crit_r, 1)}%\n暴击伤害：{round(100 * op.crit_d, 1)}%\n" \
-                                             f"速度：{round(op.speed, 1)}"
+async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) -> Path:
+    bg_img = Image.open(f"{attribute_img_path}/bg.png")
+    op_img_path = await get_op_img(oid, is_big=1)
+    op_img = Image.open(op_img_path)
+    max_health_img = Image.open(f"{attribute_img_path}/max_health.png")
+    atk_img = Image.open(f"{attribute_img_path}/atk.png")
+    def_img = Image.open(f"{attribute_img_path}/def.png")
+    crit_d_img = Image.open(f"{attribute_img_path}/crit_d.png")
+    crit_r_img = Image.open(f"{attribute_img_path}/crit_r.png")
+    res_img = Image.open(f"{attribute_img_path}/res.png")
+    speed_img = Image.open(f"{attribute_img_path}/speed.png")
+
+    img = Image.new("RGBA", bg_img.size, (255, 255, 255, 0))#新建画板
+    draw = ImageDraw.Draw(img)
+
+    img.paste(bg_img, (0, 0))
+    img.paste(op_img, (1450, 100), mask=op_img)
+    os.remove(op_img_path)
+    level_img = Image.open(f"{attribute_img_path}/level.png")
+    img.paste(level_img, (50, 200), mask=level_img)
+    # 七种属性图标
+    img.paste(max_health_img, (50, 520))
+    img.paste(atk_img, (50, 580))
+    img.paste(def_img, (50, 640))
+    img.paste(res_img, (50, 700))
+    img.paste(speed_img, (400, 520))
+    img.paste(crit_r_img, (400, 580))
+    img.paste(crit_d_img, (400, 640))
+    # 属性值
+    font = ImageFont.truetype("simhei", 100)
+    if len(str(level)) == 2:#判断等级位数
+        draw.text((95, 245), f"{level}", font=font, fill='white', stroke_fill='black', stroke_width=2)
+    else:
+        draw.text((120, 245), f"{level}", font=font, fill='white', stroke_fill='black', stroke_width=2)
+    font = ImageFont.truetype("simhei", 50)
+    draw.text((50, 460), "属性>>", font=font, fill='black')
+    draw.text((250, 515), f"{op.max_health}", font=font, fill="black")  # max_health
+    draw.text((250, 575), f"{op.atk}", font=font, fill="black")  # atk
+    draw.text((250, 635), f"{op.defence}", font=font, fill="black")  # def
+    draw.text((250, 695), f"{op.res}", font=font, fill="black")  # res
+    draw.text((600, 515), f"{round(op.speed, 1)}", font=font, fill="black")  # speed
+    draw.text((600, 575), f"{round(100 * op.crit_r, 1)}%", font=font, fill="black")  # crit_r
+    draw.text((600, 635), f"{round(100 * op.crit_d, 1)}%", font=font, fill="black")  # crit_d
+
+    # 干员模型
+    box = Image.new("RGBA", (480, 395), (0, 0, 0, 150))
+    op_model_path = await get_op_model(oid)
+    op_model = Image.open(op_model_path).resize((900, 900))
+    img.paste(box, (280, 105), mask=box)
+    img.paste(op_model, (50, -250), mask=op_model)
+    os.remove(op_model_path)
+
+    # 干员信息
+    stars = Image.open(f"{stars_img_path}/6.png").resize((350, 92))  # 星级
+    img.paste(stars, (40, 760), mask=stars)
+    font = ImageFont.truetype("simhei", 150)
+    draw.text((50, 860), f"{op.name}", font=font, fill='white', stroke_fill='black', stroke_width=2)  # name
+
+    profession = ''.join(list(op.profession)[0:2])
+    feature = ''.join(list(op.profession)[-2:])
+    pro_img = Image.open(f"{profession_img_path}/{profession}_big.png")
+    img.paste(pro_img, (50, 1020))
+    font = ImageFont.truetype("simhei", 60)
+    draw.text((240, 1020), f"{profession}", font=font, fill='white', stroke_fill='black', stroke_width=1)
+    draw.text((240, 1090), f"{feature}", font=font, fill='white', stroke_fill='black', stroke_width=1)
+
+    # 技能详情
+    box = Image.open(f"{attribute_img_path}/box.png")
+    img.paste(box, (650, 200), mask=box)
+
+    draw.text((800, 220), "技能", font=font, fill='white', stroke_fill='black', stroke_width=1)
+    draw.text((1180, 220), "描述", font=font, fill='white', stroke_fill='black', stroke_width=1)
+    draw.text((1410, 220), "技力", font=font, fill='white', stroke_fill='black', stroke_width=1)
+
     op_skills_list = op.skills_list
-    reply_skills_info = MessageSegment.at(uid) + f"{op.name}的技能数据为："
-    i = 1
+
+    i = 0
     for skill in op_skills_list:
-        reply_skills_info += f"\n\n{i}. {skill.name}  等级：{skill.level}\n" \
-                             f"技力消耗：{int(skill.consume)}\n" \
-                             f"{skill.detail}"
+        font = ImageFont.truetype("simhei", 48)
+        draw.text((780, 380+i*300), f"{skill.name}", font=font, fill='white', stroke_fill='black', stroke_width=2)
+        font = ImageFont.truetype("simhei", 30)
+        skill_detail = await line_break(skill.detail, 10)
+        draw.text((1100, 360+i*300), f"{skill_detail}", font=font, fill='white', stroke_fill='black', stroke_width=2)
+        font = ImageFont.truetype("simhei", 64)
+        draw.text((1435, 380+i*300), f"{int(skill.consume)}", font=font, fill='white', stroke_fill='black', stroke_width=2)
         i += 1
-    await op_detail.send(reply_op_info)
-    await op_detail.send(reply_skills_info)
-    await op_detail.finish()
+    save_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / f'{uid}_info.png'
+    img.save(save_path)
+    return save_path
