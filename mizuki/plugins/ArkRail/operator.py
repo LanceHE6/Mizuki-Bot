@@ -25,8 +25,8 @@ class Operator:
         """
         :param name: 干员名称
         :param level: 干员等级
-        :param stars: 干员星级
-        :param profession: 干员职业
+        :param stars: 干员星级 / 敌人类型
+        :param profession: 干员职业 / 敌人种类
         :param health: 干员初始生命值(初始赋值给干员的最大生命值max_health和当前生命值health)
         :param atk: 干员初始攻击力
         :param defence: 干员初始防御力
@@ -38,6 +38,12 @@ class Operator:
         :param skills_list: 干员的技能列表
 
         后面有_p的变量表示干员战斗时该变量的实际值(xxx_p = xxx * (1 + xxx_add_f) + xxx_add_d)
+
+        攻击类型列表
+        0:物理单体  1:法术单体  2:物理群体  3:法术群体  4:治疗单体  5:治疗群体  6:真实单体  7:不进行普攻
+
+        敌人类型列表
+        1:普通  2:高级  3:精英  4:高级精英  5:领袖  6:强大领袖(双阶段)
         """
         self.name = name
         self.stars = stars
@@ -50,7 +56,7 @@ class Operator:
         self.crit_r = self.crit_r_p = crit_r
         self.crit_d = self.crit_d_p = crit_d
         self.speed = self.speed_p = speed
-        self.atk_type = atk_type
+        self.atk_type_p = self.atk_type = atk_type
         self.atk_type_str = "-"
         self.skills_list = skills_list
 
@@ -86,9 +92,6 @@ class Operator:
         atk_add_d: 攻击力数值加成
         def_add_d: 防御力数值加成
         res_add_d: 法抗数值加成
-        crit_r_add_d: 暴击率数值加成
-        crit_d_add_d: 暴击伤害数值加成
-        speed_d: 速度数值加成
         
         特殊状态(数值表示持续回合，大于0时生效，效果生效时每回合减1)
         immobile: 无法行动(无法普攻和使用技能，跳过该干员回合)
@@ -98,6 +101,8 @@ class Operator:
         invincible: 无敌(无法受到任何伤害)
         mocked: 被嘲讽(攻击时只能攻击指定单位)
         mocking_obj: 嘲讽者(被嘲讽时只能攻击的单位)
+        blooding: 流血(每回合流失最大生命值)
+        blooding_rate: 流血率(每回合流失多少最大生命值)
         
         next_operators: 身边的干员(包括自己)
         """
@@ -106,17 +111,14 @@ class Operator:
         self.atk_add_f: float = 0.0
         self.def_add_f: float = 0.0
         self.res_add_f: float = 0.0
-        self.crit_r_add_f: float = 0.0
-        self.crit_d_add_f: float = 0.0
-        self.speed_add_f: float = 0.0
 
         self.health_add_d: int = 0
         self.atk_add_d: int = 0
         self.def_add_d: int = 0
-        self.res_add_d: int = 0
-        self.crit_r_add_d: int = 0
-        self.crit_d_add_d: int = 0
-        self.speed_add_d: int = 0
+        self.res_add_d: float = 0
+        self.crit_r_add_d: float = 0
+        self.crit_d_add_d: float = 0
+        self.speed_add_d: float = 0
 
         self.immobile: int = 0
         self.silent: int = 0
@@ -125,18 +127,10 @@ class Operator:
         self.invincible: int = 0
         self.mocked: int = 0
         self.mocking_obj = None
+        self.blooding: int = 0
+        self.blooding_rate: float = 0
 
         self.next_operators: list[Operator] = [self]
-
-    async def use_skill(self, skill, obj1, obj2=None):
-        """
-        使用技能
-
-        :param skill: 使用的技能
-        :param obj1: 目标对象1
-        :param obj2: 目标对象2(可选)
-        """
-        pass
 
     async def is_die(self) -> bool:
         """
@@ -172,6 +166,18 @@ class Operator:
             self.mocked -= 1
             if self.mocked == 0:
                 self.mocking_obj = None
+
+    async def upgrade_effect(self):
+        """
+        更新干员各项属性的方法
+        """
+        self.max_health_p = self.max_health * (1 + self.health_add_f) + self.health_add_d
+        self.atk_p = self.atk * (1 + self.atk_add_f) + self.atk_add_d
+        self.defence_p = self.defence * (1 + self.def_add_f) + self.def_add_d
+        self.res_p = self.res * (1 + self.res_add_f) + self.res_add_d
+        self.crit_r_p = self.crit_r + self.crit_r_add_d
+        self.crit_d_p = self.crit_d + self.crit_d_add_d
+        self.speed_p = self.speed + self.speed_add_d
 
 
 async def new_instance(oid: int, level: int, skills_level: list[int], is_enemy: bool = False) -> Operator:
