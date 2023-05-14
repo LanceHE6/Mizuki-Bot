@@ -1,5 +1,5 @@
 # -*- coding = utf-8 -*-
-# @File:gacha.py
+# @File:draw_gacha.py
 # @Author:Hycer_Lance
 # @Time:2023/5/6 21:14
 # @Software:PyCharm
@@ -12,11 +12,11 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 from nonebot.log import logger
 from pathlib import Path
 from PIL import Image, ImageFont, ImageDraw
-from .DB import get_op_attribute, get_ops_list_by_stars, OPAttribute, is_op_owned, add_op_to_user, add_op_to_user_db
-from .DB import add_user_pool_num, get_user_cur_pool_num, reset_user_cur_pool_num
-from .pool_config import PoolConfig
-from ..Currency.utils import change_user_sj_num, sj_is_enough, change_user_lmc_num
-from .utils import get_op_img
+from ..DB import get_op_attribute, get_ops_list_by_stars, OPAttribute, is_op_owned, add_op_to_user, add_op_to_user_db
+from ..DB import add_user_pool_num, get_user_cur_pool_num, reset_user_cur_pool_num
+from ..gacha.pool_config import PoolConfig
+from ...Currency.utils import change_user_sj_num, sj_is_enough, change_user_lmc_num
+from ..utils import get_op_img
 import random
 
 """

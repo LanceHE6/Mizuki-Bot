@@ -1,14 +1,18 @@
-from nonebot.adapters.onebot.v11 import Message
+from nonebot import  on_command
+from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
 from nonebot.params import CommandArg
-
+from nonebot.log import logger
+import os
+from pathlib import Path
+from PIL import Image, ImageDraw, ImageFont
 from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_oid_by_name, is_map_exist, get_map_attribute, \
-    MapAttribute
-from .gacha import *
+    MapAttribute, get_op_attribute, OPAttribute, is_op_owned
 from .operator import Operator, new_instance
 from .utils import get_op_img, get_op_model, line_break
 
 attribute_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'op_info'
 stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'stars'
+profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'profession'
 
 op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
 op_info_all = on_command("info all", aliases={"所有角色", "所有干员"}, block=True, priority=2)

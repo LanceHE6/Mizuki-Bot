@@ -4,4 +4,5 @@
 # @Time:2023/4/27 16:52
 # @Software:PyCharm
 
+from .gacha import *
 from .show_info_command import *

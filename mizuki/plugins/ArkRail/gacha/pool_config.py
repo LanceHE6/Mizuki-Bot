@@ -6,7 +6,7 @@
 
 import json
 import os
-from .DB import get_op_attribute, OPAttribute
+from ..DB import get_op_attribute, OPAttribute
 from pathlib import Path
 from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11 import MessageSegment
@@ -15,7 +15,7 @@ from nonebot.params import CommandArg
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Message
 from PIL import Image, ImageDraw, ImageFont
-from .utils import get_op_img
+from ..utils import get_op_img
 
 config = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'pool_config.json'
 
