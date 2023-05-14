@@ -6,3 +6,4 @@
 
 from .draw_gacha import ten, single
 from .pool_config import change_up_5s_comm, change_up_6s_comm
+from .gacha_record import gacha_record
