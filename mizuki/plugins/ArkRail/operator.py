@@ -166,6 +166,11 @@ class Operator:
             self.mocked -= 1
             if self.mocked == 0:
                 self.mocking_obj = None
+        if self.blooding:
+            self.blooding -= 1
+            if self.blooding == 0:
+                self.blooding_rate = 0
+        await self.upgrade_effect()
 
     async def upgrade_effect(self):
         """
