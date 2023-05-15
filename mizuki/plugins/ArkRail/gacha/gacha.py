@@ -1,5 +1,5 @@
 # -*- coding = utf-8 -*-
-# @File:draw_gacha.py
+# @File:gacha.py
 # @Author:Hycer_Lance
 # @Time:2023/5/6 21:14
 # @Software:PyCharm

@@ -10,7 +10,7 @@ from nonebot.log import logger
 import requests
 import json
 
-casual_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src'
+casual_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
 async def get_op_img(oid: int or str, is_big: int = 0):
     """
     从接口获取干员图片并保存到本地

@@ -28,11 +28,11 @@ from ..DB import (
     get_user_all_pool_num
     )
 
-src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src'
-gacha_record_src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'gacha' / 'src'
-new_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'new.png'
-profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'profession'
-stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'stars'
+src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
+gacha_record_src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'gacha' / 'res'
+new_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'new.png'
+profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profession'
+stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'stars'
 
 
 async def gacha(uid, ten_type: bool = False) -> list:
@@ -88,7 +88,7 @@ async def gacha(uid, ten_type: bool = False) -> list:
 
 # 绘制抽卡图片，返回图片地址
 async def draw_img_ten(oid_list: list, uid: int or str) -> Path:
-    bg_img = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'gacha_bg_ten.png'
+    bg_img = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'gacha_bg_ten.png'
     bg = Image.open(bg_img)  # bg
     image = Image.new('RGB', bg.size, (255, 0, 0))
     image.paste(bg, (0, 0))  # 创建新画板
@@ -135,7 +135,7 @@ async def draw_img_ten(oid_list: list, uid: int or str) -> Path:
 
 
 async def draw_img_single(oid_list: list, uid: int or str) -> Path:
-    bg_img = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'gacha_bg_single.png'
+    bg_img = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'gacha_bg_single.png'
     bg = Image.open(bg_img)  # bg
     image = Image.new('RGB', bg.size, (255, 0, 0))
     image.paste(bg, (0, 0))  # 创建新画板

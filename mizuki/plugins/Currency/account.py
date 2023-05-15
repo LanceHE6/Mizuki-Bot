@@ -15,7 +15,7 @@ import requests
 from .utils import is_user_in_table, get_user_lmc_num, get_user_sj_num
 from ..Utils.PluginInfo import PluginInfo
 
-src_path = Path() / 'mizuki' / 'plugins' / 'Currency' / 'src'
+src_path = Path() / 'mizuki' / 'plugins' / 'Currency' / 'res'
 my_account = on_command("account", aliases={"我的账户", "账户"}, block=True, priority=2)
 
 __plugin_info__ = PluginInfo(

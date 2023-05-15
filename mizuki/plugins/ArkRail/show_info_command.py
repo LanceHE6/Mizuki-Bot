@@ -10,9 +10,9 @@ from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_oid_by_
 from .operator import Operator, new_instance
 from .utils import get_op_img, get_op_model, line_break
 
-attribute_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'op_info'
-stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'stars'
-profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'profession'
+attribute_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_info'
+stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'stars'
+profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profession'
 
 op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
 op_info_all = on_command("info all", aliases={"所有角色", "所有干员"}, block=True, priority=2)
@@ -203,6 +203,6 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
         draw.text((1435, 380 + i * 300), f"{int(skill.consume)}", font=font, fill='white', stroke_fill='black',
                   stroke_width=2)
         i += 1
-    save_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / f'{uid}_info.png'
+    save_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / f'{uid}_info.png'
     img.save(save_path)
     return save_path

@@ -13,7 +13,7 @@ from pathlib import Path
 from .utils import draw_gacha_record
 from ...Utils.PluginInfo import PluginInfo
 
-src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'gacha' / 'src'
+src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'gacha' / 'res'
 
 gacha_record = on_command("抽卡记录", aliases={"抽卡分析"}, block=True, priority=3)
 

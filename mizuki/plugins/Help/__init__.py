@@ -4,15 +4,27 @@
 # @Time:2023/5/15 7:56
 # @Software:PyCharm
 
-from ..Utils.PluginInfo import PluginsInfoList
+from ..Utils.PluginInfo import PluginInfo
+from .draw_img import draw_help_img
 from nonebot import on_command
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 
-test = on_command("help")
+help_comm = on_command("help", aliases={"帮助", "帮助菜单", "指令"}, block=True, priority=2)
 
-@test.handle()
-async def _():
-    reply = ""
-    plugins_meta_info_list = PluginsInfoList().plugins_list
-    for plugin_meta_info in plugins_meta_info_list:
-        reply+= str(plugin_meta_info.usage)+"\n"
-    await test.finish(reply)
+__plugin_info__ = PluginInfo(
+    plugin_name="Help",
+    name="指令菜单",
+    description="查看指令菜单",
+    usage="help ——查看指令菜单",
+    extra={
+        "author": "Hycer_Lance",
+        "version": "0.1.0",
+        "priority": 2
+    }
+)
+
+@help_comm.handle()
+async def _(event: GroupMessageEvent):
+    uid = event.get_user_id()
+    img_path = await draw_help_img()
+    await help_comm.finish(MessageSegment.at(uid)+MessageSegment.image(img_path))

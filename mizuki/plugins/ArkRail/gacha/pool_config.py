@@ -102,9 +102,9 @@ async def draw_pool_info(up_6s: list, up_5s: list) -> Path:
     :param up_5s: up5星列表
     :return: 图片地址
     """
-    profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'profession'
-    stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'stars'
-    pool_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'src' / 'gacha_pool'
+    profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profession'
+    stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'stars'
+    pool_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'gacha_pool'
     bg_img = Image.open(f"{pool_img_path}/bg.png").resize((1720, 1080))
     img = Image.new("RGBA", (1920, 1080), (255, 255, 255, 255))
     img.paste(bg_img, (100, 0))
