@@ -21,7 +21,7 @@ op_detail = on_command("detail", aliases={"d", "干员信息", "干员详情"}, 
 map_info = on_command("level", aliases={"关卡", "关卡信息", "map"}, block=True, priority=2)
 
 __plugin_info__ = [PluginInfo(
-    plugin_name="ArkRail_show_info",
+    plugin_name="ArkRail_show_op_info",
     name="出战干员信息展示",
     description="查看出战干员",
     usage="op ——查看出战干员",
@@ -32,7 +32,7 @@ __plugin_info__ = [PluginInfo(
     }
     ),
     PluginInfo(
-        plugin_name="ArkRail_show_info",
+        plugin_name="ArkRail_show_all_op_info",
         name="所有干员信息展示",
         description="查看自身拥有的所有干员",
         usage="op all ——查看自身拥有的所有干员",
@@ -43,7 +43,7 @@ __plugin_info__ = [PluginInfo(
         }
     ),
     PluginInfo(
-        plugin_name="ArkRail_show_info",
+        plugin_name="ArkRail_show_detail_info",
         name="干员详细信息展示",
         description="查看干员详细信息",
         usage="detail <干员名称> ——查看干员详细信息",
@@ -54,7 +54,7 @@ __plugin_info__ = [PluginInfo(
         }
     ),
     PluginInfo(
-        plugin_name="ArkRail_show_info",
+        plugin_name="ArkRail_show_level_info",
         name="关卡信息展示",
         description="查看关卡信息",
         usage="level <关卡编号> ——查看关卡信息",
