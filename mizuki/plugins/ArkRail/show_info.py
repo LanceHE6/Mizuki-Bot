@@ -9,16 +9,28 @@ from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_oid_by_
     MapAttribute, get_op_attribute, OPAttribute, is_op_owned
 from .operator import Operator, new_instance
 from .utils import get_op_img, get_op_model, line_break
+from ..Utils.PluginInfo import PluginInfo
 
 attribute_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_info'
 stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'stars'
 profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profession'
 
-op_info = on_command("info", aliases={"我的干员", "干员"}, block=True, priority=2)
-op_info_all = on_command("info all", aliases={"所有角色", "所有干员"}, block=True, priority=2)
-op_detail = on_command("detail", aliases={"干员信息", "干员详情"}, block=True, priority=2)
-map_info = on_command("map", aliases={"地图", "地图信息"}, block=True, priority=2)
+op_info = on_command("op", aliases={"我的干员", "干员", "info"}, block=True, priority=2)
+op_info_all = on_command("op all", aliases={"所有角色", "所有干员", "info all"}, block=True, priority=2)
+op_detail = on_command("detail", aliases={"d", "干员信息", "干员详情"}, block=True, priority=2)
+map_info = on_command("level", aliases={"关卡", "关卡信息", "map"}, block=True, priority=2)
 
+__plugin_info__ = PluginInfo(
+    plugin_name="ArkRail_show_info",
+    name="干员及关卡信息展示",
+    description="查看方舟铁道的干员信息及关卡信息",
+    usage="信息展示 ——查看方舟铁道的干员信息及关卡信息",
+    extra={
+        "author": "Silence",
+        "version": "0.1.0",
+        "priority": 2
+    }
+)
 
 @op_info.handle()
 async def _(event: GroupMessageEvent):
