@@ -1,4 +1,4 @@
-from nonebot import  on_command
+from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
 from nonebot.params import CommandArg
 from nonebot.log import logger
@@ -20,17 +20,52 @@ op_info_all = on_command("op all", aliases={"所有角色", "所有干员", "inf
 op_detail = on_command("detail", aliases={"d", "干员信息", "干员详情"}, block=True, priority=2)
 map_info = on_command("level", aliases={"关卡", "关卡信息", "map"}, block=True, priority=2)
 
-__plugin_info__ = PluginInfo(
+__plugin_info__ = [PluginInfo(
     plugin_name="ArkRail_show_info",
-    name="干员及关卡信息展示",
-    description="查看方舟铁道的干员信息及关卡信息",
-    usage="信息展示 ——查看方舟铁道的干员信息及关卡信息",
+    name="出战干员信息展示",
+    description="查看出战干员",
+    usage="op ——查看出战干员",
     extra={
         "author": "Silence",
         "version": "0.1.0",
         "priority": 2
     }
-)
+    ),
+    PluginInfo(
+        plugin_name="ArkRail_show_info",
+        name="所有干员信息展示",
+        description="查看自身拥有的所有干员",
+        usage="op all ——查看自身拥有的所有干员",
+        extra={
+            "author": "Silence",
+            "version": "0.1.0",
+            "priority": 2
+        }
+    ),
+    PluginInfo(
+        plugin_name="ArkRail_show_info",
+        name="干员详细信息展示",
+        description="查看干员详细信息",
+        usage="detail <干员名称> ——查看干员详细信息",
+        extra={
+            "author": "Silence",
+            "version": "0.1.0",
+            "priority": 2
+        }
+    ),
+    PluginInfo(
+        plugin_name="ArkRail_show_info",
+        name="关卡信息展示",
+        description="查看关卡信息",
+        usage="level <关卡编号> ——查看关卡信息",
+        extra={
+            "author": "Silence",
+            "version": "0.1.0",
+            "priority": 2
+        }
+    )
+]
+
 
 @op_info.handle()
 async def _(event: GroupMessageEvent):
