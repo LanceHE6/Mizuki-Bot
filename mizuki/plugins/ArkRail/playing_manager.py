@@ -224,6 +224,11 @@ class PlayingManager:
                         sub.atk_p = skill.rate1
                         sub.atk_add_f += skill.rate2
                         message += f""
+                    elif skill.sid == 3:
+                        message += f"恢复{round(skill.rate1 * 100, 1)}%最大生命值"
+                        sub.health += sub.max_health_p * skill.rate1
+                        if sub.health > sub.max_health_p:
+                            sub.health = sub.max_health_p
                     elif skill.sid == 4:
                         rate = random.uniform(skill.rate1, skill.rate2)
                         if sub.atk_type_p == 1:
