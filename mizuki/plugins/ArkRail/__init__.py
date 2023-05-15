@@ -5,4 +5,4 @@
 # @Software:PyCharm
 
 from .gacha import *
-from .show_info_command import *
+from .show_info import *
