@@ -13,10 +13,22 @@ from PIL import Image, ImageDraw, ImageFont
 from pathlib import Path
 import requests
 from .utils import is_user_in_table, get_user_lmc_num, get_user_sj_num
+from ..Utils.PluginInfo import PluginInfo
 
 src_path = Path() / 'mizuki' / 'plugins' / 'Currency' / 'src'
 my_account = on_command("account", aliases={"我的账户", "账户"}, block=True, priority=2)
 
+__plugin_info__ = PluginInfo(
+    plugin_name="Currency_account",
+    name="账户系统",
+    description="显示用户货币数据",
+    usage="account ——查看龙门币和合成玉数量",
+    extra={
+        "author": "Hycer_Lance",
+        "version": "0.1.0",
+        "priority": 2
+    }
+)
 
 def circle_corner(img: Image, radii: int) -> Image:
     """

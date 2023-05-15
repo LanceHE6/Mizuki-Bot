@@ -8,6 +8,7 @@ import json
 from nonebot import on_message
 from nonebot.rule import *
 from nonebot.adapters.onebot.v11 import Message, Event, MessageSegment
+from ..Utils.PluginInfo import PluginInfo
 
 # 思知机器人
 data = {
@@ -17,6 +18,17 @@ data = {
 }
 chat = on_message(rule=to_me(), priority=2, block=True)
 
+__plugin_info__ = PluginInfo(
+    plugin_name="Chat",
+    name="Chat",
+    description="与bot愉快的聊天吧",
+    usage="@bot<内容> ——与bot聊天",
+    extra={
+        "author": "Hycer_Lance",
+        "version": "0.1.0",
+        "priority": 2
+    }
+)
 
 @chat.handle()
 async def reply(event: Event):

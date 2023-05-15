@@ -16,12 +16,37 @@ from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Message
 from PIL import Image, ImageDraw, ImageFont
 from ..utils import get_op_img
+from ...Utils.PluginInfo import PluginInfo
 
 config = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'pool_config.json'
 
 change_up_6s_comm = on_command("修改up6星", aliases={"更改up6星", "up6星设置", "修改6星up"}, block=True, priority=3, permission=SUPERUSER)
 change_up_5s_comm = on_command("修改up5星", aliases={"更改up5星", "up5星设置", "修改5星up"}, block=True, priority=3, permission=SUPERUSER)
 pool_info = on_command("pool_info", aliases={"卡池信息", "卡池"}, block=True, priority=3)
+
+__plugin_info__ = [PluginInfo(
+    plugin_name="ArkRail_gacha_pool_info",
+    name="卡池信息",
+    description="查看当前卡池内容",
+    usage="卡池信息 ——查看当前卡池内容",
+    extra={
+        "author": "Hycer_Lance",
+        "version": "0.1.0",
+        "priority": 3
+    }
+), PluginInfo(
+    plugin_name="ArkRail_gacha_pool_config",
+    name="卡池配置",
+    description="修改池子up干员",
+    usage=("更改6星up",
+           "更改5星up"),
+    extra={
+        "author": "Hycer_Lance",
+        "version": "0.1.0",
+        "priority": 3,
+        "permission": "SUPERUSER"
+    }
+)]
 
 # change_prob_improvement = on_command("")
 class Pool:

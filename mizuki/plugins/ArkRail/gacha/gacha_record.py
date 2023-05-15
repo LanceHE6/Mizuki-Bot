@@ -3,18 +3,31 @@
 # @Author:Hycer_Lance
 # @Time:2023/5/14 11:44
 # @Software:PyCharm
-import os
 
+import os
 from colorama import Fore
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import MessageSegment, GroupMessageEvent
 from nonebot.log import logger
 from pathlib import Path
 from .utils import draw_gacha_record
+from ...Utils.PluginInfo import PluginInfo
 
 src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'gacha' / 'src'
 
 gacha_record = on_command("抽卡记录", aliases={"抽卡分析"}, block=True, priority=3)
+
+__plugin_info__ = PluginInfo(
+    plugin_name="ArkRail_gacha_record",
+    name="抽卡记录分析",
+    description="查看方舟铁道的抽卡分析",
+    usage="抽卡记录 ——查看方舟铁道的抽卡分析",
+    extra={
+        "author": "Hycer_Lance",
+        "version": "0.1.0",
+        "priority": 3
+    }
+)
 
 @gacha_record.handle()
 async def _(event: GroupMessageEvent):

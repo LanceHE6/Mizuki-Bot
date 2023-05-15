@@ -14,6 +14,7 @@ from nonebot.rule import to_me
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 import time
 from colorama import Fore
+from ..Utils.PluginInfo import PluginInfo
 
 """
 数据库签到表示例
@@ -22,9 +23,19 @@ uid:str         last_sign_in_time:int            continuous_sign-in:int
 """
 
 sign_in_by_command = on_command("签到", aliases={"打卡"}, block=True, priority=2)
-sign_kw = ["签到", "打卡"]
-sign_in_by_message = on_keyword(sign_kw, block=True, rule=to_me(), priority=1)
+sign_in_by_message = on_keyword( {"签到", "打卡"}, block=True, rule=to_me(), priority=2)
 
+__plugin_info__ = PluginInfo(
+    plugin_name="Currency_sign_in",
+    name="签到系统",
+    description="每日签到获取龙门币",
+    usage="签到 ——每日签到",
+    extra={
+        "author": "Hycer_Lance",
+        "version": "0.1.0",
+        "priority": 2
+    }
+)
 
 async def time_to_strftime(stamp_time):
     return time.strftime("%Y-%m-%d", time.localtime(stamp_time))
