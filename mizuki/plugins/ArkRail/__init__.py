@@ -6,3 +6,4 @@
 
 from .gacha import *
 from .show_info import *
+from .fight import *
