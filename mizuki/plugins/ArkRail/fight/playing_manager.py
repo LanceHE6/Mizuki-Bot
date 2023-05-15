@@ -1,7 +1,7 @@
 import random
 
-from .operator import Operator, get_operator_list, get_enemies_list
-from .skill import Skill
+from ..operator import Operator, get_operator_list, get_enemies_list
+from ..skill import Skill
 
 
 class PlayingManager:
