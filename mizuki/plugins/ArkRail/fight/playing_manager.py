@@ -1,3 +1,8 @@
+# -*- coding = utf-8 -*-
+# @File:playing_manager.py
+# @Author:Silence
+# @Time:2023/5/11 11:32
+# @Software:PyCharm
 import random
 
 from ..operator import Operator, get_operator_list, get_enemies_list
