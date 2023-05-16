@@ -273,24 +273,11 @@ async def new_instance(uid: str or int, mid: str) -> PlayingManager:
 
 
 # 快速排序函数
-def quick_sort(arr: list[Operator], low, high):
-    if low < high:
-        pi = partition(arr, low, high)
-
-        quick_sort(arr, low, pi - 1)
-        quick_sort(arr, pi + 1, high)
-
-
-def partition(arr: list[Operator], low, high):
-    i = (low - 1)  # 最小元素索引
-    pivot = arr[high].speed
-
-    for j in range(low, high):
-
-        # 当前元素小于或等于 pivot
-        if arr[j].speed <= pivot:
-            i = i + 1
-            arr[i], arr[j] = arr[j], arr[i]
-
-    arr[i + 1], arr[high] = arr[high], arr[i + 1]
-    return i + 1
+def quick_sort(arr: list[Operator]):
+    if len(arr) <= 1:
+        return arr
+    else:
+        pivot = arr[0]
+        left = [x for x in arr[1:] if x.speed < pivot.speed]
+        right = [x for x in arr[1:] if x.speed >= pivot.speed]
+        return quick_sort(left) + [pivot] + quick_sort(right)
