@@ -6,7 +6,7 @@
 from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
-from playing_manager import PlayingManager, new_instance
+from .playing_manager import PlayingManager, new_instance
 from ...Utils.PluginInfo import PluginInfo
 from ..DB import is_map_exist
 
@@ -42,12 +42,12 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
     reply2 = "敌方干员："
     for op in pm.map_enemies_list:
-        reply1 += f"\n{op.name}     血量：{op.health}"
+        reply2 += f"\n{op.name}     血量：{op.health}"
     reply2 += f"\n敌方剩余技力点：{pm.enemy_skill_count}"
 
     reply3 = "行动顺序："
     for op in pm.all_ops_list:
-        reply1 += f"\n{op.name}     速度：{op.speed}"
+        reply3 += f"\n{op.name}     速度：{op.speed}"
     await play.send(reply1)
     await play.send(reply2)
     await play.finish(reply3)

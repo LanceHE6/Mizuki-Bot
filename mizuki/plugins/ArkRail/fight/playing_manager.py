@@ -15,8 +15,8 @@ class PlayingManager:
         self.player_ops_list = player_ops_list  # 玩家干员列表
         self.map_enemies_list = map_enemies_list  # 敌方干员列表
         self.all_ops_list = player_ops_list + map_enemies_list  # 所有干员列表，用于计算干员出手顺序
-        quick_sort(self.all_ops_list, 0, len(self.all_ops_list) - 1)  # 根据速度做快速排序
-
+        self.all_ops_list = quick_sort(self.all_ops_list)  # 根据速度做快速排序
+        list.reverse(self.all_ops_list)
         self.player_skill_count = 20  # 我方初始技力点
         self.enemy_skill_count = 10  # 敌方初始技力点
 
