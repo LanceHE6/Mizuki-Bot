@@ -1,3 +1,8 @@
+# -*- coding = utf-8 -*-
+# @File:show_info.py
+# @Author:Hycer_Lance
+# @Time:2023/4/27 16:52
+# @Software:PyCharm
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
 from nonebot.params import CommandArg
