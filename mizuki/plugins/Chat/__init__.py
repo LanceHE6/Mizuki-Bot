@@ -32,9 +32,14 @@ __plugin_info__ = PluginInfo(
 
 @chat.handle()
 async def reply(event: Event):
-    data["spoken"] = str(event.get_message())
-    api = 'https://api.ownthink.com/bot'
-    result = json.loads(requests.post(url=api, data=json.dumps(data)).content)
-    message = result['data']['info']['text']
-    await chat.finish(MessageSegment.at(event.get_user_id()) + Message(message))
+    spoken = str(event.get_message())
+    #data["spoken"] = str(event.get_message())
+    #api = 'https://api.ownthink.com/bot'#思知bot
+
+    #result = json.loads(requests.post(url=api, data=json.dumps(data)).content)
+    #message = result['data']['info']['text']
+    #第三方api http://api.sc1.fun/?action=doc&id=3
+    api = f'http://api.sc1.fun/API/ChatGPT.php?msg={spoken}&type=wifi&id=1&mos=json'
+    result = json.loads(requests.get(url=api).content)["message"]
+    await chat.finish(MessageSegment.at(event.get_user_id()) + Message(result))
 
