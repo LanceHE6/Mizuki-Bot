@@ -33,4 +33,21 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     if not await is_map_exist(mid):
         await play.finish(MessageSegment.at(uid) + f"没有{mid}这张地图！")
 
-    pm = new_instance(uid, mid)
+    pm: PlayingManager = await new_instance(uid, mid)
+
+    reply1 = "我方干员："
+    for op in pm.player_ops_list:
+        reply1 += f"\n{op.name}     血量：{op.health}"
+    reply1 += f"\n我方剩余技力点：{pm.player_skill_count}"
+
+    reply2 = "敌方干员："
+    for op in pm.map_enemies_list:
+        reply1 += f"\n{op.name}     血量：{op.health}"
+    reply2 += f"\n敌方剩余技力点：{pm.enemy_skill_count}"
+
+    reply3 = "行动顺序："
+    for op in pm.all_ops_list:
+        reply1 += f"\n{op.name}     速度：{op.speed}"
+    await play.send(reply1)
+    await play.send(reply2)
+    await play.finish(reply3)
