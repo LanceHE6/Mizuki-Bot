@@ -13,6 +13,7 @@ from ...database.utils import MDB
 from nonebot.log import logger
 from sqlite3 import DatabaseError
 
+aliases_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'aliases.json'
 operators_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'operators_data.json'
 skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'skills_data.json'
 maps_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'maps_data.json'
@@ -210,6 +211,20 @@ async def is_in_table(uid: int) -> bool:
 
 # 通过名字在所有干员数据中找oid,返回-1未找到
 async def get_oid_by_name(name: str) -> int:
+    """
+    通过名字(别名)获取干员oid
+    :param name: 名字(别名)
+    :return: oid
+    """
+
+    #先在别名中找
+    with open(aliases_data, 'r', encoding='utf-8') as aliases_file:
+        aliases_dict = json.load(aliases_file)
+        aliases_file.close()
+    for op_name in aliases_dict:
+        if name in aliases_dict[op_name]:
+            name = op_name#找到干员名字
+    #在干员信息中查找oid
     with open(operators_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
         data.close()
