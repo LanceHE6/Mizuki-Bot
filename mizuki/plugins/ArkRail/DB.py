@@ -164,6 +164,11 @@ async def get_user_level(uid: str or int) -> int:
 
 
 async def get_user_all_ops(uid: str or int) -> dict:
+    """
+    获取用户所拥有的所有干员的字典
+    :param uid: uid
+    :return: 所拥有所有干员的字典
+    """
     sql_sequence = f"Select operators_all from ArkRail_User where uid={uid};"
     ops = await MDB.db_query_column(sql_sequence)
     return eval(ops[0])
@@ -235,6 +240,12 @@ async def get_oid_by_name(name: str) -> int:
 
 
 async def is_op_owned(uid: int or str, oid: int) -> bool:
+    """
+    通过oid判断用户是否拥有该干员
+    :param uid: uid
+    :param oid: oid
+    :return: 布尔类型，True为拥有
+    """
     user_ops = await get_user_all_ops(uid)
     for number in user_ops:
         if int(user_ops[number]["oid"]) == oid:
@@ -254,6 +265,11 @@ async def is_map_exist(mid: str) -> bool:
 
 # 获取指定星级的干员id列表
 async def get_ops_list_by_stars(stars: int = 3 or 4 or 5 or 6) -> list:
+    """
+    获取指定星级的干员id列表
+    :param stars: 星级
+    :return: 干员oid列表
+    """
     with open(operators_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
         data.close()
@@ -278,6 +294,12 @@ async def add_op_to_user(uid: int or str, oid: int or str):
     }
     await MDB.db_execute(f'Update ArkRail_User set operators_all="{owned_ops_list}" Where uid="{uid}";')
 
+async def change_user_op_level(uid: int or str, oid :int, target_level: int):
+    user_ops_list = await get_user_all_ops(uid)
+    for op_no in user_ops_list:
+        if user_ops_list[op_no]["oid"] == oid:
+            user_ops_list[op_no]["level"] = target_level
+    await MDB.db_execute(f'Update ArkRail_User set operators_all="{user_ops_list}" Where uid="{uid}";')
 
 async def get_user_all_pool_num(uid: int or str) -> int:
     """返回用户所有池子的抽数"""
