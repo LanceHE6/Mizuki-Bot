@@ -5,7 +5,7 @@
 # @Software:PyCharm
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent, MessageEvent
+from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
 from nonebot.params import CommandArg, Arg
 from nonebot.typing import T_State
 
@@ -84,4 +84,4 @@ async def got_level(state: T_State, level = Arg("level")):
 
     await change_user_op_level(uid, state["oid"], level)
     await change_user_lmc_num(uid, -cost)
-    await op_level_up.finish(f"已将 {state['op_name']} 升到{level}级", at_sender = True)
+    await op_level_up.finish(f"已将 {state['op_name']} 升到{level}级\n消耗龙门币:{cost}", at_sender = True)
