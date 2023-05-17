@@ -220,8 +220,9 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
     os.remove(op_model_path)
 
     # 干员信息
-    stars = Image.open(f"{stars_img_path}/6.png").resize((350, 92))  # 星级
-    img.paste(stars, (40, 760), mask=stars)
+    stars = await get_op_attribute(oid, OPAttribute.stars)
+    stars_img = Image.open(f"{stars_img_path}/{stars}.png").resize((350, 92))  # 星级
+    img.paste(stars_img, (40, 760), mask=stars_img)
     font = ImageFont.truetype("simhei", 150)
     draw.text((50, 860), f"{op.name}", font=font, fill='white', stroke_fill='black', stroke_width=2)  # name
 
