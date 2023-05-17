@@ -219,7 +219,7 @@ async def get_oid_by_name(name: str) -> int:
     """
     通过名字(别名)获取干员oid
     :param name: 名字(别名)
-    :return: oid
+    :return: oid  -1为未找到
     """
 
     #先在别名中找
@@ -307,6 +307,26 @@ async def change_user_op_level(uid: int or str, oid :int, target_level: int):
             #同步更新出战干员的等级
             await MDB.db_execute(f'Update ArkRail_User set operators_playing="{user_playing_ops_list}" Where uid="{uid}";')
     await MDB.db_execute(f'Update ArkRail_User set operators_all="{user_ops_list}" Where uid="{uid}";')
+
+async def change_user_playing_ops(uid: int or str, playing_oid_list: list):
+    """
+    更改用户出战干员
+    :param uid: qq
+    :param playing_oid_list: 出战干员oid列表
+    :return:
+    """
+
+    all_ops = await get_user_all_ops(uid)
+    i = 1
+    new_playing_ops = {}
+    for oid in playing_oid_list:
+        for op_no in all_ops:
+            if all_ops[op_no]["oid"] == oid:
+                new_playing_ops[i] = all_ops[op_no]
+                break
+        i += 1
+    await MDB.db_execute(f'Update ArkRail_User set operators_playing="{new_playing_ops}" Where uid="{uid}";')
+
 
 async def get_user_all_pool_num(uid: int or str) -> int:
     """返回用户所有池子的抽数"""
