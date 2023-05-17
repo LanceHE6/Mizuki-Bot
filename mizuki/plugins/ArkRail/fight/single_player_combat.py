@@ -53,6 +53,19 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await send_message_list(await pm.is_enemy_turn(), atk)
         await atk.finish()
 
+    @skill.handle()
+    async def _(args: Message = CommandArg()):
+        if pm.all_ops_list[0] not in pm.player_ops_list:
+            await skill.finish("现在还不是你的回合哦！")
+        enemy_num = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
+        skill_num = 0
+        if pm.all_ops_list[0].skills_list[skill_num].consume > pm.player_skill_count:
+            await skill.finish("您的技力点不足以释放这个技能！")
+        await skill.send(await pm.turn(pm.all_ops_list[0], skill_num + 1, pm.map_enemies_list[int(enemy_num) - 1]))
+        await send_status_message(pm, skill)
+        await send_message_list(await pm.is_enemy_turn(), skill)
+        await skill.finish()
+
 
 async def send_message_list(message: list[str], handle):
     """
