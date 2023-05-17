@@ -12,40 +12,60 @@ from ..skill import Skill
 class PlayingManager:
 
     def __init__(self, player_ops_list: list[Operator], map_enemies_list: list[Operator]):
-        self.player_ops_list = player_ops_list  # 玩家干员列表
-        self.map_enemies_list = map_enemies_list  # 敌方干员列表
-        self.all_ops_list = player_ops_list + map_enemies_list  # 所有干员列表，用于计算干员出手顺序
-        self.all_ops_list = quick_sort(self.all_ops_list)  # 根据速度做快速排序
-        list.reverse(self.all_ops_list)
+        self.player_ops_list: list[Operator] = player_ops_list  # 玩家干员列表
+        self.map_enemies_list: list[Operator] = map_enemies_list  # 敌方干员列表
+        # 所有干员列表，用于计算干员出手顺序，初始化时顺便做一下冒泡排序
+        self.all_ops_list: list[Operator] = bubble_sort(player_ops_list + map_enemies_list)
         self.player_skill_count = 20  # 我方初始技力点
         self.enemy_skill_count = 10  # 敌方初始技力点
 
-    async def round(self):
+    async def is_enemy_turn(self) -> list[str]:
         """
-        回合前的准备，大概吧
+        判断是否为敌人回合，如果是则敌人行动，直到玩家回合为止
+        :return 返回战斗消息
         """
-        move_op = self.all_ops_list[len(self.all_ops_list) - 1]  # 当前行动者
-        if move_op in self.player_ops_list:
-            pass
-        else:  # 如果未被嘲讽则随机选一个目标
-            while True:
-                obj: Operator = self.player_ops_list[random.randint(0, len(self.player_ops_list) - 1)] \
-                    if not move_op.mocked else move_op.mocking_obj
+        move_op = self.all_ops_list[0]  # 当前行动者
+        messages: list[str] = []
+        while move_op in self.map_enemies_list and not await self.is_round_over():
+            while True:  # 如果未被嘲讽则随机选一个目标
+                random_num: int = random.randint(0, len(self.player_ops_list) - 1)
+                obj: Operator = self.player_ops_list[random_num] if not move_op.mocked else move_op.mocking_obj
                 if not obj.hidden:  # 如果所有干员都处于隐匿状态就糟咯awa
                     break
 
-            if not len(move_op.skills_list) and random.randint(1, 100) <= 20 + (5 * move_op.stars) and \
+            if len(move_op.skills_list) and random.randint(1, 100) <= 20 + (5 * move_op.stars) and \
                     self.enemy_skill_count >= move_op.skills_list[0].consume:  # 条件达成则使用技能
 
                 for i in range(len(move_op.skills_list) - 1, -1, -1):
                     if self.enemy_skill_count >= move_op.skills_list[i].consume:
-                        await self.turn(move_op, i + 1, obj)
+                        messages.append(await self.turn(move_op, i + 1, obj))
                         break
 
             else:  # 否则进行普攻
-                await self.turn(move_op, 0, obj)
+                messages.append(await self.turn(move_op, 0, obj))
+            move_op = self.all_ops_list[0]
+        if await self.is_round_over():
+            messages.append("当前轮已结束，进入下一轮！")
+            for op in self.all_ops_list:
+                op.speed_p = op.speed
+            self.all_ops_list = bubble_sort(self.all_ops_list)  # 根据速度做冒泡排序
+        messages.append("玩家的回合！")
+        return messages
 
-    async def turn(self, sub: Operator, operate: int, obj1: Operator, obj2: Operator = None):
+    async def is_round_over(self):
+        """
+        判断当前轮是否结束
+
+        :return: 当前轮是否结束
+        """
+        is_round_over: bool = True
+        for op in self.all_ops_list:
+            if op.speed_p != 0:
+                is_round_over = False
+                break
+        return is_round_over
+
+    async def turn(self, sub: Operator, operate: int, obj1: Operator, obj2: Operator = None) -> str:
         """
         干员的一个回合
 
@@ -54,21 +74,23 @@ class PlayingManager:
         :param obj1: 目标对象1
         :param obj2: 目标对象2(可选)
         """
+        message = ""  # 返回的消息
         if sub in self.player_ops_list:  # 我方干员回合
             if operate == 0:
-                await self.attack(sub, obj1)
+                message = await self.attack(sub, obj1)
                 self.player_skill_count += 5  # 普攻回复5技力点
             elif operate in [1, 2, 3]:
-                await self.use_skill(sub, operate - 1, obj1, obj2)
+                message = await self.use_skill(sub, operate - 1, obj1, obj2)
                 self.player_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
         else:  # 敌方干员回合
             if operate == 0:
-                await self.attack(sub, obj1)
+                message = await self.attack(sub, obj1)
                 self.enemy_skill_count += 10  # 普攻回复10技力点
             elif operate in [1, 2, 3]:
-                await self.use_skill(sub, operate - 1, obj1, obj2)
+                message = await self.use_skill(sub, operate - 1, obj1, obj2)
                 self.enemy_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
-        quick_sort(self.all_ops_list, 0, len(self.all_ops_list) - 1)
+        self.all_ops_list = bubble_sort(self.all_ops_list)
+        return message
 
     async def attack(self, sub: Operator, obj: Operator) -> str:
         """
@@ -82,10 +104,10 @@ class PlayingManager:
         is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
         is_crit_str: str = "暴击并" if is_crit else ""
         if sub.atk_type_p == 0:  # 单体物理
-            damage = (sub.atk_p - obj.defence_p) \
+            damage: int = (sub.atk_p - obj.defence_p) \
                 if (sub.atk_p - obj.defence_p > sub.atk_p * 0.05) \
                 else (sub.atk_p * 0.05)  # 5%攻击力的保底伤害
-            damage += damage * is_crit * (1.0 + sub.crit_d_p)
+            damage += damage * is_crit * sub.crit_d_p
             message = f"{sub.name}对{obj.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点物理伤害！"  # 返回的字符串
             if sub.profession == "重装-中坚" and random.randint(1, 100) < 50:  # 中坚重装普攻有概率嘲讽敌方单位
                 message += f"\n{sub.name}嘲讽了{obj.name}！"
@@ -101,8 +123,8 @@ class PlayingManager:
                         self.player_ops_list.remove(obj)
                     self.all_ops_list.remove(obj)
         elif sub.atk_type_p == 1:  # 单体法术
-            damage = (sub.atk_p * ((100 - obj.res_p) / 100))  # 法抗90封顶
-            damage += damage * is_crit * (1.0 + sub.crit_d_p)
+            damage: int = int(sub.atk_p * ((100 - obj.res_p) / 100))  # 法抗90封顶
+            damage += damage * is_crit * sub.crit_d_p
             message = f"{sub.name}对{obj.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点法术伤害！"  # 返回的字符串
 
             if not obj.invincible:
@@ -121,10 +143,10 @@ class PlayingManager:
             die_objs: str = ""  # 被击倒的目标名字
             for op in obj.next_operators:
                 objs_name += f" {op.name}"
-                damage = (sub.atk_p - op.defence_p) \
+                damage: int = (sub.atk_p - op.defence_p) \
                     if (sub.atk_p - op.defence_p > sub.atk_p * 0.05) \
                     else (sub.atk_p * 0.05)
-                damage += damage * is_crit * (1.0 + sub.crit_d_p)
+                damage += damage * is_crit * sub.crit_d_p
                 objs_damage += f" {damage}"
                 if not op.invincible:
                     op.health -= damage
@@ -143,8 +165,8 @@ class PlayingManager:
             die_objs: str = ""  # 被击倒的目标名字
             for op in obj.next_operators:
                 objs_name += f" {op.name}"
-                damage = (sub.atk_p * ((100 - op.res_p) / 100))
-                damage += damage * is_crit * (1.0 + sub.crit_d_p)
+                damage: int = int(sub.atk_p * ((100 - op.res_p) / 100))
+                damage += damage * is_crit * sub.crit_d_p
                 objs_damage += f" {damage}"
                 if not op.invincible:
                     op.health -= damage
@@ -178,8 +200,8 @@ class PlayingManager:
                 objs_health += f"{health_amount} "
             message += f"{objs_name}，分别恢复他们{objs_health} 的生命值！"
         elif sub.atk_type_p == 6:  # 单体真实
-            damage = sub.atk_p
-            damage += damage * is_crit * (1.0 + sub.crit_d_p)
+            damage: int = sub.atk_p
+            damage += damage * is_crit * sub.crit_d_p
             message = f"{sub.name}对{obj.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点真实伤害！"  # 返回的字符串
             if not obj.invincible:
                 obj.health -= damage
@@ -272,12 +294,11 @@ async def new_instance(uid: str or int, mid: str) -> PlayingManager:
     return PlayingManager(player_ops_list, map_enemies_list)
 
 
-# 快速排序函数
-def quick_sort(arr: list[Operator]):
-    if len(arr) <= 1:
-        return arr
-    else:
-        pivot = arr[0]
-        left = [x for x in arr[1:] if x.speed < pivot.speed]
-        right = [x for x in arr[1:] if x.speed >= pivot.speed]
-        return quick_sort(left) + [pivot] + quick_sort(right)
+# 冒泡排序函数
+def bubble_sort(arr: list[Operator]):
+    n = len(arr)
+    for i in range(n):
+        for j in range(n-i-1):
+            if arr[j].speed_p < arr[j+1].speed_p:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    return arr
