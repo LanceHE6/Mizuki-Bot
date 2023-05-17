@@ -299,6 +299,13 @@ async def change_user_op_level(uid: int or str, oid :int, target_level: int):
     for op_no in user_ops_list:
         if user_ops_list[op_no]["oid"] == oid:
             user_ops_list[op_no]["level"] = target_level
+    #判断该干员是否为出战干员
+    user_playing_ops_list = await get_user_playing_ops(uid)
+    for op_no in user_playing_ops_list:
+        if user_playing_ops_list[op_no]["oid"] == oid:
+            user_playing_ops_list[op_no]["level"] = target_level
+            #同步更新出战干员的等级
+            await MDB.db_execute(f'Update ArkRail_User set operators_playing="{user_playing_ops_list}" Where uid="{uid}";')
     await MDB.db_execute(f'Update ArkRail_User set operators_all="{user_ops_list}" Where uid="{uid}";')
 
 async def get_user_all_pool_num(uid: int or str) -> int:
