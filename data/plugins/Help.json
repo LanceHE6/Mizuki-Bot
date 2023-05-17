@@ -1,1 +1,1 @@
-{"plugin_name": "Help", "name": "\u6307\u4ee4\u83dc\u5355", "description": "\u67e5\u770b\u6307\u4ee4\u83dc\u5355", "usage": "help \u2014\u2014\u67e5\u770b\u6307\u4ee4\u83dc\u5355", "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 2}}
+{"plugin_name": "Help", "name": "指令菜单", "description": "查看指令菜单", "usage": "help ——查看指令菜单", "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 2}}

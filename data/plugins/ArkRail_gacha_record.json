@@ -1,1 +1,1 @@
-{"plugin_name": "ArkRail_gacha_record", "name": "\u62bd\u5361\u8bb0\u5f55\u5206\u6790", "description": "\u67e5\u770b\u65b9\u821f\u94c1\u9053\u7684\u62bd\u5361\u5206\u6790", "usage": "\u62bd\u5361\u8bb0\u5f55 \u2014\u2014\u67e5\u770b\u65b9\u821f\u94c1\u9053\u7684\u62bd\u5361\u5206\u6790", "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 3}}
+{"plugin_name": "ArkRail_gacha_record", "name": "抽卡记录分析", "description": "查看方舟铁道的抽卡分析", "usage": "抽卡记录 ——查看方舟铁道的抽卡分析", "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 3}}

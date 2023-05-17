@@ -1,1 +1,1 @@
-{"plugin_name": "ArkRail_gacha_pool_info", "name": "\u5361\u6c60\u4fe1\u606f", "description": "\u67e5\u770b\u5f53\u524d\u5361\u6c60\u5185\u5bb9", "usage": "\u5361\u6c60\u4fe1\u606f \u2014\u2014\u67e5\u770b\u5f53\u524d\u5361\u6c60\u5185\u5bb9", "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 3}}
+{"plugin_name": "ArkRail_gacha_pool_info", "name": "卡池信息", "description": "查看当前卡池内容", "usage": "卡池信息 ——查看当前卡池内容", "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 3}}

@@ -1,1 +1,1 @@
-{"plugin_name": "ArkRail_gacha_pool_config", "name": "\u5361\u6c60\u914d\u7f6e", "description": "\u4fee\u6539\u6c60\u5b50up\u5e72\u5458", "usage": ["\u66f4\u65396\u661fup", "\u66f4\u65395\u661fup"], "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 3, "permission": "SUPERUSER"}}
+{"plugin_name": "ArkRail_gacha_pool_config", "name": "卡池配置", "description": "修改池子up干员", "usage": ["更改6星up", "更改5星up"], "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 3, "permission": "SUPERUSER"}}

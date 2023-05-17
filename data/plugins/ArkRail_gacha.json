@@ -1,1 +1,1 @@
-{"plugin_name": "ArkRail_gacha", "name": "\u62bd\u5361", "description": "\u65b9\u821f\u94c1\u9053\u62bd\u5361", "usage": ["\u62bd\u5361", "\u5341\u8fde"], "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 3}}
+{"plugin_name": "ArkRail_gacha", "name": "抽卡", "description": "方舟铁道抽卡", "usage": ["抽卡", "十连"], "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 3}}

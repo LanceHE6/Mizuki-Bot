@@ -89,6 +89,8 @@ class PlayingManager:
             elif operate in [1, 2, 3]:
                 message = await self.use_skill(sub, operate - 1, obj1, obj2)
                 self.enemy_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
+        await sub.finish_turn()
+        sub.speed_p = 0
         self.all_ops_list = bubble_sort(self.all_ops_list)
         return message
 
@@ -215,7 +217,6 @@ class PlayingManager:
         elif sub.atk_type_p == 7:  # 不攻击
             message = f"{sub.name}无动于衷..."
             pass
-        sub.speed_p = 0
         return message
 
     async def use_skill(self, sub: Operator, skill_num: int, obj1: Operator, obj2: Operator = None) -> str:
@@ -248,11 +249,11 @@ class PlayingManager:
                         self.player_skill_count += skill.rate1
                         message += f"\n回复了{skill.rate1}技力点！"
                     elif skill.sid == 2:
-                        sub.atk_p = skill.rate1
+                        sub.atk_type_p = skill.rate1
                         sub.atk_add_f += skill.rate2
-                        message += f""
+                        message += f"\n攻击类型变为法术并提高{round(skill.rate2 * 100, 1)}%攻击力！"
                     elif skill.sid == 3:
-                        message += f"恢复{round(skill.rate1 * 100, 1)}%最大生命值"
+                        message += f"\n恢复{round(skill.rate1 * 100, 1)}%最大生命值！"
                         sub.health += sub.max_health_p * skill.rate1
                         if sub.health > sub.max_health_p:
                             sub.health = sub.max_health_p
@@ -268,7 +269,7 @@ class PlayingManager:
                                 sub.atk_p * rate * 0.05
                         obj1.health -= damage
                         enemies_obj.append(obj1)
-                        message += f"对{obj1.name}造成了{damage}点{atk_type_str}伤害！"
+                        message += f"\n对{obj1.name}造成了{damage}点{atk_type_str}伤害！"
                 else:  # 26~50
                     pass
             else:
@@ -278,7 +279,7 @@ class PlayingManager:
                     pass
         skill.count = skill.persistence
         for op in enemies_obj:
-            if op.is_die():
+            if await op.is_die():
                 message += f"\n{op.name}被击倒了！"
                 if op in self.map_enemies_list:
                     self.map_enemies_list.remove(op)
