@@ -13,13 +13,13 @@ from ...Utils.PluginInfo import PluginInfo
 from ..DB import get_oid_by_name, is_op_owned, change_user_playing_ops, get_op_attribute, OPAttribute
 from .utils import str_to_list
 
-change_comm = on_command("修改出战干员", aliases={"更改出战干员", "出战干员"}, block=True, priority=3)
+change_comm = on_command("修改出战干员", aliases={"更改出战干员", "编队"}, block=True, priority=3)
 
 __plugin_info__ = PluginInfo(
     plugin_name="ArkRail_change_playing_op",
     name="出战干员更改",
     description="根据用户发送的干员名字顺序修改出战干员",
-    usage="出战干员 ——修改出战干员",
+    usage="编队 ——修改出战干员",
     extra={
         "author": "Hycer_Lance",
         "version": "0.1.0",

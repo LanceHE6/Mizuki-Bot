@@ -20,8 +20,8 @@ attribute_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_inf
 stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'stars'
 profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profession'
 
-op_info = on_command("op", aliases={"我的干员", "干员", "info"}, block=True, priority=2)
-op_info_all = on_command("op all", aliases={"所有角色", "所有干员", "info all"}, block=True, priority=2)
+op_info = on_command("出战", aliases={"出战干员"}, block=True, priority=2)
+op_info_all = on_command("ops", aliases={"所有角色", "所有干员", "info all", "我的干员", "干员"}, block=True, priority=2)
 op_detail = on_command("detail", aliases={"d", "干员信息", "干员详情"}, block=True, priority=2)
 map_info = on_command("level", aliases={"关卡", "关卡信息", "map"}, block=True, priority=2)
 
@@ -29,7 +29,7 @@ __plugin_info__ = [PluginInfo(
     plugin_name="ArkRail_show_op_info",
     name="出战干员信息展示",
     description="查看出战干员",
-    usage="op ——查看出战干员",
+    usage="出战干员 ——查看出战干员",
     extra={
         "author": "Silence",
         "version": "0.1.0",
@@ -40,7 +40,7 @@ __plugin_info__ = [PluginInfo(
         plugin_name="ArkRail_show_all_op_info",
         name="所有干员信息展示",
         description="查看自身拥有的所有干员",
-        usage="op all ——查看自身拥有的所有干员",
+        usage="ops ——查看自身拥有的所有干员",
         extra={
             "author": "Silence",
             "version": "0.1.0",
