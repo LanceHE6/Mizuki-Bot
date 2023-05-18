@@ -246,7 +246,7 @@ class PlayingManager:
             if sid <= 50:  # 1~50
                 if sid <= 25:  # 1~25
                     if sid == 1:
-                        self.player_skill_count += skill.rate1
+                        self.player_skill_count += int(skill.rate1)
                         message += f"\n回复了{int(skill.rate1)}技力点！"
                     elif sid == 2:
                         skill.count += 1
@@ -360,8 +360,9 @@ class PlayingManager:
                 sub.def_add_f -= f_s.rate1
             elif sid == 9:
                 sub.atk_add_f -= f_s.rate2
-        sub.speed_p = 0
         await sub.finish_turn()
+        sub.speed_p = 0
+
 
 async def new_instance(uid: str or int, mid: str) -> PlayingManager:
     player_ops_list: list[Operator] = await get_operator_list(uid)
@@ -373,7 +374,7 @@ async def new_instance(uid: str or int, mid: str) -> PlayingManager:
 def bubble_sort(arr: list[Operator]):
     n = len(arr)
     for i in range(n):
-        for j in range(n-i-1):
-            if arr[j].speed_p < arr[j+1].speed_p:
-                arr[j], arr[j+1] = arr[j+1], arr[j]
+        for j in range(n - i - 1):
+            if arr[j].speed_p < arr[j + 1].speed_p:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
     return arr
