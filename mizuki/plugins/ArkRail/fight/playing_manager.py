@@ -89,8 +89,7 @@ class PlayingManager:
             elif operate in [1, 2, 3]:
                 message = await self.use_skill(sub, operate - 1, obj1, obj2)
                 self.enemy_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
-        await sub.finish_turn()
-        sub.speed_p = 0
+        await self.finish_turn(sub)
         self.all_ops_list = bubble_sort(self.all_ops_list)
         return message
 
@@ -233,8 +232,9 @@ class PlayingManager:
         objs_name: str = ""
         objs_damage: str = ""
         message: str = f"{sub.name}使用了{skill.name}！"  # 返回的信息
-        if skill.sid < 0:  # 小于0的为敌人技能
-            if skill.sid == -1:
+        sid = skill.sid  # 技能id
+        if sid < 0:  # 小于0的为敌人技能
+            if sid == -1:
                 for op in obj1.next_operators:
                     damage = sub.atk_p * skill.rate1 * (1 - op.res_p)
                     op.health -= damage
@@ -243,41 +243,86 @@ class PlayingManager:
                     objs_damage += f" {damage}"
                 message += f"\n对{objs_name}\n分别造成了{objs_damage} 点法术伤害！"
         else:
-            if skill.sid <= 50:  # 1~50
-                if skill.sid <= 25:  # 1~25
-                    if skill.sid == 1:
+            if sid <= 50:  # 1~50
+                if sid <= 25:  # 1~25
+                    if sid == 1:
                         self.player_skill_count += skill.rate1
-                        message += f"\n回复了{skill.rate1}技力点！"
-                    elif skill.sid == 2:
+                        message += f"\n回复了{int(skill.rate1)}技力点！"
+                    elif sid == 2:
+                        skill.count += 1
                         sub.atk_type_p = skill.rate1
                         sub.atk_add_f += skill.rate2
-                        message += f"\n攻击类型变为法术并提高{round(skill.rate2 * 100, 1)}%攻击力！"
-                    elif skill.sid == 3:
+                        message += f"\n攻击力提高{round(skill.rate2 * 100, 1)}%并变为法术伤害！"
+                    elif sid == 3:
                         message += f"\n恢复{round(skill.rate1 * 100, 1)}%最大生命值！"
                         sub.health += sub.max_health_p * skill.rate1
                         if sub.health > sub.max_health_p:
                             sub.health = sub.max_health_p
-                    elif skill.sid == 4:
+                    elif sid == 4:
                         rate = random.uniform(skill.rate1, skill.rate2)
                         if sub.atk_type_p == 1:
                             atk_type_str = "法术"
-                            damage = sub.atk_p * rate * (1 - obj1.res_p)
+                            damage = int(sub.atk_p * rate * (1 - obj1.res_p))
                         else:
                             atk_type_str = "物理"
-                            damage = sub.atk_p * rate - obj1.defence_p if \
+                            damage = int(sub.atk_p * rate - obj1.defence_p) if \
                                 sub.atk_p * rate - obj1.defence_p > sub.atk_p * rate * 0.05 else \
-                                sub.atk_p * rate * 0.05
+                                int(sub.atk_p * rate * 0.05)
                         obj1.health -= damage
                         enemies_obj.append(obj1)
                         message += f"\n对{obj1.name}造成了{damage}点{atk_type_str}伤害！"
+                    elif sid == 5:
+                        skill.count += 1
+                        sub.atk_add_f += skill.rate1
+                        message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%！"
+                    elif sid == 6:
+                        skill.count += 1
+                        sub.def_add_f += skill.rate1
+                        message += f"\n防御力提高{round(skill.rate1 * 100, 1)}%！"
+                    elif sid == 7:
+                        damage_str: str = ""
+                        for i in range(int(skill.rate1)):
+                            rate = random.uniform(skill.rate2, skill.rate3)
+
+                            damage = int(sub.atk_p * rate - obj1.defence_p) if \
+                                sub.atk_p * rate - obj1.defence_p > sub.atk_p * rate * 0.05 else \
+                                int(sub.atk_p * rate * 0.05)
+                            obj1.health -= damage
+                            damage_str += f"{damage}+"
+                        damage_str = damage_str.rstrip("+")  # 去掉末尾的+号
+                        enemies_obj.append(obj1)
+                        message += f"\n对{obj1.name}造成了{damage_str}点物理伤害！"
+                    elif sid == 8:
+                        treat = int(sub.atk_p * skill.rate1)
+                        obj1.health += treat
+                        obj2.health += treat
+                        if obj1.health > obj1.max_health_p:
+                            obj1.health = obj1.max_health_p
+                        if obj2.health > obj2.max_health_p:
+                            obj2.health = obj2.max_health_p
+                        message += f"\n分别为{obj1.name}和{obj2.name}恢复了{treat}点生命值！"
+                    elif sid == 9:
+                        skill.count += 1
+                        sub.atk_add_f += skill.rate2
+                        message += f"\n每回合回复{int(skill.rate1)}技力点，攻击力提高{round(skill.rate2 * 100, 1)}%！"
+                    elif sid == 10:
+                        skill.count += 1
+                        sub.crit_r_add_d += skill.rate1
+                        sub.crit_d_add_d += skill.rate2
+                        message += f"\n暴击率增加{round(skill.rate1 * 100, 1)}%，暴击伤害增加{round(skill.rate2 * 100, 1)}%！\n"
+                        await sub.upgrade_effect()
+                        message += await self.attack(sub, obj1)
+                        enemies_obj.append(obj1)
                 else:  # 26~50
                     pass
             else:
-                if skill.sid <= 75:  # 51~75
+                if sid <= 75:  # 51~75
                     pass
                 else:  # 76~100
                     pass
+
         skill.count = skill.persistence
+
         for op in enemies_obj:
             if await op.is_die():
                 message += f"\n{op.name}被击倒了！"
@@ -288,6 +333,35 @@ class PlayingManager:
                 self.all_ops_list.remove(op)
         return message
 
+    async def finish_turn(self, sub: Operator):
+        """
+
+
+        :param sub: 结束回合的对象
+        """
+        finish_skill: list[Skill] = []
+        for skill in sub.skills_list:
+            if skill.count > 1:
+                skill.count -= 1
+                if skill.count == 0:
+                    finish_skill.append(skill)
+                sid = skill.sid
+                if sid == 9:
+                    self.player_skill_count += int(skill.rate1)
+
+        for f_s in finish_skill:
+            sid = f_s.sid
+            if sid == 2:
+                sub.atk_type_p = sub.atk_type
+                sub.atk_add_f -= f_s.rate2
+            elif sid == 5:
+                sub.atk_add_f -= f_s.rate1
+            elif sid == 6:
+                sub.def_add_f -= f_s.rate1
+            elif sid == 9:
+                sub.atk_add_f -= f_s.rate2
+        sub.speed_p = 0
+        await sub.finish_turn()
 
 async def new_instance(uid: str or int, mid: str) -> PlayingManager:
     player_ops_list: list[Operator] = await get_operator_list(uid)
