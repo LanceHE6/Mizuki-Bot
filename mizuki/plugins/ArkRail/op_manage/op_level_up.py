@@ -31,6 +31,8 @@ __plugin_info__ = PluginInfo(
 @op_level_up.handle()
 async def _(event: GroupMessageEvent, state: T_State, args: Message = CommandArg()):
     name = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
+    if name == '':
+        await op_level_up.finish("请在指令后跟干员名称", at_sender = True)
     uid = event.get_user_id()
     oid = await get_oid_by_name(name)
     op_name = await get_op_attribute(oid, OPAttribute.name)
