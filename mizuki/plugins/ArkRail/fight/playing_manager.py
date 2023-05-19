@@ -65,7 +65,7 @@ class PlayingManager:
                 break
         return is_round_over
 
-    async def turn(self, sub: Operator, operate: int, obj1: Operator, obj2: Operator = None) -> str:
+    async def turn(self, sub: Operator, operate: int, obj1: Operator = None, obj2: Operator = None) -> str:
         """
         干员的一个回合
 
@@ -89,7 +89,7 @@ class PlayingManager:
             elif operate in [1, 2, 3]:
                 message = await self.use_skill(sub, operate - 1, obj1, obj2)
                 self.enemy_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
-        await self.finish_turn(sub)
+        message += await self.finish_turn(sub)
         self.all_ops_list = bubble_sort(self.all_ops_list)
         return message
 
@@ -333,12 +333,14 @@ class PlayingManager:
                 self.all_ops_list.remove(op)
         return message
 
-    async def finish_turn(self, sub: Operator):
+    async def finish_turn(self, sub: Operator) -> str:
         """
-
+        干员回合结束时调用的函数
 
         :param sub: 结束回合的对象
+        :return: 回合结束信息
         """
+        message: str = ""  # 返回的信息
         finish_skill: list[Skill] = []
         for skill in sub.skills_list:
             if skill.count > 1:
@@ -348,6 +350,7 @@ class PlayingManager:
                 sid = skill.sid
                 if sid == 9:
                     self.player_skill_count += int(skill.rate1)
+                    message += f"{skill.name}生效！回复{int(skill.rate1)}点技力点"
 
         for f_s in finish_skill:
             sid = f_s.sid
@@ -361,7 +364,8 @@ class PlayingManager:
             elif sid == 9:
                 sub.atk_add_f -= f_s.rate2
         await sub.finish_turn()
-        sub.speed_p = 0
+        sub.speed_p = 0  # 速度设为0
+        return message
 
 
 async def new_instance(uid: str or int, mid: str) -> PlayingManager:
