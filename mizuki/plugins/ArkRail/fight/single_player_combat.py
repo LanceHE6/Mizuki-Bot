@@ -55,7 +55,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
             await operate_atk.finish("参数错误！\n/atk <目标序号>\ntip:不普攻的干员可以不选目标")
         else:
             obj_num = int(str(atk_args))
-            if op.atk_type_p == 0 or 1 or 2 or 3 or 6:
+            if op.atk_type_p in [0, 1, 2, 3, 6]:
                 if 0 < obj_num <= len(pm.map_enemies_list):
                     await operate_atk.send(await pm.turn(pm.all_ops_list[0], 0, pm.map_enemies_list[obj_num - 1]))
                 else:
@@ -77,7 +77,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         parm_list: list[int] = []
         for n in parm_str_list:
             if n.isdigit():
-                parm_list.append(int(n))
+                parm_list.append(int(n) - 1)
             else:
                 await operate_run.finish("参数错误！\n/skill <技能序号> [目标序号1] [目标序号2/友方序号]")
         skill_num = parm_list[0] - 1  # 技能序号
@@ -92,28 +92,29 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         if skill.consume > pm.player_skill_count:
             await operate_skill.finish("您的技力点不足以释放这个技能！")
 
-        if skill.obj_type == 1 or 4:
-            if len(parm_list) >= 2 and 0 < parm_list[1] <= len(pm.map_enemies_list):
+        await operate_skill.send(str(skill.obj_type))
+        if skill.obj_type in [1, 4]:
+            if len(parm_list) >= 2 and 0 <= parm_list[1] < len(pm.map_enemies_list):
                 obj1 = pm.map_enemies_list[parm_list[1]] if skill.obj_type == 1 else pm.player_ops_list[parm_list[1]]
                 await operate_skill.send(await pm.turn(op, skill_num + 1, obj1))
             else:
-                await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> [目标序号]")
-        elif skill.obj_type == 2 or 5:
-            if len(parm_list) >= 3 and 0 < parm_list[1] <= len(pm.map_enemies_list) and \
-                    0 < parm_list[2] <= len(pm.map_enemies_list) and parm_list[1] != parm_list[2]:
+                await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号>")
+        elif skill.obj_type in [2, 5]:
+            if len(parm_list) >= 3 and 0 <= parm_list[1] < len(pm.map_enemies_list) and \
+                    0 <= parm_list[2] < len(pm.map_enemies_list) and parm_list[1] != parm_list[2]:
                 obj1 = pm.map_enemies_list[parm_list[1]] if skill.obj_type == 2 else pm.player_ops_list[parm_list[1]]
                 obj2 = pm.map_enemies_list[parm_list[2]] if skill.obj_type == 2 else pm.player_ops_list[parm_list[2]]
                 await operate_skill.send(await pm.turn(op, skill_num + 1, obj1, obj2))
             else:
-                await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> [目标序号1] [目标序号2]")
+                await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号1> <目标序号2>")
         elif skill.obj_type == 7:
-            if len(parm_list) >= 3 and 0 < parm_list[1] <= len(pm.map_enemies_list) and \
-                    0 < parm_list[2] <= len(pm.player_ops_list):
+            if len(parm_list) >= 3 and 0 <= parm_list[1] < len(pm.map_enemies_list) and \
+                    0 <= parm_list[2] < len(pm.player_ops_list):
                 obj1 = pm.map_enemies_list[parm_list[1]]
                 obj2 = pm.player_ops_list[parm_list[2]]
                 await operate_skill.send(await pm.turn(op, skill_num + 1, obj1, obj2))
             else:
-                await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> [目标序号] [友方序号]")
+                await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号> <友方序号>")
         else:
             await operate_skill.send(await pm.turn(op, skill_num + 1))
         await send_status_message(pm, operate_skill)
