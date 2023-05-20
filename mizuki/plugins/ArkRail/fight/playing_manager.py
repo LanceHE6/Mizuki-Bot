@@ -19,13 +19,15 @@ class PlayingManager:
         self.player_skill_count = 20  # 我方初始技力点
         self.enemy_skill_count = 10  # 敌方初始技力点
 
-    async def is_enemy_turn(self) -> list[str]:
+    async def is_enemy_turn(self, play) -> list[str]:
         """
         判断是否为敌人回合，如果是则敌人行动，直到玩家回合为止
+        :param play:用于发送信息并进行战斗结算
         :return 返回战斗消息
         """
         move_op = self.all_ops_list[0]  # 当前行动者
-        messages: list[str] = []
+        messages: list[str] = []  # 返回的战斗信息
+        result_message: list[str] = []  # 结果信息，用于判断战斗是否结束
         while move_op in self.map_enemies_list and not await self.is_round_over():
             while True:  # 如果未被嘲讽则随机选一个目标
                 random_num: int = random.randint(0, len(self.player_ops_list) - 1)
@@ -38,17 +40,23 @@ class PlayingManager:
 
                 for i in range(len(move_op.skills_list) - 1, -1, -1):
                     if self.enemy_skill_count >= move_op.skills_list[i].consume:
-                        messages.append(await self.turn(move_op, i + 1, obj))
+                        result_message = await self.turn(move_op, i + 1, obj)
+                        messages.append(result_message[0])
                         break
 
             else:  # 否则进行普攻
-                messages.append(await self.turn(move_op, 0, obj))
+                result_message = await self.turn(move_op, 0, obj)
+                messages.append(result_message[0])
+            if result_message[len(result_message) - 1] in ["作战失败", "作战成功"]:
+                messages.append(result_message[len(result_message) - 1])
+                return messages
             move_op = self.all_ops_list[0]
         if await self.is_round_over():
             messages.append("当前轮已结束，进入下一轮！")
             for op in self.all_ops_list:
                 op.speed_p = op.speed
             self.all_ops_list = bubble_sort(self.all_ops_list)  # 根据速度做冒泡排序
+
         messages.append("玩家的回合！")
         return messages
 
@@ -65,7 +73,7 @@ class PlayingManager:
                 break
         return is_round_over
 
-    async def turn(self, sub: Operator, operate: int, obj1: Operator = None, obj2: Operator = None) -> str:
+    async def turn(self, sub: Operator, operate: int, obj1: Operator = None, obj2: Operator = None) -> list[str]:
         """
         干员的一个回合
 
@@ -74,24 +82,28 @@ class PlayingManager:
         :param obj1: 目标对象1
         :param obj2: 目标对象2(可选)
         """
-        message = ""  # 返回的消息
+        messages = []  # 返回的消息
         if sub in self.player_ops_list:  # 我方干员回合
             if operate == 0:
-                message = await self.attack(sub, obj1)
+                messages.append(await self.attack(sub, obj1))
                 self.player_skill_count += 5  # 普攻回复5技力点
             elif operate in [1, 2, 3]:
-                message = await self.use_skill(sub, operate - 1, obj1, obj2)
+                messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
                 self.player_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
         else:  # 敌方干员回合
             if operate == 0:
-                message = await self.attack(sub, obj1)
+                messages.append(await self.attack(sub, obj1))
                 self.enemy_skill_count += 10  # 普攻回复10技力点
             elif operate in [1, 2, 3]:
-                message = await self.use_skill(sub, operate - 1, obj1, obj2)
+                messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
                 self.enemy_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
-        message += await self.finish_turn(sub)
+        messages[0] += await self.finish_turn(sub)
+        if not len(self.map_enemies_list):
+            messages.append("作战成功")
+        elif not len(self.player_ops_list):
+            messages.append("作战失败")
         self.all_ops_list = bubble_sort(self.all_ops_list)
-        return message
+        return messages
 
     async def attack(self, sub: Operator, obj: Operator) -> str:
         """

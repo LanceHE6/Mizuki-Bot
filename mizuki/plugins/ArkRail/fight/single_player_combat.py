@@ -39,7 +39,7 @@ __plugin_info__ = [
         plugin_name="ArkRail_play_skill",
         name="使用技能",
         description="使用干员的技能",
-        usage="skill <技能序号> [目标序号1] [目标序号2/友方序号] ——(作战中)使用技能",
+        usage="skill <技能序号> [目标序号1] [目标序号2] ——(作战中)使用技能",
         extra={
             "author": "Silence",
             "version": "0.1.0",
@@ -62,6 +62,24 @@ __plugin_info__ = [
 
 @play.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
+    async def send_message_and_is_over(message: list[str], handle):
+        """
+        发送消息并判断战斗时候结束所使用的的函数
+
+        :param message: 要发送的信息列表
+        :param handle: 用于发送消息
+        """
+        is_over: bool = False
+        if len(message) > 1 and message[len(message) - 1] in ["作战失败", "作战成功"]:
+            if message[len(message) - 1] == "作战成功":
+                pass  # 获取奖励
+            del pm  # 删除战斗信息
+            is_over = True
+        for s in message:
+            await handle.send(s)
+        if is_over:
+            await play.finish()
+
     uid = int(event.get_user_id())
     mid = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
 
@@ -76,7 +94,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     operate_skill = on_command("skill", aliases={"技能", "使用技能"}, block=True, priority=1)
     operate_run = on_command("run", aliases={"逃跑", "润", "溜了"}, block=True, priority=1)
 
-    await send_message_list(await pm.is_enemy_turn(), play)
+    await send_message_and_is_over(await pm.is_enemy_turn(play), play)
 
     @operate_atk.handle()
     async def _(atk_args: Message = CommandArg()):
@@ -84,23 +102,23 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
             await operate_atk.finish("现在还不是你的回合哦！")
         op = pm.all_ops_list[0]  # 行动干员
         if op.atk_type_p == 7:
-            await operate_atk.send(await pm.turn(op, 0))
+            await send_message_and_is_over(await pm.turn(op, 0), operate_atk)
         elif not str(atk_args).isdigit():
             await operate_atk.finish("参数错误！\n/atk <目标序号>\ntip:不普攻的干员可以不选目标")
         else:
             obj_num = int(str(atk_args))
             if op.atk_type_p in [0, 1, 2, 3, 6]:
                 if 0 < obj_num <= len(pm.map_enemies_list):
-                    await operate_atk.send(await pm.turn(pm.all_ops_list[0], 0, pm.map_enemies_list[obj_num - 1]))
+                    await send_message_and_is_over(await pm.turn(op, 0, pm.map_enemies_list[obj_num - 1]), operate_atk)
                 else:
                     await operate_atk.finish("目标序号错误！\n/atk <敌人序号>")
             else:
                 if 0 < obj_num <= len(pm.player_ops_list):
-                    await operate_atk.send(await pm.turn(pm.all_ops_list[0], 0, pm.player_ops_list[obj_num - 1]))
+                    await send_message_and_is_over(await pm.turn(op, 0, pm.player_ops_list[obj_num - 1]), operate_atk)
                 else:
                     await operate_atk.finish("目标序号错误！\n/atk <友方序号>")
         await send_status_message(pm, operate_atk)
-        await send_message_list(await pm.is_enemy_turn(), operate_atk)
+        await send_message_and_is_over(await pm.is_enemy_turn(play), operate_atk)
         await operate_atk.finish()
 
     @operate_skill.handle()
@@ -130,7 +148,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         if skill.obj_type in [1, 4]:
             if len(parm_list) >= 2 and 0 <= parm_list[1] < len(pm.map_enemies_list):
                 obj1 = pm.map_enemies_list[parm_list[1]] if skill.obj_type == 1 else pm.player_ops_list[parm_list[1]]
-                await operate_skill.send(await pm.turn(op, skill_num + 1, obj1))
+                await send_message_and_is_over(await pm.turn(op, skill_num + 1, obj1), operate_skill)
             else:
                 await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号>")
         elif skill.obj_type in [2, 5]:
@@ -138,7 +156,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                     0 <= parm_list[2] < len(pm.map_enemies_list) and parm_list[1] != parm_list[2]:
                 obj1 = pm.map_enemies_list[parm_list[1]] if skill.obj_type == 2 else pm.player_ops_list[parm_list[1]]
                 obj2 = pm.map_enemies_list[parm_list[2]] if skill.obj_type == 2 else pm.player_ops_list[parm_list[2]]
-                await operate_skill.send(await pm.turn(op, skill_num + 1, obj1, obj2))
+                await send_message_and_is_over(await pm.turn(op, skill_num + 1, obj1, obj2), operate_skill)
             else:
                 await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号1> <目标序号2>")
         elif skill.obj_type == 7:
@@ -146,32 +164,21 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                     0 <= parm_list[2] < len(pm.player_ops_list):
                 obj1 = pm.map_enemies_list[parm_list[1]]
                 obj2 = pm.player_ops_list[parm_list[2]]
-                await operate_skill.send(await pm.turn(op, skill_num + 1, obj1, obj2))
+                await send_message_and_is_over(await pm.turn(op, skill_num + 1, obj1, obj2), operate_skill)
             else:
                 await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号> <友方序号>")
         else:
-            await operate_skill.send(await pm.turn(op, skill_num + 1))
+            await send_message_and_is_over(await pm.turn(op, skill_num + 1), operate_skill)
         await send_status_message(pm, operate_skill)
-        await send_message_list(await pm.is_enemy_turn(), operate_skill)
+        await send_message_and_is_over(await pm.is_enemy_turn(play), operate_skill)
         await operate_skill.finish()
 
     @operate_run.handle()
     async def _():
         await operate_run.send(f"{uid}逃跑了！")
+        del pm
         await play.finish()
         await operate_run.finish()
-
-async def send_message_list(message: list[str], handle):
-    """
-    发送消息所使用的的函数
-
-    :param message: 要发送的信息列表
-    :param handle: 用于发送消息
-    """
-    if not len(message):
-        return
-    for s in message:
-        await handle.send(s)
 
 
 async def send_status_message(pm: PlayingManager, handle):
