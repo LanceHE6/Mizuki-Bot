@@ -6,24 +6,58 @@
 from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
-from typing import Annotated
 from .playing_manager import PlayingManager, new_instance
 from ...Utils.PluginInfo import PluginInfo
 from ..DB import is_map_exist
 
 play = on_command("play", aliases={"作战"}, block=True, priority=1)
 
-__plugin_info__ = PluginInfo(
-    plugin_name="ArkRail_play",
-    name="单人作战",
-    description="进行单人作战",
-    usage="play <关卡编号> ——进行单人作战",
-    extra={
-        "author": "Silence",
-        "version": "0.1.0",
-        "priority": 1
-    }
-)
+__plugin_info__ = [
+    PluginInfo(
+        plugin_name="ArkRail_play",
+        name="单人作战",
+        description="进行单人作战",
+        usage="play <关卡编号> ——进行单人作战",
+        extra={
+            "author": "Silence",
+            "version": "0.1.0",
+            "priority": 1
+        }
+    ),
+    PluginInfo(
+        plugin_name="ArkRail_play_atk",
+        name="普攻",
+        description="对敌人进行普通攻击",
+        usage="atk [目标序号] ——(作战中)进行普攻",
+        extra={
+            "author": "Silence",
+            "version": "0.1.0",
+            "priority": 1
+        }
+    ),
+    PluginInfo(
+        plugin_name="ArkRail_play_skill",
+        name="使用技能",
+        description="使用干员的技能",
+        usage="skill <技能序号> [目标序号1] [目标序号2/友方序号] ——(作战中)使用技能",
+        extra={
+            "author": "Silence",
+            "version": "0.1.0",
+            "priority": 1
+        }
+    ),
+    PluginInfo(
+        plugin_name="ArkRail_play_run",
+        name="逃跑",
+        description="逃跑",
+        usage="run ——(作战中)逃跑",
+        extra={
+            "author": "Silence",
+            "version": "0.1.0",
+            "priority": 1
+        }
+    )
+]
 
 
 @play.handle()
@@ -122,16 +156,10 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await operate_skill.finish()
 
     @operate_run.handle()
-    async def _(run_args: Message = CommandArg()):
-        parm_str_list: list[str] = str(run_args).split(" ")
-        parm_list: list[int] = []
-        for n in parm_str_list:
-            if n.isdigit():
-                parm_list.append(int(n))
-            else:
-                await operate_run.finish("sb")
-        await operate_run.finish(str(parm_list))
-
+    async def _():
+        await operate_run.send(f"{uid}逃跑了！")
+        await play.finish()
+        await operate_run.finish()
 
 async def send_message_list(message: list[str], handle):
     """
