@@ -3,7 +3,10 @@
 # @Author:Silence
 # @Time:2023/5/15 19:11
 # @Software:PyCharm
+from typing import Type
+
 from nonebot import on_command
+from nonebot.internal.matcher import Matcher
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
 from .playing_manager import PlayingManager, new_instance
@@ -11,6 +14,12 @@ from ...Utils.PluginInfo import PluginInfo
 from ..DB import is_map_exist
 
 play = on_command("play", aliases={"作战"}, block=True, priority=1)
+playing_user: list[int] = []  # 正在进行战斗的用户
+
+
+async def is_playing(uid: int) -> bool:  # 判断用户是否正在进行战斗
+    return uid in playing_user
+
 
 __plugin_info__ = [
     PluginInfo(
@@ -70,29 +79,33 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         :param handle: 用于发送消息
         """
         is_over: bool = False
-        if len(message) > 1 and message[len(message) - 1] in ["作战失败", "作战成功"]:
+        if len(message) > 1 and message[len(message) - 1] in ["作战失败", "作战成功"]:  # 删除战斗信息
             if message[len(message) - 1] == "作战成功":
                 pass  # 获取奖励
-            del pm  # 删除战斗信息
             is_over = True
         for s in message:
             await handle.send(s)
         if is_over:
-            await play.finish()
+            await finish_playing()
+
+    def is_doctor(e: GroupMessageEvent) -> bool:  # 判断触发atk,skill,run指令的用户是否跟触发play指令的用户相同
+        return int(e.get_user_id()) == uid
 
     uid = int(event.get_user_id())
     mid = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
 
-    if not await is_map_exist(mid):
+    if not await is_map_exist(mid):  # 判断地图是否存在
         await play.finish(MessageSegment.at(uid) + f"没有{mid}这张地图！")
+    if await is_playing(uid):
+        await play.finish("你还有正在进行的战斗哦！")
 
-    pm: PlayingManager = await new_instance(uid, mid)
-
+    pm: PlayingManager = await new_instance(uid, mid)  # 战斗数据
+    playing_user.append(uid)  # 将用户id放进战斗中的用户id列表
     await send_status_message(pm, play)
 
-    operate_atk = on_command("atk", aliases={"attack", "普通攻击", "普攻", "攻击"}, block=True, priority=1)
-    operate_skill = on_command("skill", aliases={"技能", "使用技能"}, block=True, priority=1)
-    operate_run = on_command("run", aliases={"逃跑", "润", "溜了"}, block=True, priority=1)
+    operate_atk = on_command("atk", aliases={"attack", "普通攻击", "普攻", "攻击"}, rule=is_doctor, block=True, priority=1)
+    operate_skill = on_command("skill", aliases={"技能", "使用技能"}, rule=is_doctor, block=True, priority=1)
+    operate_run = on_command("run", aliases={"逃跑", "润", "溜了"}, rule=is_doctor, block=True, priority=1)
 
     await send_message_and_is_over(await pm.is_enemy_turn(play), play)
 
@@ -132,10 +145,9 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                 parm_list.append(int(n) - 1)
             else:
                 await operate_run.finish("参数错误！\n/skill <技能序号> [目标序号1] [目标序号2/友方序号]")
-        skill_num = parm_list[0] - 1  # 技能序号
+        skill_num = parm_list[0]  # 技能序号(原始)
         op = pm.all_ops_list[0]  # 行动干员
         skill = None  # 使用的技能
-
         if 0 <= skill_num < len(op.skills_list):
             skill = op.skills_list[skill_num]
         else:
@@ -144,7 +156,6 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         if skill.consume > pm.player_skill_count:
             await operate_skill.finish("您的技力点不足以释放这个技能！")
 
-        await operate_skill.send(str(skill.obj_type))
         if skill.obj_type in [1, 4]:
             if len(parm_list) >= 2 and 0 <= parm_list[1] < len(pm.map_enemies_list):
                 obj1 = pm.map_enemies_list[parm_list[1]] if skill.obj_type == 1 else pm.player_ops_list[parm_list[1]]
@@ -175,10 +186,30 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
     @operate_run.handle()
     async def _():
-        await operate_run.send(f"{uid}逃跑了！")
+        await operate_run.send(f"{event.sender.nickname}逃跑了！")
+        # await play.finish()
+        # await operate_run.finish()
+        await finish_playing()
+
+    async def finish_playing():
+        """
+        结束对战的方法
+        """
+        playing_user.remove(uid)
+        await delete_handle(operate_run)
+        await delete_handle(operate_atk)
+        await delete_handle(operate_skill)
         del pm
-        await play.finish()
-        await operate_run.finish()
+
+
+async def delete_handle(obj: Type[Matcher]):
+    """
+    删除响应器的方法
+
+    :param obj: 要删除的响应器
+    """
+    obj.destroy()
+    del obj
 
 
 async def send_status_message(pm: PlayingManager, handle):
