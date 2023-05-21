@@ -81,7 +81,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         """
         is_over: bool = False
         if len(message) > 1 and message[len(message) - 1] in ["作战失败", "作战成功"]:  # 删除战斗信息
-            if message[len(message) - 1] == "作战成功":   # 获取奖励
+            if message[len(message) - 1] == "作战成功":  # 获取奖励
                 reward = await get_map_attribute(mid, MapAttribute.reward)
                 #  reward[0]: str 奖励名称  reward[1]: int 奖励数量
                 if reward[0] == "龙门币":
@@ -126,15 +126,17 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
             await operate_atk.finish("参数错误！\n/atk <目标序号>\ntip:不普攻的干员可以不选目标")
         else:
             obj_num = int(str(atk_args))  # 目标序号
-            obj = pm.map_enemies_list[obj_num - 1]  # 目标对象
             if op.atk_type_p in [0, 1, 2, 3, 6]:
+                obj = pm.map_enemies_list[obj_num - 1]  # 目标对象
                 if op.mocked and op.mocking_obj != obj:
-                    await operate_atk.finish(f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                    await operate_atk.finish(
+                        f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
                 if 0 < obj_num <= len(pm.map_enemies_list):
                     await send_message_and_is_over(await pm.turn(op, 0, obj), operate_atk)
                 else:
                     await operate_atk.finish("目标序号错误！\n/atk <敌人序号>")
-            else:
+            else: 
+                obj = pm.player_ops_list[obj_num - 1]  # 目标对象
                 if 0 < obj_num <= len(pm.player_ops_list):
                     await send_message_and_is_over(await pm.turn(op, 0, obj), operate_atk)
                 else:
@@ -169,7 +171,8 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
             if len(parm_list) >= 2 and 0 <= parm_list[1] < len(pm.map_enemies_list):
                 obj1 = pm.map_enemies_list[parm_list[1]] if skill.obj_type == 1 else pm.player_ops_list[parm_list[1]]
                 if skill.obj_type == 1 and op.mocked and op.mocking_obj != obj1:
-                    await operate_atk.finish(f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                    await operate_atk.finish(
+                        f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
                 await send_message_and_is_over(await pm.turn(op, skill_num + 1, obj1), operate_skill)
             else:
                 await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号>")
@@ -179,7 +182,8 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                 obj1 = pm.map_enemies_list[parm_list[1]] if skill.obj_type == 2 else pm.player_ops_list[parm_list[1]]
                 obj2 = pm.map_enemies_list[parm_list[2]] if skill.obj_type == 2 else pm.player_ops_list[parm_list[2]]
                 if skill.obj_type == 3 and op.mocked and op.mocking_obj != obj1 and op.mocking_obj != obj2:
-                    await operate_atk.finish(f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\nta必须为攻击目标之一！")
+                    await operate_atk.finish(
+                        f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\nta必须为攻击目标之一！")
                 await send_message_and_is_over(await pm.turn(op, skill_num + 1, obj1, obj2), operate_skill)
             else:
                 await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号1> <目标序号2>")
@@ -189,7 +193,8 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                 obj1 = pm.map_enemies_list[parm_list[1]]
                 obj2 = pm.player_ops_list[parm_list[2]]
                 if op.mocked and op.mocking_obj != obj1:
-                    await operate_atk.finish(f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                    await operate_atk.finish(
+                        f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
                 await send_message_and_is_over(await pm.turn(op, skill_num + 1, obj1, obj2), operate_skill)
             else:
                 await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号> <友方序号>")
@@ -214,7 +219,11 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await delete_handle(operate_run)
         await delete_handle(operate_atk)
         await delete_handle(operate_skill)
-        del pm
+
+        async def del_pm():
+            del pm
+
+        await del_pm()
 
 
 async def delete_handle(obj: Type[Matcher]):
