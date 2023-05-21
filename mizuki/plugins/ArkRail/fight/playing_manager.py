@@ -18,11 +18,12 @@ class PlayingManager:
         self.all_ops_list: list[Operator] = bubble_sort(player_ops_list + map_enemies_list)
         self.player_skill_count = 20  # 我方初始技力点
         self.enemy_skill_count = 10  # 敌方初始技力点
+        await refresh_op_next_list(self.player_ops_list)
+        await refresh_op_next_list(self.map_enemies_list)
 
-    async def is_enemy_turn(self, play) -> list[str]:
+    async def is_enemy_turn(self) -> list[str]:
         """
         判断是否为敌人回合，如果是则敌人行动，直到玩家回合为止
-        :param play:用于发送信息并进行战斗结算
         :return 返回战斗消息
         """
         move_op = self.all_ops_list[0]  # 当前行动者
@@ -35,7 +36,7 @@ class PlayingManager:
                 if not obj.hidden:  # 如果所有干员都处于隐匿状态就糟咯awa
                     break
 
-            if len(move_op.skills_list) and random.randint(1, 100) <= 20 + (5 * move_op.stars) and \
+            if len(move_op.skills_list) and random.randint(1, 100) <= 50 + (5 * move_op.stars) and \
                     self.enemy_skill_count >= move_op.skills_list[0].consume:  # 条件达成则使用技能
 
                 for i in range(len(move_op.skills_list) - 1, -1, -1):
@@ -122,7 +123,7 @@ class PlayingManager:
                 else (sub.atk_p * 0.05)  # 5%攻击力的保底伤害
             damage += damage * is_crit * sub.crit_d_p
             message = f"{sub.name}对{obj.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点物理伤害！"  # 返回的字符串
-            if sub.profession == "重装-中坚" and random.randint(1, 100) < 50:  # 中坚重装普攻有概率嘲讽敌方单位
+            if sub.profession[0:2] == "重装" and random.randint(1, 100) < 50:  # 重装普攻有概率嘲讽敌方单位
                 message += f"\n{sub.name}嘲讽了{obj.name}！"
                 obj.mocked = 1
                 obj.mocking_obj = sub
@@ -248,7 +249,7 @@ class PlayingManager:
         if sid < 0:  # 小于0的为敌人技能
             if sid == -1:
                 for op in obj1.next_operators:
-                    damage = sub.atk_p * skill.rate1 * (1 - op.res_p)
+                    damage = sub.atk_p * skill.rate1 * ((100 - op.res_p) / 100)
                     op.health -= damage
                     enemies_obj.append(op)
                     objs_name += f" {op.name}"
@@ -274,7 +275,7 @@ class PlayingManager:
                         rate = random.uniform(skill.rate1, skill.rate2)
                         if sub.atk_type_p == 1:
                             atk_type_str = "法术"
-                            damage = int(sub.atk_p * rate * (1 - obj1.res_p))
+                            damage = int(sub.atk_p * rate * ((100 - obj1.res_p) / 100))
                         else:
                             atk_type_str = "物理"
                             damage = int(sub.atk_p * rate - obj1.defence_p) if \
@@ -338,12 +339,22 @@ class PlayingManager:
         for op in enemies_obj:
             if await op.is_die():
                 message += f"\n{op.name}被击倒了！"
-                if op in self.map_enemies_list:
-                    self.map_enemies_list.remove(op)
-                else:
-                    self.player_ops_list.remove(op)
-                self.all_ops_list.remove(op)
+                await self.op_die(op)
         return message
+
+    async def op_die(self, op: Operator):
+        """
+        干员被击倒时调用的方法
+
+        :param op: 被击倒的干员
+        """
+        if op in self.map_enemies_list:
+            self.map_enemies_list.remove(op)
+            await refresh_op_next_list(self.map_enemies_list)
+        else:
+            self.player_ops_list.remove(op)
+            await refresh_op_next_list(self.player_ops_list)
+        self.all_ops_list.remove(op)
 
     async def finish_turn(self, sub: Operator) -> str:
         """
@@ -384,6 +395,25 @@ async def new_instance(uid: str or int, mid: str) -> PlayingManager:
     player_ops_list: list[Operator] = await get_operator_list(uid)
     map_enemies_list: list[Operator] = await get_enemies_list(mid)
     return PlayingManager(player_ops_list, map_enemies_list)
+
+
+async def refresh_op_next_list(op_list: list[Operator]):
+    """
+    刷新干员身边的干员列表
+
+    :param op_list:
+    """
+    for i in range(len(op_list)):
+        op_list[i].next_operators.clear()
+        if i - 1 >= 0:  # 左边的干员
+            op_list[i].next_operators.append(op_list[i - 1])
+        else:
+            op_list[i].next_operators.append(0)
+        op_list[i].next_operators.append(op_list[i])  # 自身
+        if i + 1 < len(op_list):  # 右边的干员
+            op_list[i].next_operators.append(op_list[i + 1])
+        else:
+            op_list[i].next_operators.append(0)
 
 
 # 冒泡排序函数
