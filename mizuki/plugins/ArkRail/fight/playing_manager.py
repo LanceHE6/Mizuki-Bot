@@ -18,8 +18,30 @@ class PlayingManager:
         self.all_ops_list: list[Operator] = bubble_sort(player_ops_list + map_enemies_list)
         self.player_skill_count = 20  # 我方初始技力点
         self.enemy_skill_count = 10  # 敌方初始技力点
-        await refresh_op_next_list(self.player_ops_list)
-        await refresh_op_next_list(self.map_enemies_list)
+
+        for i in range(len(self.player_ops_list)):
+            self.player_ops_list[i].next_operators.clear()
+            if i - 1 >= 0:  # 左边的干员
+                self.player_ops_list[i].next_operators.append(self.player_ops_list[i - 1])
+            else:
+                self.player_ops_list[i].next_operators.append(0)
+            self.player_ops_list[i].next_operators.append(self.player_ops_list[i])  # 自身
+            if i + 1 < len(self.player_ops_list):  # 右边的干员
+                self.player_ops_list[i].next_operators.append(self.player_ops_list[i + 1])
+            else:
+                self.player_ops_list[i].next_operators.append(0)
+
+        for i in range(len(self.map_enemies_list)):
+            self.map_enemies_list[i].next_operators.clear()
+            if i - 1 >= 0:  # 左边的干员
+                self.map_enemies_list[i].next_operators.append(self.map_enemies_list[i - 1])
+            else:
+                self.map_enemies_list[i].next_operators.append(0)
+            self.map_enemies_list[i].next_operators.append(self.map_enemies_list[i])  # 自身
+            if i + 1 < len(self.map_enemies_list):  # 右边的干员
+                self.map_enemies_list[i].next_operators.append(self.map_enemies_list[i + 1])
+            else:
+                self.map_enemies_list[i].next_operators.append(0)
 
     async def is_enemy_turn(self) -> list[str]:
         """
@@ -36,7 +58,7 @@ class PlayingManager:
                 if not obj.hidden:  # 如果所有干员都处于隐匿状态就糟咯awa
                     break
 
-            if len(move_op.skills_list) and random.randint(1, 100) <= 50 + (5 * move_op.stars) and \
+            if len(move_op.skills_list) and random.randint(1, 100) <= 35 + (5 * move_op.stars) and \
                     self.enemy_skill_count >= move_op.skills_list[0].consume:  # 条件达成则使用技能
 
                 for i in range(len(move_op.skills_list) - 1, -1, -1):
@@ -52,11 +74,15 @@ class PlayingManager:
                 messages.append(result_message[len(result_message) - 1])
                 return messages
             move_op = self.all_ops_list[0]
+        if move_op.immobile:
+            messages += await self.finish_turn(move_op)
         if await self.is_round_over():
             messages.append("当前轮已结束，进入下一轮！")
             for op in self.all_ops_list:
                 op.speed_p = op.speed
             self.all_ops_list = bubble_sort(self.all_ops_list)  # 根据速度做冒泡排序
+            messages += (await self.is_enemy_turn())
+            messages.pop()  # 去掉一个"玩家的回合！"
 
         messages.append("玩家的回合！")
         return messages
@@ -100,7 +126,7 @@ class PlayingManager:
                 self.enemy_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
         messages[0] += await self.finish_turn(sub)
         if not len(self.map_enemies_list):
-            messages.append("作战成功")
+            messages.append("作战成功")  # messages[1]装战斗结果信息
         elif not len(self.player_ops_list):
             messages.append("作战失败")
         self.all_ops_list = bubble_sort(self.all_ops_list)
@@ -156,6 +182,8 @@ class PlayingManager:
             objs_damage: str = ""  # 各个目标受到的伤害
             die_objs: str = ""  # 被击倒的目标名字
             for op in obj.next_operators:
+                if not isinstance(op, Operator):
+                    continue
                 objs_name += f" {op.name}"
                 damage: int = (sub.atk_p - op.defence_p) \
                     if (sub.atk_p - op.defence_p > sub.atk_p * 0.05) \
@@ -171,13 +199,17 @@ class PlayingManager:
                         else:
                             self.player_ops_list.remove(op)
                         self.all_ops_list.remove(op)
-            message += f"{objs_name} 发动了普通攻击，{is_crit_str}分别对他们造成了{objs_damage} 点物理伤害！\n{die_objs} 被击倒了！"
+            message += f"{objs_name} 发动了普通攻击，{is_crit_str}分别对他们造成了{objs_damage} 点物理伤害！"
+            if die_objs != "":
+                message += f"\n{die_objs} 被击倒了！"
         elif sub.atk_type_p == 3:  # 群体法术
             message = f"{sub.name}对"  # 返回的字符串
             objs_name: str = ""  # 所有目标名字
             objs_damage: str = ""  # 各个目标受到的伤害
             die_objs: str = ""  # 被击倒的目标名字
             for op in obj.next_operators:
+                if not isinstance(op, Operator):
+                    continue
                 objs_name += f" {op.name}"
                 damage: int = int(sub.atk_p * ((100 - op.res_p) / 100))
                 damage += damage * is_crit * sub.crit_d_p
@@ -191,7 +223,9 @@ class PlayingManager:
                         else:
                             self.player_ops_list.remove(op)
                         self.all_ops_list.remove(op)
-            message += f"{objs_name} 发动了普通攻击，{is_crit_str}分别对他们造成了{objs_damage} 点法术伤害！\n{die_objs} 被击倒了！"
+            message += f"{objs_name} 发动了普通攻击，{is_crit_str}分别对他们造成了{objs_damage} 点法术伤害！"
+            if die_objs != "":
+                message += f"\n{die_objs} 被击倒了！"
         elif sub.atk_type_p == 4:  # 单体治疗
             health_amount = sub.atk_p
             obj.health += health_amount
@@ -246,10 +280,13 @@ class PlayingManager:
         objs_damage: str = ""
         message: str = f"{sub.name}使用了{skill.name}！"  # 返回的信息
         sid = skill.sid  # 技能id
+        persistence: int = 0  # 是否为持续性技能
         if sid < 0:  # 小于0的为敌人技能
             if sid == -1:
                 for op in obj1.next_operators:
-                    damage = sub.atk_p * skill.rate1 * ((100 - op.res_p) / 100)
+                    if not isinstance(op, Operator):
+                        continue
+                    damage = int(sub.atk_p * skill.rate1 * ((100 - op.res_p) / 100))
                     op.health -= damage
                     enemies_obj.append(op)
                     objs_name += f" {op.name}"
@@ -262,7 +299,7 @@ class PlayingManager:
                         self.player_skill_count += int(skill.rate1)
                         message += f"\n回复了{int(skill.rate1)}技力点！"
                     elif sid == 2:
-                        skill.count += 1
+                        persistence = 1
                         sub.atk_type_p = skill.rate1
                         sub.atk_add_f += skill.rate2
                         message += f"\n攻击力提高{round(skill.rate2 * 100, 1)}%并变为法术伤害！"
@@ -275,31 +312,33 @@ class PlayingManager:
                         rate = random.uniform(skill.rate1, skill.rate2)
                         if sub.atk_type_p == 1:
                             atk_type_str = "法术"
-                            damage = int(sub.atk_p * rate * ((100 - obj1.res_p) / 100))
+                            damage: int = int(sub.atk_p * rate * ((100 - obj1.res_p) / 100))
                         else:
                             atk_type_str = "物理"
-                            damage = int(sub.atk_p * rate - obj1.defence_p) if \
+                            damage: int = int(sub.atk_p * rate - obj1.defence_p) if \
                                 sub.atk_p * rate - obj1.defence_p > sub.atk_p * rate * 0.05 else \
                                 int(sub.atk_p * rate * 0.05)
                         obj1.health -= damage
                         enemies_obj.append(obj1)
                         message += f"\n对{obj1.name}造成了{damage}点{atk_type_str}伤害！"
                     elif sid == 5:
-                        skill.count += 1
+                        persistence = 1
                         sub.atk_add_f += skill.rate1
                         message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%！"
                     elif sid == 6:
-                        skill.count += 1
+                        persistence = 1
                         sub.def_add_f += skill.rate1
                         message += f"\n防御力提高{round(skill.rate1 * 100, 1)}%！"
                     elif sid == 7:
                         damage_str: str = ""
                         for i in range(int(skill.rate1)):
+                            is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
                             rate = random.uniform(skill.rate2, skill.rate3)
 
-                            damage = int(sub.atk_p * rate - obj1.defence_p) if \
+                            damage: int = int(sub.atk_p * rate - obj1.defence_p) if \
                                 sub.atk_p * rate - obj1.defence_p > sub.atk_p * rate * 0.05 else \
                                 int(sub.atk_p * rate * 0.05)
+                            damage += int(damage * is_crit * sub.crit_d_p)
                             obj1.health -= damage
                             damage_str += f"{damage}+"
                         damage_str = damage_str.rstrip("+")  # 去掉末尾的+号
@@ -315,16 +354,25 @@ class PlayingManager:
                             obj2.health = obj2.max_health_p
                         message += f"\n分别为{obj1.name}和{obj2.name}恢复了{treat}点生命值！"
                     elif sid == 9:
-                        skill.count += 1
-                        sub.atk_add_f += skill.rate2
-                        message += f"\n每回合回复{int(skill.rate1)}技力点，攻击力提高{round(skill.rate2 * 100, 1)}%！"
+                        persistence = 1
+                        sub.atk_add_f += skill.rate1
+                        message += f"\n每回合回复{int(skill.rate2)}技力点，攻击力提高{round(skill.rate1 * 100, 1)}%！"
                     elif sid == 10:
-                        skill.count += 1
                         sub.crit_r_add_d += skill.rate1
                         sub.crit_d_add_d += skill.rate2
                         message += f"\n暴击率增加{round(skill.rate1 * 100, 1)}%，暴击伤害增加{round(skill.rate2 * 100, 1)}%！\n"
                         await sub.upgrade_effect()
-                        message += await self.attack(sub, obj1)
+                        is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
+                        is_crit_str: str = "暴击并" if is_crit else ""
+                        damage: int = (sub.atk_p - obj1.defence_p) \
+                            if (sub.atk_p - obj1.defence_p > sub.atk_p * 0.05) \
+                            else (sub.atk_p * 0.05)  # 5%攻击力的保底伤害
+                        damage += damage * is_crit * sub.crit_d_p
+                        message = f"\n{sub.name}对{obj1.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点物理伤害！"  # 返回的字符串
+                        if not obj1.invincible:
+                            obj1.health -= damage
+                        sub.crit_r_add_d -= skill.rate1
+                        sub.crit_d_add_d -= skill.rate2
                         enemies_obj.append(obj1)
                 else:  # 26~50
                     pass
@@ -334,7 +382,7 @@ class PlayingManager:
                 else:  # 76~100
                     pass
 
-        skill.count = skill.persistence
+        skill.count = skill.persistence + persistence
 
         for op in enemies_obj:
             if await op.is_die():
@@ -368,12 +416,13 @@ class PlayingManager:
         for skill in sub.skills_list:
             if skill.count > 1:
                 skill.count -= 1
-                if skill.count == 0:
-                    finish_skill.append(skill)
                 sid = skill.sid
                 if sid == 9:
-                    self.player_skill_count += int(skill.rate1)
-                    message += f"{skill.name}生效！回复{int(skill.rate1)}点技力点"
+                    self.player_skill_count += int(skill.rate2)
+                    message += f"\n{skill.name}生效！回复{int(skill.rate2)}点技力点"
+
+                if skill.count == 0:
+                    finish_skill.append(skill)
 
         for f_s in finish_skill:
             sid = f_s.sid
