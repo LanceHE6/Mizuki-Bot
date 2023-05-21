@@ -204,7 +204,7 @@
     "crit_r_plus": 0.002,
     "crit_d": 1.0,
     "crit_d_plus": 0.005,
-    "speed": 110,
+    "speed": 105,
     "speed_plus": 0.1,
     "atk_type": 0,
     "skills": [5,10]
@@ -248,7 +248,7 @@
     "crit_d_plus": 0,
     "speed": 100,
     "speed_plus": 0.1,
-    "atk_type": 1,
+    "atk_type": 2,
     "skills": [5,13]
   },
   "13": {
@@ -500,7 +500,7 @@
     "crit_d_plus": 0,
     "speed": 100,
     "speed_plus": 0.1,
-    "atk_type": 1,
+    "atk_type": 2,
     "skills": [7,35]
   },
   "25": {
@@ -750,7 +750,7 @@
     "crit_r_plus": 0.002,
     "crit_d": 1.0,
     "crit_d_plus": 0.005,
-    "speed": 110,
+    "speed": 105,
     "speed_plus": 0.1,
     "atk_type": 0,
     "skills": [5,7,46]
