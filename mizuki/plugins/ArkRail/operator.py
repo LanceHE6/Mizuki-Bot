@@ -130,7 +130,7 @@ class Operator:
         self.blooding: int = 0
         self.blooding_rate: float = 0
 
-        self.next_operators: list[Operator] = [self]
+        self.next_operators: list = []
 
     async def is_die(self) -> bool:
         """
