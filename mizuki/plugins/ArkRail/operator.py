@@ -144,8 +144,6 @@ class Operator:
         if self.deathless:  # 如果干员处于不死状态，则将其血量恢复为1
             self.health = 1
             return False
-        for op in self.next_operators:
-            op.next_operators.remove(self)
         return True
 
     async def finish_turn(self):
