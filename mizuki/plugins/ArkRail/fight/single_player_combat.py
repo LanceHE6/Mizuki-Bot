@@ -12,6 +12,7 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEve
 from .playing_manager import PlayingManager, new_instance
 from ...Utils.PluginInfo import PluginInfo
 from ..DB import is_map_exist, get_map_attribute, MapAttribute
+from ...Currency.utils import change_user_lmc_num, change_user_sj_num
 
 play = on_command("play", aliases={"作战"}, block=True, priority=1)
 playing_user: list[int] = []  # 正在进行战斗的用户
@@ -80,14 +81,13 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         """
         is_over: bool = False
         if len(message) > 1 and message[len(message) - 1] in ["作战失败", "作战成功"]:  # 删除战斗信息
-            if message[len(message) - 1] == "作战成功":
+            if message[len(message) - 1] == "作战成功":   # 获取奖励
                 reward = await get_map_attribute(mid, MapAttribute.reward)
                 #  reward[0]: str 奖励名称  reward[1]: int 奖励数量
                 if reward[0] == "龙门币":
-
-                    pass  # 获取奖励
+                    await change_user_lmc_num(uid, reward[1])
                 elif reward[0] == "合成玉":
-                    pass  # 获取奖励
+                    await change_user_sj_num(uid, reward[1])
             is_over = True
         for s in message:
             await handle.send(s)
