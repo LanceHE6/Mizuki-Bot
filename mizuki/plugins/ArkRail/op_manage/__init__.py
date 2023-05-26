@@ -5,4 +5,5 @@
 # @Software:PyCharm
 
 from .op_level_up import *
+from .skill_level_up import *
 from .change_playing_ops import *

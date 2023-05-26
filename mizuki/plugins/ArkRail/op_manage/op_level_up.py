@@ -12,7 +12,7 @@ from nonebot.typing import T_State
 from ...Utils.PluginInfo import PluginInfo
 from ..DB import get_oid_by_name, get_user_all_ops, is_op_owned, change_user_op_level, get_op_attribute, OPAttribute
 from ...Currency.utils import get_user_lmc_num, change_user_lmc_num
-from .utils import get_cost
+from .utils import get_cost_op
 
 op_level_up = on_command("level_up", aliases={"干员升级", "升级"}, block=True, priority=1)
 
@@ -60,13 +60,13 @@ async def _(event: GroupMessageEvent, state: T_State, args: Message = CommandArg
     reply = f"\n目前干员等级:{op_level}"
     if level_up_to_5 >= 90:
         level_up_to_5 = 90
-        reply += f"\n升到{level_up_to_5}级所需龙门币:{await get_cost(op_level, level_up_to_5)}"
+        reply += f"\n升到{level_up_to_5}级所需龙门币:{await get_cost_op(op_level, level_up_to_5)}"
     else:
         if level_up_to_5 + 5 >= 90:
             level_up_to_10 = 90
         else:
             level_up_to_10 = level_up_to_5+5
-        reply += f"\n升到{level_up_to_5}级所需龙门币:{await get_cost(op_level, level_up_to_5)}\n升到{level_up_to_10}级所需龙门币:{await get_cost(op_level, level_up_to_10)}"
+        reply += f"\n升到{level_up_to_5}级所需龙门币:{await get_cost_op(op_level, level_up_to_5)}\n升到{level_up_to_10}级所需龙门币:{await get_cost_op(op_level, level_up_to_10)}"
 
     reply += f"\n龙门币:{user_lmc_num}"
 
@@ -80,7 +80,7 @@ async def got_level(state: T_State, level = Arg("level")):
     uid = (state["uid"])
     if level < 1 or level > 90 or level < state["op_level"]:
         await op_level_up.finish(MessageSegment.at(uid)+"非法等级")
-    cost = await get_cost(state["op_level"], level)
+    cost = await get_cost_op(state["op_level"], level)
     if cost > state["user_lmc_num"]:
         await op_level_up.finish("龙门币余额不足", at_sender = True)
 
