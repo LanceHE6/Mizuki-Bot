@@ -149,6 +149,8 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     async def _(skill_args: Message = CommandArg()):
         if pm.all_ops_list[0] not in pm.player_ops_list:
             await operate_skill.finish("现在还不是你的回合哦！")
+        if pm.all_ops_list[0].silent:
+            await operate_skill.finish("你被沉默了，无法使用技能！")
         parm_str_list: list[str] = str(skill_args).split(" ")
         parm_list: list[int] = []
         for n in parm_str_list:
