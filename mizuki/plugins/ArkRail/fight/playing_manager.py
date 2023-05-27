@@ -143,40 +143,36 @@ class PlayingManager:
         message: str = ""
         is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
         is_crit_str: str = "暴击并" if is_crit else ""
-        if sub.atk_type_p == 0:  # 单体物理
-            damage: int = (sub.atk_p - obj.defence_p) \
-                if (sub.atk_p - obj.defence_p > sub.atk_p * 0.05) \
-                else (sub.atk_p * 0.05)  # 5%攻击力的保底伤害
-            damage += damage * is_crit * sub.crit_d_p
-            message = f"{sub.name}对{obj.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点物理伤害！"  # 返回的字符串
-            if sub.profession[0:2] == "重装" and random.randint(1, 100) < 50:  # 重装普攻有概率嘲讽敌方单位
-                message += f"\n{sub.name}嘲讽了{obj.name}！"
+        damage = int(sub.atk_p + (sub.atk_p * is_crit * sub.crit_d_p))  # 初始伤害
+
+        if sub.atk_type_p in [0, 1, 6, 8]:  # 单体物理(嘲讽)
+            atk_type = sub.atk_type_p
+            atk_type_str = ""
+            if atk_type in [0, 8]:
+                atk_type_str = "物理"
+            elif atk_type == 1:
+                atk_type_str = "法术"
+            elif atk_type == 6:
+                atk_type_str = "真实"
+            damage = await obj.hurt(atk_type, damage)
+            message = f"{sub.name}对{obj.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点{atk_type_str}伤害！"  # 返回的字符串
+            if sub.atk_type_p == 8 and random.randint(1, 100) < 50:  # 重装普攻有概率嘲讽敌方单位
+                message += f"\n{sub.name}嘲讽了{obj.name}！\n持续1回合！"
                 obj.mocked = 1
                 obj.mocking_obj = sub
-            if not obj.invincible:
-                obj.health -= damage
-                if await obj.is_die():
-                    message += f"\n{obj.name}被{sub.name}击倒了！"
-                    if obj in self.map_enemies_list:
-                        self.map_enemies_list.remove(obj)
-                    else:
-                        self.player_ops_list.remove(obj)
-                    self.all_ops_list.remove(obj)
-        elif sub.atk_type_p == 1:  # 单体法术
-            damage: int = int(sub.atk_p * ((100 - obj.res_p) / 100))  # 法抗90封顶
-            damage += damage * is_crit * sub.crit_d_p
-            message = f"{sub.name}对{obj.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点法术伤害！"  # 返回的字符串
+            if await obj.is_die():
+                message += f"\n{obj.name}被{sub.name}击倒了！"
+                await self.op_die(obj)
 
-            if not obj.invincible:
-                obj.health -= damage
-                if await obj.is_die():
-                    message += f"\n{obj.name}被{sub.name}击倒了！"
-                    if obj in self.map_enemies_list:
-                        self.map_enemies_list.remove(obj)
-                    else:
-                        self.player_ops_list.remove(obj)
-                    self.all_ops_list.remove(obj)
-        elif sub.atk_type_p == 2:  # 群体物理
+        elif sub.atk_type_p in [2, 3, 7]:  # 群体真实
+            atk_type = sub.atk_type_p  # 攻击类型
+            atk_type_str = ""
+            if atk_type == 2:
+                atk_type_str = "物理"
+            elif atk_type == 3:
+                atk_type_str = "法术"
+            elif atk_type == 7:
+                atk_type_str = "真实"
             message = f"{sub.name}对"  # 返回的字符串
             objs_name: str = ""  # 所有目标名字
             objs_damage: str = ""  # 各个目标受到的伤害
@@ -185,82 +181,32 @@ class PlayingManager:
                 if not isinstance(op, Operator):
                     continue
                 objs_name += f" {op.name}"
-                damage: int = (sub.atk_p - op.defence_p) \
-                    if (sub.atk_p - op.defence_p > sub.atk_p * 0.05) \
-                    else (sub.atk_p * 0.05)
-                damage += damage * is_crit * sub.crit_d_p
+                damage = await op.hurt(atk_type, damage)
                 objs_damage += f" {damage}"
-                if not op.invincible:
-                    op.health -= damage
-                    if await op.is_die():
-                        die_objs += f" {op.name}"
-                        if op in self.map_enemies_list:
-                            self.map_enemies_list.remove(op)
-                        else:
-                            self.player_ops_list.remove(op)
-                        self.all_ops_list.remove(op)
-            message += f"{objs_name} 发动了普通攻击，{is_crit_str}分别对他们造成了{objs_damage} 点物理伤害！"
+                if await op.is_die():
+                    die_objs += f" {op.name}"
+                    await self.op_die(op)
+            message += f"{objs_name} 发动了普通攻击，{is_crit_str}分别对他们造成了{objs_damage} 点{atk_type_str}伤害！"
             if die_objs != "":
                 message += f"\n{die_objs} 被击倒了！"
-        elif sub.atk_type_p == 3:  # 群体法术
-            message = f"{sub.name}对"  # 返回的字符串
-            objs_name: str = ""  # 所有目标名字
-            objs_damage: str = ""  # 各个目标受到的伤害
-            die_objs: str = ""  # 被击倒的目标名字
-            for op in obj.next_operators:
-                if not isinstance(op, Operator):
-                    continue
-                objs_name += f" {op.name}"
-                damage: int = int(sub.atk_p * ((100 - op.res_p) / 100))
-                damage += damage * is_crit * sub.crit_d_p
-                objs_damage += f" {damage}"
-                if not op.invincible:
-                    op.health -= damage
-                    if await op.is_die():
-                        die_objs += f" {op.name}"
-                        if op in self.map_enemies_list:
-                            self.map_enemies_list.remove(op)
-                        else:
-                            self.player_ops_list.remove(op)
-                        self.all_ops_list.remove(op)
-            message += f"{objs_name} 发动了普通攻击，{is_crit_str}分别对他们造成了{objs_damage} 点法术伤害！"
-            if die_objs != "":
-                message += f"\n{die_objs} 被击倒了！"
+
         elif sub.atk_type_p == 4:  # 单体治疗
-            health_amount = sub.atk_p
-            obj.health += health_amount
-            if obj.health > obj.max_health_p:
-                obj.health = obj.max_health_p
-                health_amount = sub.atk_p + (obj.max_health_p - obj.health - sub.atk_p)
-
+            health_amount = await obj.hurt(4, sub.atk_p)
             message = f"{sub.name}治疗了{obj.name}，恢复其{health_amount}生命值！"  # 返回的字符串
+
         elif sub.atk_type_p == 5:  # 群体治疗
             message = f"{sub.name}治疗了"  # 返回的字符串
             objs_name: str = ""  # 所有目标名字
             objs_health: str = ""  # 各个目标恢复的生命值
-            health_amount = sub.atk_p
             for op in obj.next_operators:
+                if not isinstance(op, Operator):
+                    continue
                 objs_name += f" {op.name}"
-                op.health += health_amount
-                if op.health > op.max_health_p:
-                    op.health = op.max_health_p
-                    health_amount = sub.atk_p + (op.max_health_p - op.health - sub.atk_p)
+                health_amount = await op.hurt(4, sub.atk_p)
                 objs_health += f"{health_amount} "
             message += f"{objs_name}，分别恢复他们{objs_health} 的生命值！"
-        elif sub.atk_type_p == 6:  # 单体真实
-            damage: int = sub.atk_p
-            damage += damage * is_crit * sub.crit_d_p
-            message = f"{sub.name}对{obj.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点真实伤害！"  # 返回的字符串
-            if not obj.invincible:
-                obj.health -= damage
-                if await obj.is_die():
-                    message += f"\n{obj.name}被{sub.name}击倒了！"
-                    if obj in self.map_enemies_list:
-                        self.map_enemies_list.remove(obj)
-                    else:
-                        self.player_ops_list.remove(obj)
-                    self.all_ops_list.remove(obj)
-        elif sub.atk_type_p == 7:  # 不攻击
+
+        elif sub.atk_type_p == 9:  # 不攻击
             message = f"{sub.name}无动于衷..."
             pass
         return message
@@ -275,7 +221,7 @@ class PlayingManager:
         :param obj2: 目标对象2(可选)
         """
         skill: Skill = sub.skills_list[skill_num]  # 使用的技能
-        enemies_obj: list[Operator] = []  # 受影响的敌人
+        objs_list: list[Operator] = []  # 受影响的敌人
         objs_name: str = ""
         objs_damage: str = ""
         message: str = f"{sub.name}使用了{skill.name}！"  # 返回的信息
@@ -286,12 +232,32 @@ class PlayingManager:
                 for op in obj1.next_operators:
                     if not isinstance(op, Operator):
                         continue
-                    damage = int(sub.atk_p * skill.rate1 * ((100 - op.res_p) / 100))
-                    op.health -= damage
-                    enemies_obj.append(op)
+                    damage = await op.hurt(3, int(sub.atk_p * skill.rate1))
+
+                    objs_list.append(op)
                     objs_name += f" {op.name}"
                     objs_damage += f" {damage}"
                 message += f"\n对{objs_name}\n分别造成了{objs_damage} 点法术伤害！"
+            elif sid == -2:
+                for op in obj1.next_operators:
+                    if not isinstance(op, Operator):
+                        continue
+                    damage = await op.hurt(2, int(sub.atk_p * skill.rate1))
+
+                    objs_list.append(op)
+                    objs_name += f" {op.name}"
+                    objs_damage += f" {damage}"
+                message += f"\n对{objs_name}\n分别造成了{objs_damage} 点物理伤害！"
+            elif sid == -3:
+                for op in obj1.next_operators:
+                    if not isinstance(op, Operator):
+                        continue
+                    damage = await op.hurt(2, int(sub.atk_p * skill.rate1), skill.rate2)
+
+                    objs_list.append(op)
+                    objs_name += f" {op.name}"
+                    objs_damage += f" {damage}"
+                message += f"\n对{objs_name}\n分别造成了{objs_damage} 点物理伤害！"
         else:
             if sid <= 50:  # 1~50
                 if sid <= 25:  # 1~25
@@ -304,23 +270,36 @@ class PlayingManager:
                         sub.atk_add_f += skill.rate2
                         message += f"\n攻击力提高{round(skill.rate2 * 100, 1)}%并变为法术伤害！"
                     elif sid == 3:
-                        message += f"\n恢复{round(skill.rate1 * 100, 1)}%最大生命值！"
-                        sub.health += sub.max_health_p * skill.rate1
-                        if sub.health > sub.max_health_p:
-                            sub.health = sub.max_health_p
+                        health_amount = await sub.hurt(4, int(skill.rate1 * sub.max_health_p))
+                        message += f"\n恢复{health_amount}%最大生命值！"
                     elif sid == 4:
                         rate = random.uniform(skill.rate1, skill.rate2)
-                        if sub.atk_type_p == 1:
-                            atk_type_str = "法术"
-                            damage: int = int(sub.atk_p * rate * ((100 - obj1.res_p) / 100))
-                        else:
+                        is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
+                        is_crit_str: str = "暴击并" if is_crit else ""
+                        damage = int(sub.atk_p * rate + (sub.atk_p * is_crit * sub.crit_d_p))
+                        atk_type = sub.atk_type_p
+                        atk_type_str = ""
+                        if atk_type in [0, 2, 8]:
                             atk_type_str = "物理"
-                            damage: int = int(sub.atk_p * rate - obj1.defence_p) if \
-                                sub.atk_p * rate - obj1.defence_p > sub.atk_p * rate * 0.05 else \
-                                int(sub.atk_p * rate * 0.05)
-                        obj1.health -= damage
-                        enemies_obj.append(obj1)
-                        message += f"\n对{obj1.name}造成了{damage}点{atk_type_str}伤害！"
+                        elif atk_type in [1, 3]:
+                            atk_type_str = "法术"
+                        elif atk_type in [6, 7]:
+                            atk_type_str = "真实"
+                        if atk_type in [0, 1, 6, 8]:
+                            objs_list.append(obj1)
+                            damage = await obj1.hurt(atk_type, damage)
+                            message += f"\n{is_crit_str}对{obj1.name}造成了{damage}点{atk_type_str}伤害！"
+                        elif atk_type in [2, 3, 7]:
+                            for op in obj1.next_operators:
+                                if not isinstance(op, Operator):
+                                    continue
+                                damage = await op.hurt(3, int(sub.atk_p * skill.rate1))
+
+                                objs_list.append(op)
+                                objs_name += f" {op.name}"
+                                objs_damage += f" {damage}"
+                            message += f"\n{is_crit_str}对{objs_name}\n分别造成了{objs_damage} 点{atk_type_str}伤害！"
+
                     elif sid == 5:
                         persistence = 1
                         sub.atk_add_f += skill.rate1
@@ -330,50 +309,60 @@ class PlayingManager:
                         sub.def_add_f += skill.rate1
                         message += f"\n防御力提高{round(skill.rate1 * 100, 1)}%！"
                     elif sid == 7:
+                        atk_type = sub.atk_type_p
+                        atk_type_str = ""
                         damage_str: str = ""
-                        for i in range(int(skill.rate1)):
-                            is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
-                            rate = random.uniform(skill.rate2, skill.rate3)
-
-                            damage: int = int(sub.atk_p * rate - obj1.defence_p) if \
-                                sub.atk_p * rate - obj1.defence_p > sub.atk_p * rate * 0.05 else \
-                                int(sub.atk_p * rate * 0.05)
-                            damage += int(damage * is_crit * sub.crit_d_p)
-                            obj1.health -= damage
-                            damage_str += f"{damage}+"
-                        damage_str = damage_str.rstrip("+")  # 去掉末尾的+号
-                        enemies_obj.append(obj1)
-                        message += f"\n对{obj1.name}造成了{damage_str}点物理伤害！"
+                        if atk_type in [0, 2, 8]:
+                            atk_type_str = "物理"
+                        elif atk_type in [1, 3]:
+                            atk_type_str = "法术"
+                        elif atk_type in [6, 7]:
+                            atk_type_str = "真实"
+                        if atk_type in [0, 1, 6, 8]:
+                            for i in range(int(skill.rate1)):
+                                is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
+                                is_crit_sym: str = "★" if is_crit else ""
+                                rate = random.uniform(skill.rate2, skill.rate3)
+                                damage = int(sub.atk_p * rate + (sub.atk_p * is_crit * sub.crit_d_p))
+                                damage = await obj1.hurt(atk_type, damage)
+                                damage_str += f"{damage}{is_crit_sym}+"
+                            damage_str = damage_str.rstrip("+")  # 去掉末尾的+号
+                            objs_list.append(obj1)
+                            message += f"\n对{obj1.name}造成了{damage_str}点物理伤害！"
+                        elif atk_type in [2, 3, 7]:
+                            for op in obj1.next_operators:
+                                if not isinstance(op, Operator):
+                                    continue
+                                for i in range(int(skill.rate1)):
+                                    is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
+                                    is_crit_sym: str = "★" if is_crit else ""
+                                    rate = random.uniform(skill.rate2, skill.rate3)
+                                    damage = int(sub.atk_p * rate + (sub.atk_p * is_crit * sub.crit_d_p))
+                                    damage = await op.hurt(atk_type, damage)
+                                    damage_str += f"{damage}{is_crit_sym}+"
+                                damage_str = damage_str.rstrip("+")  # 去掉末尾的+号
+                                objs_list.append(op)
+                                objs_name += f" {op.name}"
+                                objs_damage += f" \n{damage_str}"
+                            message += f"\n对{objs_name}\n分别造成了{objs_damage} 点{atk_type_str}伤害！"
                     elif sid == 8:
-                        treat = int(sub.atk_p * skill.rate1)
-                        obj1.health += treat
-                        obj2.health += treat
-                        if obj1.health > obj1.max_health_p:
-                            obj1.health = obj1.max_health_p
-                        if obj2.health > obj2.max_health_p:
-                            obj2.health = obj2.max_health_p
-                        message += f"\n分别为{obj1.name}和{obj2.name}恢复了{treat}点生命值！"
+                        treat1 = treat2 = int(sub.atk_p * skill.rate1)
+                        treat1 = await obj1.hurt(4, treat1)
+                        treat2 = await obj2.hurt(4, treat2)
+                        message += f"\n为{obj1.name}和{obj2.name}分别恢复了 {treat1} {treat2} 点生命值！"
                     elif sid == 9:
                         persistence = 1
                         sub.atk_add_f += skill.rate1
                         message += f"\n每回合回复{int(skill.rate2)}技力点，攻击力提高{round(skill.rate1 * 100, 1)}%！"
                     elif sid == 10:
-                        sub.crit_r_add_d += skill.rate1
-                        sub.crit_d_add_d += skill.rate2
-                        message += f"\n暴击率增加{round(skill.rate1 * 100, 1)}%，暴击伤害增加{round(skill.rate2 * 100, 1)}%！\n"
+                        sub.crit_d_add_d += skill.rate1
+                        message += f"\n下次普攻必定暴击且暴击伤害增加{round(skill.rate1 * 100, 1)}%！\n"
                         await sub.upgrade_effect()
-                        is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
-                        is_crit_str: str = "暴击并" if is_crit else ""
-                        damage: int = (sub.atk_p - obj1.defence_p) \
-                            if (sub.atk_p - obj1.defence_p > sub.atk_p * 0.05) \
-                            else (sub.atk_p * 0.05)  # 5%攻击力的保底伤害
-                        damage += damage * is_crit * sub.crit_d_p
-                        message = f"\n{sub.name}对{obj1.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点物理伤害！"  # 返回的字符串
-                        if not obj1.invincible:
-                            obj1.health -= damage
-                        sub.crit_r_add_d -= skill.rate1
-                        sub.crit_d_add_d -= skill.rate2
-                        enemies_obj.append(obj1)
+                        damage = int(sub.atk_p + (sub.atk_p * sub.crit_d_p))
+                        damage = await obj1.hurt(0, damage)
+                        message = f"\n{sub.name}对{obj1.name}发动了普通攻击，暴击并对其造成了{damage}点物理伤害！"  # 返回的字符串
+                        sub.crit_d_add_d -= skill.rate1
+                        objs_list.append(obj1)
                 else:  # 26~50
                     pass
             else:
@@ -384,7 +373,7 @@ class PlayingManager:
 
         skill.count = skill.persistence + persistence
 
-        for op in enemies_obj:
+        for op in objs_list:
             if await op.is_die():
                 message += f"\n{op.name}被击倒了！"
                 await self.op_die(op)
