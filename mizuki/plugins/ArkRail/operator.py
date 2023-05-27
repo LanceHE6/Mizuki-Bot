@@ -40,7 +40,7 @@ class Operator:
         后面有_p的变量表示干员战斗时该变量的实际值(xxx_p = xxx * (1 + xxx_add_f) + xxx_add_d)
 
         攻击类型列表
-        0:物理单体  1:法术单体  2:物理群体  3:法术群体  4:治疗单体  5:治疗群体  6:真实单体  7:不进行普攻
+        0:物理单体  1:法术单体  2:物理群体  3:法术群体  4:治疗单体  5:治疗群体  6:真实单体  7:真实群体  8:物理单体嘲讽  9:不进行普攻
 
         敌人类型列表
         1:普通  2:高级  3:精英  4:高级精英  5:领袖  6:强大领袖(双阶段)
@@ -75,6 +75,10 @@ class Operator:
         elif atk_type == 6:
             self.atk_type_str = "真实单体"
         elif atk_type == 7:
+            self.atk_type_str = "真实群体"
+        elif atk_type == 8:
+            self.atk_type_str = "物理单体嘲讽"
+        elif atk_type == 9:
             self.atk_type_str = "不进行普攻"
 
         """
@@ -131,6 +135,46 @@ class Operator:
         self.blooding_rate: float = 0
 
         self.next_operators: list = []
+
+    async def hurt(self, atk_type: int, damage: int, ignore_def: float = 0, ignore_res: float = 0) -> int:
+        """
+        干员受到伤害时调用的方法
+
+        :param atk_type: 攻击类型。0:物理  1:法术  6:真实
+        :param damage: 伤害量
+        :param ignore_def: 无视防御比例
+        :param ignore_res: 无视法抗比例
+        :return: 返回受到的伤害
+        """
+        result = 0  # 返回的伤害或治疗量
+        if not self.invincible:  # 自身处于无敌状态则不会扣血
+            if atk_type in [0, 2, 8]:  # 物理伤害
+                defence = self.defence_p * (1 - ignore_def)
+                result = (damage - defence) \
+                    if (damage - defence > damage * 0.05) \
+                    else (damage * 0.05)  # 5%攻击力的保底伤害
+            elif atk_type in [1, 3]:  # 法术伤害
+                res = self.res_p * (1 - ignore_res)
+                result = damage * ((100 - res) / 100) \
+                    if (damage * ((100 - res) / 100) > damage * 0.1) \
+                    else (damage * 0.1)  # 10%攻击力的保底伤害
+            elif atk_type in [6, 7]:  # 真实伤害
+                result = damage
+
+        # 无敌状态可以受到治疗
+        if atk_type in [4, 5]:
+            result = damage
+
+        result = int(result)
+        if atk_type in [0, 1, 2, 3, 6, 7, 8]:
+            self.health -= result
+        elif atk_type in [4, 5]:
+            self.health += result
+            if self.health > self.max_health_p:
+                temp = self.health
+                self.health = self.max_health_p
+                result = result - (temp - self.max_health_p)
+        return result
 
     async def is_die(self) -> bool:
         """
