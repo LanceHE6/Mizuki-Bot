@@ -5,7 +5,7 @@
 # @Software:PyCharm
 
 
-async def get_cost(start_level: int, end_level: int) -> int:
+async def get_cost_op(start_level: int, end_level: int) -> int:
     """
     获取从一个等级升级到另一个等级所需消耗的货币
     :param start_level: 开始等级
@@ -21,6 +21,20 @@ async def get_cost(start_level: int, end_level: int) -> int:
                           15213, 15601]
     total_cost = 0
     for i in range(start_level-1, end_level-1):
+        total_cost += lmc_cost_per_level[i]
+
+    return total_cost
+
+async def get_cost_skill(start_level: int, end_level: int) -> int:
+    """
+    获取从一个技能等级升级到另一个技能等级所需消耗的货币
+    :param start_level: 开始等级
+    :param end_level: 目标等级
+    :return: 总共消耗货币数
+    """
+    lmc_cost_per_level = [5000, 10000 ,18000, 28000, 40000, 55000, 70000]
+    total_cost = 0
+    for i in range(start_level, end_level+1):
         total_cost += lmc_cost_per_level[i]
 
     return total_cost

@@ -295,6 +295,13 @@ async def add_op_to_user(uid: int or str, oid: int or str):
     await MDB.db_execute(f'Update ArkRail_User set operators_all="{owned_ops_list}" Where uid="{uid}";')
 
 async def change_user_op_level(uid: int or str, oid :int, target_level: int):
+    """
+    更改用户干员等级
+    :param uid: qq
+    :param oid: oid
+    :param target_level: 目标等级
+    :return: none
+    """
     user_ops_list = await get_user_all_ops(uid)
     for op_no in user_ops_list:
         if user_ops_list[op_no]["oid"] == oid:
@@ -306,6 +313,29 @@ async def change_user_op_level(uid: int or str, oid :int, target_level: int):
             user_playing_ops_list[op_no]["level"] = target_level
             #同步更新出战干员的等级
             await MDB.db_execute(f'Update ArkRail_User set operators_playing="{user_playing_ops_list}" Where uid="{uid}";')
+    await MDB.db_execute(f'Update ArkRail_User set operators_all="{user_ops_list}" Where uid="{uid}";')
+
+async def change_user_op_skill_level(uid: int or str, oid :int, skill_number:int, target_level: int):
+    """
+    更改用户干员技能等级
+    :param uid: qq
+    :param oid: oid
+    :param skill_number: 技能序号 0 1 2
+    :param target_level: 目标等级
+    :return: none
+    """
+    user_ops_list = await get_user_all_ops(uid)
+    for op_no in user_ops_list:
+        if user_ops_list[op_no]["oid"] == oid:
+            user_ops_list[op_no]["skills_level"][skill_number] = target_level
+    # 判断该干员是否为出战干员
+    user_playing_ops_list = await get_user_playing_ops(uid)
+    for op_no in user_playing_ops_list:
+        if user_playing_ops_list[op_no]["oid"] == oid:
+            user_playing_ops_list[op_no]["skills_level"][skill_number] = target_level
+            # 同步更新出战干员的等级
+            await MDB.db_execute(
+                f'Update ArkRail_User set operators_playing="{user_playing_ops_list}" Where uid="{uid}";')
     await MDB.db_execute(f'Update ArkRail_User set operators_all="{user_ops_list}" Where uid="{uid}";')
 
 async def change_user_playing_ops(uid: int or str, playing_oid_list: list):
