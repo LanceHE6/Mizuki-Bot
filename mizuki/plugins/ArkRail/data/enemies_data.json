@@ -228,7 +228,7 @@
     "speed": 80,
     "speed_plus": 0.1,
     "atk_type": 2,
-    "skills": []
+    "skills": [2]
   },
   "12": {
     "name": "双持剑士",
@@ -291,7 +291,7 @@
     "speed": 80,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": []
+    "skills": [3]
   },
   "110": {
     "name": "大鲍勃",
