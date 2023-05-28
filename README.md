@@ -13,6 +13,8 @@
 
 ------
 
+[TOC]
+
 ## 简介
 
 Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的明日方舟主题的娱乐QQ机器人
@@ -23,22 +25,22 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
 
 ## 项目结构
 
-`├─.env //配置文件`
-`├─.gitignore`
-`├─bot.py //bot启动文件`
-`├─docker-compose.yml`
-`├─Dockerfile`
-`├─pyproject.toml`
-`├─README.md`
-`├─mizuki`
-`|   ├─plugins`
-`|   | //插件目录`
-`├─database`
-`|    ├─Mizuki_DB.db`
-`|    └// 数据库目录`
-`├─data`
-`|  ├─plugins`
-`|  //插件数据目录`
+├─.env //配置文件
+├─.gitignore
+├─bot.py //bot启动文件
+├─docker-compose.yml
+├─Dockerfile
+├─pyproject.toml
+├─README.md
+├─mizuki
+|   ├─plugins
+|   | //插件目录
+├─database
+|    ├─Mizuki_DB.db
+|    └// 数据库目录
+├─data
+|  ├─plugins
+|  //插件数据目录
 
 
 
