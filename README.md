@@ -13,7 +13,23 @@
 
 ------
 
-[TOC]
+
+
+- [<center>Mizuki-Bot</center>](#-center-mizuki-bot--center-)
+  * [简介](#--)
+  * [项目结构](#----)
+  * [功能](#--)
+  * [部署](#--)
+    + [下载项目文件](#------)
+    + [修改bot配置文件](#--bot----)
+    + [安装项目依赖](#------)
+    + [下载配置go-cqhttp](#----go-cqhttp)
+    + [启动bot](#--bot)
+  * [更新日志](#----)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 
 ## 简介
 
@@ -25,6 +41,7 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
 
 ## 项目结构
 
+```
 ├─.env //配置文件
 ├─.gitignore
 ├─bot.py //bot启动文件
@@ -41,6 +58,7 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
 ├─data
 |  ├─plugins
 |  //插件数据目录
+```
 
 
 
