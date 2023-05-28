@@ -19,6 +19,29 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
 
 [Nonebot官网](https://v2.nonebot.dev/)
 
+
+
+## 项目结构
+
+├─.env //配置文件
+├─.gitignore
+├─bot.py //bot启动文件
+├─docker-compose.yml
+├─Dockerfile
+├─pyproject.toml
+├─README.md
+├─mizuki
+|   ├─plugins
+|   | //插件目录
+├─database
+|    ├─Mizuki_DB.db
+|    └// 数据库目录
+├─data
+|  ├─plugins
+|  //插件数据目录
+
+
+
 ## 功能
 
 √ 聊天
@@ -40,6 +63,8 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
   help菜单
 
 ......
+
+
 
 ## 部署
 
