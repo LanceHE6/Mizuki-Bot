@@ -3,7 +3,7 @@
 
 
 <div style="align:center">
-<img src="./icon.jpg" alt="icon" style="zoom:20%;">
+<img src="./icon.png" alt="icon" style="zoom:20%;">
 </div>
 
 
@@ -29,7 +29,7 @@
 
 
 
-## 简介
+## 简介 
 
 Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的明日方舟主题的娱乐QQ机器人
 
