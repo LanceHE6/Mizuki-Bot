@@ -27,8 +27,6 @@
     + [启动bot](#--bot)
   * [更新日志](#----)
 
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
 
 
 ## 简介
