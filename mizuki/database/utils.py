@@ -36,7 +36,8 @@ class MDataBase:
             logger.info(Fore.RED + "[Currency]用户账户数据表不存在 准备创建新数据表")
             try:
                 self.cur.execute(
-                    "Create Table Currency_UserAccount(uid integer primary key Not Null,LongMenCoin integer check (LongMenCoin >=0), Synthetic_Jade integer check (Synthetic_Jade >=0));")
+                    "Create Table Currency_UserAccount(uid integer primary key Not Null,LongMenCoin integer check ("
+                    "LongMenCoin >=0), Synthetic_Jade integer check (Synthetic_Jade >=0));")
                 self.connection.commit()
                 logger.info(Fore.RED + "[Currency]Currency_UserAccount表创建成功")
             except sqlite3.DatabaseError as e:
@@ -47,7 +48,8 @@ class MDataBase:
             logger.info(Fore.RED + "[Currency]用户签到数据表不存在 准备创建新数据表")
             try:
                 self.cur.execute(
-                    "Create Table Currency_UserSignIn(uid integer primary key Not Null,last_sign_in_time integer,continuous_sign_in integer);")
+                    "Create Table Currency_UserSignIn(uid integer primary key Not Null,last_sign_in_time integer,"
+                    "continuous_sign_in integer);")
                 self.connection.commit()
                 logger.info(Fore.RED + "[Currency]Currency_UserSignIn表创建成功")
             except sqlite3.DatabaseError as e:
@@ -87,6 +89,21 @@ class MDataBase:
                 self.connection.rollback()
                 logger.info(Fore.RED + f"[ArkRail]ArkRail_GachaUser表创建失败:{e}")
 
+        if not self.check_table("ArkRail_AgarUser"):
+            logger.info(Fore.RED + "[ArkRail]ArkRail_AgarUser表不存在 准备创建新数据表")
+            try:
+                self.cur.execute(
+                    "Create Table ArkRail_AgarUser(uid integer primary key Not Null,"
+                    "                          agar_num integer,"
+                    "                          agar_max_num integer default 160,"
+                    "                          is_full integer check ( is_full==0 or is_full==1 ),"
+                    "                          full_time integer);")
+                self.connection.commit()
+                logger.info(Fore.RED + "[ArkRail]ArkRail_AgarUser表创建成功")
+
+            except sqlite3.DatabaseError as e:
+                self.connection.rollback()
+                logger.info(Fore.RED + f"[ArkRail]ArkRail_AgarUser表创建失败:{e}")
         logger.info(Fore.BLUE + "[DB]数据表检查完成")
 
     # 检查表是否存在
@@ -115,12 +132,19 @@ class MDataBase:
             return str(e)
 
     # sql查询,单行
-    async def db_query_column(self, sql_sequence: str) -> list:
+    async def db_query_single(self, sql_sequence: str) -> list:
         result = self.cur.execute(sql_sequence)
         result_list = [row[0] for row in result.fetchall()]
         if not result_list:
             return []
         return list(result_list)
+
+    async def db_query_column(self, sql_sequence: str) -> list:
+        result = self.cur.execute(sql_sequence)
+        result_list = [row for row in result.fetchall()]
+        if not result_list:
+            return []
+        return list(result_list)[0]
 
     # sql查询语句，condition为判断条件语句，返回一个字段中符合条件的所有值的列表
     async def find_tb_by_column(self, table_name: str, column: str):

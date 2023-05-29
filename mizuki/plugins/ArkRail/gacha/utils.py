@@ -96,7 +96,7 @@ async def draw_img_ten(oid_list: list, uid: int or str) -> Path:
     draw = ImageDraw.Draw(image)
     i = 0
     for oid in oid_list:
-        op_img_path =await get_op_img(int(oid))
+        op_img_path = await get_op_img(int(oid))
         op_img = Image.open(op_img_path)
         profession = await get_op_attribute(oid, OPAttribute.profession)
         pro_img = Image.open(profession_img_path / f"{''.join(list(profession)[0:2])}.png")
@@ -104,7 +104,7 @@ async def draw_img_ten(oid_list: list, uid: int or str) -> Path:
         stars_img = Image.open(stars_img_path / f'{stars}.png')
 
         image.paste(op_img, (172 + i * 200, 230))  # 干员
-        os.remove(op_img_path)#删除临时干员图片文件
+        os.remove(op_img_path) # 删除临时干员图片文件
         flash_img = Image.open(stars_img_path / f'{stars}flash.png')
         image.paste(flash_img, (172 + i * 200, -10))  # 上光效
         if stars == 5 or stars == 6:

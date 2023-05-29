@@ -3,8 +3,9 @@
 
 
 <div style="align:center">
-<img src="./icon.jpg" alt="icon" style="zoom:20%;">
+<img src="./icon.png" alt="icon" style="zoom:20%;">
 </div>
+
 
 
 
@@ -13,11 +14,52 @@
 
 ------
 
-## 简介
+
+
+- [<center>Mizuki-Bot</center>](#-center-mizuki-bot--center-)
+  * [简介](#--)
+  * [项目结构](#----)
+  * [功能](#--)
+  * [部署](#--)
+    + [下载项目文件](#------)
+    + [修改bot配置文件](#--bot----)
+    + [安装项目依赖](#------)
+    + [下载配置go-cqhttp](#----go-cqhttp)
+    + [启动bot](#--bot)
+  * [更新日志](#----)
+
+
+
+## 简介 
 
 Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的明日方舟主题的娱乐QQ机器人
 
 [Nonebot官网](https://v2.nonebot.dev/)
+
+
+
+## 项目结构
+
+```
+├─.env //配置文件
+├─.gitignore
+├─bot.py //bot启动文件
+├─docker-compose.yml
+├─Dockerfile
+├─pyproject.toml
+├─README.md
+├─mizuki
+|   ├─plugins
+|   | //插件目录
+├─database
+|    ├─Mizuki_DB.db
+|    └// 数据库目录
+├─data
+|  ├─plugins
+|  //插件数据目录
+```
+
+
 
 ## 功能
 
@@ -40,6 +82,8 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
   help菜单
 
 ......
+
+
 
 ## 部署
 
