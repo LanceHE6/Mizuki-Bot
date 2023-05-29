@@ -117,7 +117,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
     @operate_atk.handle()
     async def _(atk_args: Message = CommandArg()):
-        if pm.all_ops_list[0] not in pm.player_ops_list:
+        if pm.all_ops_list[0] not in pm.all_ops_list:
             await operate_atk.finish("现在还不是你的回合哦！")
         op = pm.all_ops_list[0]  # 行动干员
         if op.atk_type_p == 7:
@@ -127,17 +127,17 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         else:
             obj_num = int(str(atk_args))  # 目标序号
             if op.atk_type_p in [0, 1, 2, 3, 6]:
-                obj = pm.map_enemies_list[obj_num - 1]  # 目标对象
+                obj = pm.all_enemies_list[obj_num - 1]  # 目标对象
                 if op.mocked and op.mocking_obj != obj:
                     await operate_atk.finish(
-                        f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
-                if 0 < obj_num <= len(pm.map_enemies_list):
+                        f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                if 0 < obj_num <= len(pm.all_enemies_list):
                     await send_message_and_is_over(await pm.turn(op, 0, obj), operate_atk)
                 else:
                     await operate_atk.finish("目标序号错误！\n/atk <敌人序号>")
             else: 
-                obj = pm.player_ops_list[obj_num - 1]  # 目标对象
-                if 0 < obj_num <= len(pm.player_ops_list):
+                obj = pm.all_ops_list[obj_num - 1]  # 目标对象
+                if 0 < obj_num <= len(pm.all_ops_list):
                     await send_message_and_is_over(await pm.turn(op, 0, obj), operate_atk)
                 else:
                     await operate_atk.finish("目标序号错误！\n/atk <友方序号>")
@@ -147,7 +147,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
     @operate_skill.handle()
     async def _(skill_args: Message = CommandArg()):
-        if pm.all_ops_list[0] not in pm.player_ops_list:
+        if pm.all_ops_list[0] not in pm.all_ops_list:
             await operate_skill.finish("现在还不是你的回合哦！")
         if pm.all_ops_list[0].silent:
             await operate_skill.finish("你被沉默了，无法使用技能！")
@@ -170,33 +170,33 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
             await operate_skill.finish("您的技力点不足以释放这个技能！")
 
         if skill.obj_type in [1, 4]:  # 单攻或扩散技能
-            if len(parm_list) >= 2 and 0 <= parm_list[1] < len(pm.map_enemies_list):
-                obj1 = pm.map_enemies_list[parm_list[1]] if skill.obj_type == 1 else pm.player_ops_list[parm_list[1]]
+            if len(parm_list) >= 2 and 0 <= parm_list[1] < len(pm.all_enemies_list):
+                obj1 = pm.all_enemies_list[parm_list[1]] if skill.obj_type == 1 else pm.all_ops_list[parm_list[1]]
                 if skill.obj_type == 1 and op.mocked and op.mocking_obj != obj1:
                     await operate_atk.finish(
-                        f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                        f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
                 await send_message_and_is_over(await pm.turn(op, skill_num + 1, obj1), operate_skill)
             else:
                 await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号>")
         elif skill.obj_type in [2, 5]:  # 双攻技能
-            if len(parm_list) >= 3 and 0 <= parm_list[1] < len(pm.map_enemies_list) and \
-                    0 <= parm_list[2] < len(pm.map_enemies_list) and parm_list[1] != parm_list[2]:
-                obj1 = pm.map_enemies_list[parm_list[1]] if skill.obj_type == 2 else pm.player_ops_list[parm_list[1]]
-                obj2 = pm.map_enemies_list[parm_list[2]] if skill.obj_type == 2 else pm.player_ops_list[parm_list[2]]
+            if len(parm_list) >= 3 and 0 <= parm_list[1] < len(pm.all_enemies_list) and \
+                    0 <= parm_list[2] < len(pm.all_enemies_list) and parm_list[1] != parm_list[2]:
+                obj1 = pm.all_enemies_list[parm_list[1]] if skill.obj_type == 2 else pm.all_ops_list[parm_list[1]]
+                obj2 = pm.all_enemies_list[parm_list[2]] if skill.obj_type == 2 else pm.all_ops_list[parm_list[2]]
                 if skill.obj_type == 3 and op.mocked and op.mocking_obj != obj1 and op.mocking_obj != obj2:
                     await operate_atk.finish(
-                        f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\nta必须为攻击目标之一！")
+                        f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\nta必须为攻击目标之一！")
                 await send_message_and_is_over(await pm.turn(op, skill_num + 1, obj1, obj2), operate_skill)
             else:
                 await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号1> <目标序号2>")
         elif skill.obj_type == 7:  # 目标为一个敌人和一个友方的技能
-            if len(parm_list) >= 3 and 0 <= parm_list[1] < len(pm.map_enemies_list) and \
-                    0 <= parm_list[2] < len(pm.player_ops_list):
-                obj1 = pm.map_enemies_list[parm_list[1]]
-                obj2 = pm.player_ops_list[parm_list[2]]
+            if len(parm_list) >= 3 and 0 <= parm_list[1] < len(pm.all_enemies_list) and \
+                    0 <= parm_list[2] < len(pm.all_ops_list):
+                obj1 = pm.all_enemies_list[parm_list[1]]
+                obj2 = pm.all_ops_list[parm_list[2]]
                 if op.mocked and op.mocking_obj != obj1:
                     await operate_atk.finish(
-                        f"你被{pm.map_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                        f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
                 await send_message_and_is_over(await pm.turn(op, skill_num + 1, obj1, obj2), operate_skill)
             else:
                 await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号> <友方序号>")
@@ -248,14 +248,14 @@ async def send_status_message(pm: PlayingManager, handle):
     """
     i = 1
     reply1 = "我方干员："
-    for op in pm.player_ops_list:
+    for op in pm.all_ops_list:
         reply1 += f"\n{i}.{op.name}     血量：{op.health}"
         i += 1
     reply1 += f"\n我方剩余技力点：{pm.player_skill_count}"
 
     j = 1
     reply2 = "敌方干员："
-    for op in pm.map_enemies_list:
+    for op in pm.all_enemies_list:
         reply2 += f"\n{j}.{op.name}     血量：{op.health}"
         j += 1
     reply2 += f"\n敌方剩余技力点：{pm.enemy_skill_count}"
