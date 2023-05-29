@@ -62,6 +62,7 @@ async def sign_func(event: GroupMessageEvent):
         # 获取用户在数据库中的信息
         sql_sequence = f"Select * from Currency_UserSignIn where uid={uid};"
         user_data = await MDB.db_query_column(sql_sequence)
+        print(user_data)
         # print(user_data)
         # 获取当前时间和用户上次签到的时间
         last_sign_in_time = await time_to_strftime(user_data[1])

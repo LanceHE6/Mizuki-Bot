@@ -159,7 +159,7 @@ async def get_map_attribute(mid: str, attribute: str) -> any:
 
 async def get_user_level(uid: str or int) -> int:
     sql_sequence = f"Select level from ArkRail_User where uid={uid};"
-    level = await MDB.db_query_column(sql_sequence)[0]
+    level = await MDB.db_query_single(sql_sequence)[0]
     return int(level)
 
 
@@ -170,18 +170,18 @@ async def get_user_all_ops(uid: str or int) -> dict:
     :return: 所拥有所有干员的字典
     """
     sql_sequence = f"Select operators_all from ArkRail_User where uid={uid};"
-    ops = await MDB.db_query_column(sql_sequence)
+    ops = await MDB.db_query_single(sql_sequence)
     return eval(ops[0])
 
 
 async def get_user_playing_ops(uid: str or int) -> dict:
     sql_sequence = f"Select operators_playing from ArkRail_User where uid={uid};"
-    ops = await MDB.db_query_column(sql_sequence)
+    ops = await MDB.db_query_single(sql_sequence)
     return eval(ops[0])
 
 
 async def is_in_table(uid: int) -> bool:
-    uid_list = await MDB.db_query_column("select uid from ArkRail_User")
+    uid_list = await MDB.db_query_single("select uid from ArkRail_User")
     if uid in uid_list:
         return True
     else:
@@ -361,28 +361,28 @@ async def change_user_playing_ops(uid: int or str, playing_oid_list: list):
 async def get_user_all_pool_num(uid: int or str) -> int:
     """返回用户所有池子的抽数"""
     uid = int(uid)
-    num = await MDB.db_query_column(f'Select all_pool_num From ArkRail_GachaUser Where uid="{uid}";')
+    num = await MDB.db_query_single(f'Select all_pool_num From ArkRail_GachaUser Where uid="{uid}";')
     return int(num[0])
 
 
 async def get_user_cur_pool_num(uid: int or str) -> int:
     """返回用户当前池子的抽数"""
     uid = int(uid)
-    num = await MDB.db_query_column(f'Select cur_pool_num From ArkRail_GachaUser Where uid="{uid}";')
+    num = await MDB.db_query_single(f'Select cur_pool_num From ArkRail_GachaUser Where uid="{uid}";')
     return int(num[0])
 
 
 async def get_user_all_pool_ops(uid: int or str, stars: int = 6 or 5) -> list:
     """返回用户所有池子抽到的6星或者5星的列表"""
     uid = int(uid)
-    list_text = await MDB.db_query_column(f'Select all_pool_{stars}s From ArkRail_GachaUser Where uid="{uid}";')
+    list_text = await MDB.db_query_single(f'Select all_pool_{stars}s From ArkRail_GachaUser Where uid="{uid}";')
     return eval(list_text[0])
 
 
 async def get_user_cur_pool_ops(uid: int or str, stars: int = 6 or 5) -> list:
     """返回用户当前池子抽到的6星或者5星的列表"""
     uid = int(uid)
-    list_text = await MDB.db_query_column(f'Select cur_pool_{stars}s From ArkRail_GachaUser Where uid="{uid}";')
+    list_text = await MDB.db_query_single(f'Select cur_pool_{stars}s From ArkRail_GachaUser Where uid="{uid}";')
     return eval(list_text[0])
 
 

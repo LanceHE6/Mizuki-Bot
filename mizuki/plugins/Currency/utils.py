@@ -10,7 +10,7 @@ from ...database.utils import MDB
 # 判断用户是否在Currency_UserAccount表中
 async def is_user_in_table(uid: int or str) -> bool:
     uid_list = await MDB.find_tb_by_column("Currency_UserAccount", "uid")
-    #初始6000合成玉
+    # 初始6000合成玉
     if int(uid) not in uid_list:
         sql_sequence = f"Insert Into Currency_UserAccount(uid, LongMenCoin, Synthetic_Jade) values('{uid}',0,6000);"
         await MDB.db_execute(sql_sequence)
@@ -24,7 +24,7 @@ async def get_user_lmc_num(uid: int or str) -> int:
     if not await is_user_in_table(uid):
         return 0
     sql_sequence = f"Select LongMenCoin from Currency_UserAccount where uid={uid};"
-    account_num = await MDB.db_query_column(sql_sequence)
+    account_num = await MDB.db_query_single(sql_sequence)
     return int(account_num[0])
 
 
@@ -55,12 +55,13 @@ async def change_user_lmc_num(uid: int or str, num: int) -> str:
         result = await MDB.db_execute(sql_sequence)
     return result
 
+
 # 返回用户账户合成玉数量
 async def get_user_sj_num(uid: int or str) -> int:
     if not await is_user_in_table(uid):
         return 0
     sql_sequence = f"Select Synthetic_Jade from Currency_UserAccount where uid={uid};"
-    account_num = await MDB.db_query_column(sql_sequence)
+    account_num = await MDB.db_query_single(sql_sequence)
     return int(account_num[0])
 
 
@@ -90,4 +91,3 @@ async def change_user_sj_num(uid: int or str, num: int) -> str:
         sql_sequence = f"Update Currency_UserAccount Set Synthetic_Jade=Synthetic_Jade+{num} where uid={uid};"
         result = await MDB.db_execute(sql_sequence)
     return result
-
