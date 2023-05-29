@@ -207,10 +207,12 @@ async def is_in_table(uid: int) -> bool:
                 "skills_level": [0, 0, 0]
             }
         }
-        # 初始化用户数据和抽卡数据
+        # 初始化用户数据和抽卡数据和体力数据
         await MDB.db_execute(f'insert into ArkRail_User values({uid}, 1, "{ops}", "{ops}");')
 
         await MDB.db_execute(f'Insert Into ArkRail_GachaUser values ({uid},0,0,"[]","[]","[]","[]");')
+
+        await MDB.db_execute(f'Insert Into ArkRail_AgarUser values ({uid},160,160,0,0);')
         return False
 
 
