@@ -212,7 +212,7 @@ async def is_in_table(uid: int) -> bool:
 
         await MDB.db_execute(f'Insert Into ArkRail_GachaUser values ({uid},0,0,"[]","[]","[]","[]");')
 
-        await MDB.db_execute(f'Insert Into ArkRail_AgarUser values ({uid},160,160,0,0);')
+        await MDB.db_execute(f'Insert Into ArkRail_AgarUser values ({uid},160,160,1,0);')
         return False
 
 
@@ -430,3 +430,60 @@ async def get_user_ops_num_of_gacha(uid: int or str, stars: int =5 or 6) -> int:
     """获取用户抽卡获得的5星或6星干员总数"""
     ops_list = await get_user_all_pool_ops(uid, stars)
     return len(ops_list)
+
+async def agar_natural_recover():
+    """
+    体力自动回复，配合定时器使用
+    :return:
+    """
+    uid_list = await MDB.find_tb_by_column(table_name="ArkRail_AgarUser", column="uid")
+    for uid in uid_list:
+        user_info = await MDB.db_query_column(f"Select * From ArkRail_AgarUser Where uid={uid};")
+        if int(user_info[1]) < int(user_info[2]):
+            if user_info[3] == 1:
+                need_time = 6 * (int(user_info[2]) - int(user_info[1]))  # 预计多少分钟回满
+                # 体力未满时设置tag
+                await MDB.db_execute(f"Update ArkRai_AgarUser Set is_full=0,full_time={need_time} Where uid={uid}")
+
+            await MDB.db_execute(f"Update ArkRai_AgarUser Set agar_num=argar_num+1 Where uid={uid}")  # 体力加一
+        else:
+            if user_info[3] == 0:
+                # 体力回满时设置tag
+                await MDB.db_execute(f"Update ArkRai_AgarUser Set is_full=1,full_time=0 Where uid={uid}")
+
+async def get_user_agar_num(uid: str or int) -> int:
+    """
+    获取用户当前体力值
+    :param uid:
+    :return: int
+    """
+    uid = int(uid)
+    num = await MDB.db_query_single(f"Select agar_num From ArkRail_AgarUser Where uid={uid}")[0]
+    return int(num)
+
+async def user_agar(uid: int or str, num: int) -> int:
+    """
+    使用体力，返回状态码
+    :param uid:
+    :param num: 数量（正数）
+    :return: -1体力不够， 0成功使用
+    """
+    user_num = await get_user_agar_num(uid)
+    if user_num < num:
+        return -1
+    await MDB.db_execute(f"Update ArkRai_AgarUser Set agar_num=argar_num-{num} Where uid={uid}")
+    return 0
+
+async def get_agar_full_time(uid: int or str) -> int:
+    """
+    获取体力回满需要消耗的时间
+    :param uid:
+    :return: 0 为已满
+    """
+    uid = int(uid)
+    user_info = await MDB.db_query_column(f"Select * From ArkRail_AgarUser Where uid={uid};")
+    if user_info[3] == 0:
+        need_time = 6 * (int(user_info[2]) - int(user_info[1]))  # 预计多少分钟回满
+    else:
+        need_time = 0
+    return need_time
