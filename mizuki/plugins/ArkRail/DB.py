@@ -6,7 +6,6 @@
 
 from pathlib import Path
 import json
-
 from colorama import Fore
 
 from ...database.utils import MDB
@@ -56,6 +55,7 @@ enemy_skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'enemy_
 
 
 class OPAttributeNotFoundError(Exception):
+    """干员属性异常类"""
     def __init__(self, error_attribute):
         self.error_attribute = error_attribute
 
@@ -64,6 +64,7 @@ class OPAttributeNotFoundError(Exception):
 
 
 class SkillAttributeNotFoundError(Exception):
+    """技能属性异常类"""
     def __init__(self, error_attribute):
         self.error_attribute = error_attribute
 
@@ -71,7 +72,8 @@ class SkillAttributeNotFoundError(Exception):
         print("未知技能属性:" + self.error_attribute)
 
 
-class OPAttribute:  # 干员属性类
+class OPAttribute:
+    """干员属性类"""
     name = 'name'
     stars = 'stars'
     profession = 'profession'
@@ -93,7 +95,8 @@ class OPAttribute:  # 干员属性类
     skills = 'skills'
 
 
-class SkillAttribute:  # 技能属性类
+class SkillAttribute:
+    """技能属性类"""
     name = "name"
     brief_d = "brief_d"
     detail = "detail"
@@ -110,12 +113,20 @@ class SkillAttribute:  # 技能属性类
     persistence_plus = "persistence_plus"
 
 
-class MapAttribute:  # 地图属性类
+class MapAttribute:
+    """地图属性类"""
     enemies = "enemies"
     reward = "reward"
 
 
 async def get_op_attribute(oid: str or int, attribute: str, is_enemy: bool = False) -> any:
+    """
+      获取干员属性
+      :param oid: 技能id
+      :param attribute: 属性：name, detail....
+      :param is_enemy: 是否为敌人技能 default false
+      :return: 属性信息
+      """
     if attribute not in ["name", "health", "health_plus", "atk", "atk_plus", "def", "def_plus", "crit_r", "crit_r_plus",
                          "crit_d", "crit_d_plus", "speed", "speed_plus", "atk_type", "skills", "res", "res_plus",
                          "profession", "stars"]:
@@ -127,6 +138,13 @@ async def get_op_attribute(oid: str or int, attribute: str, is_enemy: bool = Fal
 
 
 async def get_skill_attribute(sid: str or int, attribute: str, is_enemy: bool = False) -> any:
+    """
+    获取技能属性
+    :param sid: 技能id
+    :param attribute: 属性：name, detail....
+    :param is_enemy: 是否为敌人技能 default false
+    :return: 属性信息
+    """
     if attribute not in ["name", "brief_d", "detail", "rate1", "rate1_plus", "rate2", "rate2_plus", "rate3", "rate3_plus",
                          "obj_type", "consume", "consume_plus", "persistence", "persistence_plus"]:
         raise SkillAttributeNotFoundError(attribute)
@@ -137,6 +155,7 @@ async def get_skill_attribute(sid: str or int, attribute: str, is_enemy: bool = 
 
 
 async def get_map_attribute(mid: str, attribute: str) -> any:
+    """获取地图信息"""
     if attribute not in ["enemies", "reward"]:
         raise SkillAttributeNotFoundError(attribute)
     with open(maps_data, 'r', encoding='utf-8') as data:
@@ -158,6 +177,11 @@ async def get_map_attribute(mid: str, attribute: str) -> any:
 
 
 async def get_user_level(uid: str or int) -> int:
+    """
+    获取用户等级
+    :param uid: uid
+    :return: 等级
+    """
     sql_sequence = f"Select level from ArkRail_User where uid={uid};"
     level = await MDB.db_query_single(sql_sequence)[0]
     return int(level)
@@ -175,12 +199,22 @@ async def get_user_all_ops(uid: str or int) -> dict:
 
 
 async def get_user_playing_ops(uid: str or int) -> dict:
+    """
+    获取用户出战干员列表(字典)
+    :param uid: uid
+    :return: {1:{level:90,skills_level:[1,1,1]}...}
+    """
     sql_sequence = f"Select operators_playing from ArkRail_User where uid={uid};"
     ops = await MDB.db_query_single(sql_sequence)
     return eval(ops[0])
 
 
 async def is_in_table(uid: int) -> bool:
+    """
+    判断用户是否存在表中，不存在则初始化该用户数据
+    :param uid:
+    :return: boolean
+    """
     uid_list = await MDB.db_query_single("select uid from ArkRail_User")
     if uid in uid_list:
         return True
@@ -216,7 +250,6 @@ async def is_in_table(uid: int) -> bool:
         return False
 
 
-# 通过名字在所有干员数据中找oid,返回-1未找到
 async def get_oid_by_name(name: str) -> int:
     """
     通过名字(别名)获取干员oid
@@ -224,14 +257,14 @@ async def get_oid_by_name(name: str) -> int:
     :return: oid  -1为未找到
     """
 
-    #先在别名中找
+    # 先在别名中找
     with open(aliases_data, 'r', encoding='utf-8') as aliases_file:
         aliases_dict = json.load(aliases_file)
         aliases_file.close()
     for op_name in aliases_dict:
         if name in aliases_dict[op_name]:
-            name = op_name#找到干员名字
-    #在干员信息中查找oid
+            name = op_name# 找到干员名字
+    # 在干员信息中查找oid
     with open(operators_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
         data.close()
@@ -246,7 +279,7 @@ async def is_op_owned(uid: int or str, oid: int) -> bool:
     通过oid判断用户是否拥有该干员
     :param uid: uid
     :param oid: oid
-    :return: 布尔类型，True为拥有
+    :return: boolean，True为拥有
     """
     user_ops = await get_user_all_ops(uid)
     for number in user_ops:
@@ -256,6 +289,7 @@ async def is_op_owned(uid: int or str, oid: int) -> bool:
 
 
 async def is_map_exist(mid: str) -> bool:
+    """判断地图是否存在"""
     with open(maps_data, 'r', encoding='utf-8') as data:
         m_data = json.load(data)
         data.close()
@@ -308,12 +342,12 @@ async def change_user_op_level(uid: int or str, oid :int, target_level: int):
     for op_no in user_ops_list:
         if user_ops_list[op_no]["oid"] == oid:
             user_ops_list[op_no]["level"] = target_level
-    #判断该干员是否为出战干员
+    # 判断该干员是否为出战干员
     user_playing_ops_list = await get_user_playing_ops(uid)
     for op_no in user_playing_ops_list:
         if user_playing_ops_list[op_no]["oid"] == oid:
             user_playing_ops_list[op_no]["level"] = target_level
-            #同步更新出战干员的等级
+            # 同步更新出战干员的等级
             await MDB.db_execute(f'Update ArkRail_User set operators_playing="{user_playing_ops_list}" Where uid="{uid}";')
     await MDB.db_execute(f'Update ArkRail_User set operators_all="{user_ops_list}" Where uid="{uid}";')
 
@@ -488,3 +522,17 @@ async def get_agar_full_time(uid: int or str) -> int:
     else:
         need_time = 0
     return need_time
+
+async def agar_is_enough(uid: int or str, num: int) -> bool:
+    """
+    判断用户琼脂是否足够
+    :param uid: uid
+    :param num: 判断数量
+    :return: boolean
+    """
+    uid = int(uid)
+    user_num = await get_user_agar_num(uid)
+    if user_num < num:
+        return False
+    else:
+        return True
