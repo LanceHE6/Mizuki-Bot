@@ -443,13 +443,13 @@ async def agar_natural_recover():
             if user_info[3] == 1:
                 need_time = 6 * (int(user_info[2]) - int(user_info[1]))  # 预计多少分钟回满
                 # 体力未满时设置tag
-                await MDB.db_execute(f"Update ArkRai_AgarUser Set is_full=0,full_time={need_time} Where uid={uid}")
+                await MDB.db_execute(f"Update ArkRail_AgarUser Set is_full=0,full_time={need_time} Where uid={uid};")
 
-            await MDB.db_execute(f"Update ArkRai_AgarUser Set agar_num=argar_num+1 Where uid={uid}")  # 体力加一
+            await MDB.db_execute(f"Update ArkRail_AgarUser Set agar_num=agar_num+1, full_time=full_time-6 Where uid={uid};")  # 体力加一
         else:
             if user_info[3] == 0:
                 # 体力回满时设置tag
-                await MDB.db_execute(f"Update ArkRai_AgarUser Set is_full=1,full_time=0 Where uid={uid}")
+                await MDB.db_execute(f"Update ArkRail_AgarUser Set is_full=1,full_time=0 Where uid={uid};")
 
 async def get_user_agar_num(uid: str or int) -> int:
     """
@@ -458,8 +458,8 @@ async def get_user_agar_num(uid: str or int) -> int:
     :return: int
     """
     uid = int(uid)
-    num = await MDB.db_query_single(f"Select agar_num From ArkRail_AgarUser Where uid={uid}")[0]
-    return int(num)
+    num = await MDB.db_query_single(f"Select agar_num From ArkRail_AgarUser Where uid={uid}")
+    return int(num[0])
 
 async def user_agar(uid: int or str, num: int) -> int:
     """
@@ -471,7 +471,7 @@ async def user_agar(uid: int or str, num: int) -> int:
     user_num = await get_user_agar_num(uid)
     if user_num < num:
         return -1
-    await MDB.db_execute(f"Update ArkRai_AgarUser Set agar_num=argar_num-{num} Where uid={uid}")
+    await MDB.db_execute(f"Update ArkRail_AgarUser Set agar_num=argar_num-{num} Where uid={uid}")
     return 0
 
 async def get_agar_full_time(uid: int or str) -> int:
@@ -483,7 +483,8 @@ async def get_agar_full_time(uid: int or str) -> int:
     uid = int(uid)
     user_info = await MDB.db_query_column(f"Select * From ArkRail_AgarUser Where uid={uid};")
     if user_info[3] == 0:
-        need_time = 6 * (int(user_info[2]) - int(user_info[1]))  # 预计多少分钟回满
+        need_time = (await MDB.db_query_single(f"Select full_time From ArkRail_AgarUser Where uid={uid};"))[0]
+        # 预计多少分钟回满
     else:
         need_time = 0
     return need_time
