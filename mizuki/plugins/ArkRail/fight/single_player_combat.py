@@ -16,6 +16,7 @@ from ...Currency.utils import change_user_lmc_num, change_user_sj_num
 
 play = on_command("play", aliases={"作战"}, block=True, priority=1)
 playing_user: list[int] = []  # 正在进行战斗的用户
+MAX_PLAYING_PERSON = 3  # 最大同时作战人数
 
 
 async def is_playing(uid: int) -> bool:  # 判断用户是否正在进行战斗
@@ -97,6 +98,12 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     def is_doctor(e: GroupMessageEvent) -> bool:  # 判断触发atk,skill,run指令的用户是否跟触发play指令的用户相同
         return int(e.get_user_id()) == uid
 
+    if len(playing_user) > MAX_PLAYING_PERSON:
+        playing_user_name = ""
+        for u in playing_user:
+            playing_user_name += f"{u} "
+        await play.finish(f"当前作战人数较多，请稍后再进行作战哦！\n{playing_user_name}正在进行作战...")
+
     uid = int(event.get_user_id())
     mid = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
 
@@ -117,9 +124,9 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
     @operate_atk.handle()
     async def _(atk_args: Message = CommandArg()):
-        if pm.all_ops_list[0] not in pm.all_ops_list:
+        if pm.all_list[0] not in pm.all_ops_list:
             await operate_atk.finish("现在还不是你的回合哦！")
-        op = pm.all_ops_list[0]  # 行动干员
+        op = pm.all_list[0]  # 行动干员
         if op.atk_type_p == 7:
             await send_message_and_is_over(await pm.turn(op, 0), operate_atk)
         elif not str(atk_args).isdigit():
@@ -147,9 +154,9 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
     @operate_skill.handle()
     async def _(skill_args: Message = CommandArg()):
-        if pm.all_ops_list[0] not in pm.all_ops_list:
+        if pm.all_list[0] not in pm.all_ops_list:
             await operate_skill.finish("现在还不是你的回合哦！")
-        if pm.all_ops_list[0].silent:
+        if pm.all_list[0].silent:
             await operate_skill.finish("你被沉默了，无法使用技能！")
         parm_str_list: list[str] = str(skill_args).split(" ")
         parm_list: list[int] = []
@@ -159,7 +166,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
             else:
                 await operate_run.finish("参数错误！\n/skill <技能序号> [目标序号1] [目标序号2/友方序号]")
         skill_num = parm_list[0]  # 技能序号(原始)
-        op = pm.all_ops_list[0]  # 行动干员
+        op = pm.all_list[0]  # 行动干员
         skill = None  # 使用的技能
         if 0 <= skill_num < len(op.skills_list):
             skill = op.skills_list[skill_num]
@@ -209,8 +216,6 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     @operate_run.handle()
     async def _():
         await operate_run.send(f"{event.sender.nickname}逃跑了！")
-        # await play.finish()
-        # await operate_run.finish()
         await finish_playing()
 
     async def finish_playing():
@@ -240,7 +245,7 @@ async def delete_handle(obj: Type[Matcher]):
 
 async def send_status_message(pm: PlayingManager, handle):
     """
-    返回所有参战人员状态的函数
+    发送所有参战人员状态的函数
 
     :param pm: PlayingManage对象，包含了这场战斗的所有数据
     :param handle: 用于发送消息
@@ -249,21 +254,21 @@ async def send_status_message(pm: PlayingManager, handle):
     i = 1
     reply1 = "我方干员："
     for op in pm.all_ops_list:
-        reply1 += f"\n{i}.{op.name}     血量：{op.health}"
+        reply1 += f"\n{i}.{op.name} {op.health}❤"
         i += 1
-    reply1 += f"\n我方剩余技力点：{pm.player_skill_count}"
+    reply1 += f"\n{pm.player_skill_count}◈"
 
     j = 1
     reply2 = "敌方干员："
     for op in pm.all_enemies_list:
-        reply2 += f"\n{j}.{op.name}     血量：{op.health}"
+        reply2 += f"\n{j}.{op.name} {op.health}❤"
         j += 1
-    reply2 += f"\n敌方剩余技力点：{pm.enemy_skill_count}"
+    reply2 += f"\n{pm.enemy_skill_count}◈"
 
     k = 1
     reply3 = "行动顺序："
-    for op in pm.all_ops_list:
-        reply3 += f"\n{k}.{op.name}     速度：{op.speed_p}"
+    for op in pm.all_list:
+        reply3 += f"\n{k}.{op.name} {op.speed_p}↗"
         k += 1
 
     await handle.send(reply1)
