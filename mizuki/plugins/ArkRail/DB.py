@@ -263,7 +263,7 @@ async def get_oid_by_name(name: str) -> int:
         aliases_file.close()
     for op_name in aliases_dict:
         if name in aliases_dict[op_name]:
-            name = op_name# 找到干员名字
+            name = op_name  # 找到干员名字
     # 在干员信息中查找oid
     with open(operators_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)

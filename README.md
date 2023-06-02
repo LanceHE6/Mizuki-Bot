@@ -16,21 +16,22 @@
 
 
 
+
 - [<center>Mizuki-Bot</center>](#-center-mizuki-bot--center-)
-  * [简介](#--)
-  * [项目结构](#----)
-  * [功能](#--)
-  * [部署](#--)
-    + [下载项目文件](#------)
-    + [修改bot配置文件](#--bot----)
-    + [安装项目依赖](#------)
-    + [下载配置go-cqhttp](#----go-cqhttp)
-    + [启动bot](#--bot)
-  * [更新日志](#----)
+  * [简介](#span-idjump1-简介-span)
+  * [项目结构](#span-idjump2-项目结构-span)
+  * [功能](#span-idjump3-功能-span)
+  * [部署](#span-idjump4-部署-span)
+    + [下载项目文件](#span-idjump4-1-下载项目文件)
+    + [修改bot配置文件](#span-idjump4-2-修改bot配置文件)
+    + [安装项目依赖](#span-idjump4-3-安装项目依赖)
+    + [下载配置go-cqhttp](#span-idjump4-4-下载配置go-cqhttp)
+    + [启动bot](#span-idjump4-5-启动bot)
+  * [更新日志](#span-idjump5-更新日志-span)
 
 
 
-## 简介 
+## <span id="jump1">简介</span>
 
 Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的明日方舟主题的娱乐QQ机器人
 
@@ -38,7 +39,7 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
 
 
 
-## 项目结构
+## <span id="jump2">项目结构</span>
 
 ```
 ├─.env //配置文件
@@ -61,7 +62,7 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
 
 
 
-## 功能
+## <span id="jump3">功能</span>
 
 √ 聊天
 
@@ -69,7 +70,7 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
 
    方舟铁道主题玩法
 
-​		√ 抽卡
+  ​		√ 抽卡
 
 ​		   养成
 
@@ -79,23 +80,23 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
 
 
 
-  help菜单
+  √help菜单
 
 ......
 
 
 
-## 部署
+## <span id="jump4">部署</span>
 
 *请确保你的python环境版本>=3.8*
 
-### 下载项目文件
+### <span id="jump4-1">下载项目文件
 
 在本地创建你的项目文件夹，并将项目clone到该文件夹
 
 `git clone https://github.com/LanceHE6/Mizuki-Bot`
 
-### 修改bot配置文件
+### <span id="jump4-2">修改bot配置文件
 
 打开.env文件并修改相应配置
 
@@ -110,13 +111,13 @@ NICKNAME=["Mizuki", "水月", "mizuki"]  # 配置机器人的昵称
 COMMAND_START=["/"]  # 配置命令起始字符
 ```
 
-### 安装项目依赖
+### <span id="jump4-3">安装项目依赖
 
 在项目文件夹中使用pip安装项目依赖
 
 `pip install -r -requirements.txt`
 
-### 下载配置go-cqhttp
+### <span id="jump4-4">下载配置go-cqhttp
 
 1.在[Releases ](https://github.com/Mrs4s/go-cqhttp/releases)页面下载对应版本并解压
 
@@ -141,7 +142,7 @@ COMMAND_START=["/"]  # 配置命令起始字符
 
 4.保存并重新启动go_cqhttp
 
-### 启动bot
+### <span id="jump4-5">启动bot
 
 运行项目文件的bot.py
 
@@ -151,6 +152,6 @@ COMMAND_START=["/"]  # 配置命令起始字符
 
 
 
-## 更新日志
+## <span id="jump5">更新日志</span>
 
 暂未发布第一版
