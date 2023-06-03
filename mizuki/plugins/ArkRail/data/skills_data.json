@@ -524,7 +524,7 @@
     "rate3_plus": 0,
     "obj_type": 4,
     "consume": 12,
-    "consume_plus": 0.2,
+    "consume_plus": 0.25,
     "persistence": 0,
     "persistence_plus": 0
   },
@@ -540,7 +540,7 @@
     "rate3_plus": 0,
     "obj_type": 4,
     "consume": 20,
-    "consume_plus": 0.2,
+    "consume_plus": 0.25,
     "persistence": 1,
     "persistence_plus": 0.18
   },
