@@ -9,3 +9,4 @@ from .show_info import *
 from .fight import *
 from .op_manage import *
 from .agar import *
+from .res_manage import *
