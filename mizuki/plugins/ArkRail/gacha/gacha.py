@@ -71,7 +71,6 @@ async def _(event: GroupMessageEvent):
         await ten.finish(MessageSegment.at(uid) + "你的合成玉余额不足6000")
 
     logger.info("[Gacha]开始抽卡制图")
-    await ten.send(MessageSegment.at(uid)+"十连制图较慢请耐心等待哦")
     oid_list = await gacha(uid, True)
     try:
         gacha_img = await draw_img_ten(oid_list, uid)

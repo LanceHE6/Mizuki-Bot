@@ -4,13 +4,9 @@
 # @Time:2023/5/11 10:56
 # @Software:PyCharm
 
-from colorama import Fore
 from pathlib import Path
-from nonebot.log import logger
-import requests
-import json
 
-casual_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
+res_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
 
 
 async def get_op_img(oid: int or str, is_big: int = 0):
@@ -20,17 +16,10 @@ async def get_op_img(oid: int or str, is_big: int = 0):
     :param is_big: 是否为大立绘
     :return: 图片地址
     """
-    op_img_api = f'https://hycerlance.site/api/op_img/?oid={oid}&is_big={is_big}'
-    requests.packages.urllib3.disable_warnings()  # 忽略request警告
-    result = json.loads(requests.get(op_img_api, verify=False).content)
-    if result["code"] != 1:
-        logger.info(Fore.RED + "干员图片获取出错")
-        return
-    img = requests.get(result["msg"]).content
-    img_path = f"{casual_path}/{oid}.png"
-    with open(img_path, "wb") as data:
-        data.write(img)
-        data.close()
+    if is_big == 1:
+        img_path = res_path / "op_images" / f"{oid}_big.png"
+    else:
+        img_path = res_path / "op_images" / f"{oid}.png"
     return img_path
 
 
@@ -41,18 +30,11 @@ async def get_op_model(oid: int or str, is_back: int = 0):
     :param is_back: 是否为背面
     :return: 图片地址
     """
-    op_model_api = f'https://hycerlance.site/api/op_models/?oid={oid}&is_back={is_back}'
-    requests.packages.urllib3.disable_warnings()
-    result = json.loads(requests.get(op_model_api, verify=False).content)
-    if result["code"] != 1:
-        logger.info(Fore.RED + "干员模型获取出错")
-        return
-    img = requests.get(result["msg"]).content
-    img_path = f"{casual_path}/{oid}.png"
-    with open(img_path, "wb") as data:
-        data.write(img)
-        data.close()
-    return img_path
+    if is_back == 1:
+        model_path = res_path / "op_models" / f"{oid}_back.png"
+    else:
+        model_path = res_path / "op_models" / f"{oid}.png"
+    return model_path
 
 
 async def line_break(line: str, line_count: int) -> str:

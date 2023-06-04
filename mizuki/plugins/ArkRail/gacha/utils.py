@@ -104,7 +104,7 @@ async def draw_img_ten(oid_list: list, uid: int or str) -> Path:
         stars_img = Image.open(stars_img_path / f'{stars}.png')
 
         image.paste(op_img, (172 + i * 200, 230))  # 干员
-        os.remove(op_img_path) # 删除临时干员图片文件
+        # os.remove(op_img_path) # 删除临时干员图片文件
         flash_img = Image.open(stars_img_path / f'{stars}flash.png')
         image.paste(flash_img, (172 + i * 200, -10))  # 上光效
         if stars == 5 or stars == 6:
@@ -152,7 +152,7 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
     stars_img = Image.open(stars_img_path / f'{stars}_big.png')
 
     image.paste(op_img, (80, 10), mask=op_img)  # 干员
-    os.remove(op_img_path)  # 删除临时干员图片文件
+    #os.remove(op_img_path)  # 删除临时干员图片文件
     image.paste(stars_img, (160, 550), mask=stars_img)  # 星级
     image.paste(pro_img, (320, 750))  # 职业标志
 

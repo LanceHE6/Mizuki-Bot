@@ -4,7 +4,7 @@
 import nonebot
 from nonebot.adapters.onebot.v11 import Adapter as ONEBOT_V11Adapter
 
-#from nonebot.adapters.console import Adapter as CONSOLEAdapter
+# from nonebot.adapters.console import Adapter as CONSOLEAdapter
 
 # Custom your logger
 # 
@@ -21,7 +21,7 @@ app = nonebot.get_asgi()
 
 driver = nonebot.get_driver()
 driver.register_adapter(ONEBOT_V11Adapter)
-#driver.register_adapter(CONSOLEAdapter)
+# driver.register_adapter(CONSOLEAdapter)
 
 
 # Please DO NOT modify this file unless you know what you are doing!
