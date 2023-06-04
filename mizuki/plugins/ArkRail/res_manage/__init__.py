@@ -3,6 +3,7 @@
 # @Author:Hycer_Lance
 # @Time:2023/6/4 10:36
 # @Software:PyCharm
+
 import datetime
 import json
 import time
@@ -10,15 +11,37 @@ import zipfile
 
 import requests
 import os
+
 from tqdm import tqdm
 from pathlib import Path
+from ...Utils.PluginInfo import PluginInfo
 
 from nonebot.log import logger
+from nonebot import on_command
+from nonebot.permission import SUPERUSER
+from nonebot.utils import run_sync
 
 img_resources_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
 res_version_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res_manage' / 'res_version_data.json'
 
+update_res_comm = on_command("update_res", aliases={'更新资源'}, block=True, priority=1, permission=SUPERUSER)
 
+__plugin_info__ = PluginInfo(
+    plugin_name="ArkRail_res_manage",
+    name="图片资源更新",
+    description="图片资源更新",
+    usage=(
+        "更新资源"
+    ),
+    extra={
+        "author": "Hycer_Lance",
+        "version": "0.1.0",
+        "priority": 1,
+        "permission": "SUPERUSER"
+    }
+)
+
+@run_sync
 def check_release():
     """
     检查仓库release，获取asset信息
@@ -26,14 +49,15 @@ def check_release():
             则返回字符串信息
     """
     headers = {
-        # "Authorization": "token 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",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                      "Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.57 "
+        "Authorization": "token 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",
     }
     release_api = 'https://api.github.com/repos/LanceHE6/Mizuki-Bot/releases'
+    try:
 
-    response = requests.get(release_api, headers=headers)
-
+        response = requests.get(release_api, headers=headers)
+    except requests.exceptions.SSLError:
+        logger.warning("[ArkRail]GitHub API限制，暂时无法检查资源")
+        return "Request Error"
     # 检查响应状态码
     if response.status_code == 200:
         releases_data = response.json()
@@ -170,19 +194,7 @@ def check_image_res():
     logger.info('[ArkRail]开始检查图片资源')
     if os.path.exists(img_resources_path):
         logger.info('[ArkRail]图片资源已存在')
-        release_data = check_release()
-        if isinstance(release_data, str):
-            logger.warning('[ArkRail]获取图片资源信息失败')
-            return
-        with open(res_version_data, 'r', encoding='utf-8') as data:
-            local_data = json.load(data)
-            data.close()
-        if local_data["version"] != release_data[1]:
-            logger.info('[ArkRail]图片资源存在更新，开始更新资源')
-            os.remove(img_resources_path)
-            download(release_data[0], img_resources_path, release_data[1])
-            logger.info('[ArkRail]图片资源更新完成')
-
+        return
     else:
         logger.warning('[ArkRail]未检测到图片资源即将开始下载')
         release_data = check_release()
@@ -190,6 +202,20 @@ def check_image_res():
             logger.warning('[ArkRail]获取图片资源信息失败')
             return
         download(release_data[0], img_resources_path, release_data[1])
+
+@update_res_comm.handle()
+async def update_res():
+    release_data = await check_release()
+    if isinstance(release_data, str):
+        await update_res_comm.finish("获取图片资源信息失败", at_sender=True)
+    with open(res_version_data, 'r', encoding='utf-8') as data:
+        local_data = json.load(data)
+        data.close()
+    if local_data["version"] != release_data[1]:
+        await update_res_comm.send("图片资源存在更新，开始更新资源")
+        os.remove(img_resources_path)
+        download(release_data[0], img_resources_path, release_data[1])
+        await update_res_comm.finish('图片资源更新完成')
 
 check_image_res()
     
