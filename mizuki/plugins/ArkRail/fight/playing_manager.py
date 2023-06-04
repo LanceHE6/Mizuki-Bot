@@ -15,7 +15,7 @@ class PlayingManager:
         self.all_ops_list: list[Operator] = player_ops_list  # 玩家干员列表
         self.all_enemies_list: list[Operator] = map_enemies_list  # 敌方干员列表
         # 所有干员列表，用于计算干员出手顺序，初始化时顺便做一下冒泡排序
-        self.all_ops_list: list[Operator] = bubble_sort(player_ops_list + map_enemies_list)
+        self.all_list: list[Operator] = bubble_sort(player_ops_list + map_enemies_list)
         self.player_skill_count = 20  # 我方初始技力点
         self.enemy_skill_count = 10  # 敌方初始技力点
 
@@ -48,7 +48,7 @@ class PlayingManager:
         判断是否为敌人回合，如果是则敌人行动，直到玩家回合为止
         :return 返回战斗消息
         """
-        move_op = self.all_ops_list[0]  # 当前行动者
+        move_op = self.all_list[0]  # 当前行动者
         messages: list[str] = []  # 返回的战斗信息
         result_message: list[str] = []  # 结果信息，用于判断战斗是否结束
         while move_op in self.all_enemies_list and not await self.is_round_over():
@@ -73,14 +73,15 @@ class PlayingManager:
             if result_message[len(result_message) - 1] in ["作战失败", "作战成功"]:
                 messages.append(result_message[len(result_message) - 1])
                 return messages
-            move_op = self.all_ops_list[0]
-        if move_op.immobile:
-            messages += await self.finish_turn(move_op)
+            move_op = self.all_list[0]
+        while move_op.immobile:
+            messages += await self.turn(move_op, -1)
+            move_op = self.all_list[0]
         if await self.is_round_over():
             messages.append("当前轮已结束，进入下一轮！")
-            for op in self.all_ops_list:
+            for op in self.all_list:
                 op.speed_p = op.speed
-            self.all_ops_list = bubble_sort(self.all_ops_list)  # 根据速度做冒泡排序
+            self.all_list = bubble_sort(self.all_list)  # 根据速度做冒泡排序
             messages += (await self.is_enemy_turn())
             messages.pop()  # 去掉一个"玩家的回合！"
 
@@ -94,7 +95,7 @@ class PlayingManager:
         :return: 当前轮是否结束
         """
         is_round_over: bool = True
-        for op in self.all_ops_list:
+        for op in self.all_list:
             if op.speed_p != 0:
                 is_round_over = False
                 break
@@ -110,26 +111,29 @@ class PlayingManager:
         :param obj2: 目标对象2(可选)
         """
         messages = []  # 返回的消息
-        if sub in self.all_ops_list:  # 我方干员回合
-            if operate == 0:
-                messages.append(await self.attack(sub, obj1))
-                self.player_skill_count += 5  # 普攻回复5技力点
-            elif operate in [1, 2, 3]:
-                messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
-                self.player_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
-        else:  # 敌方干员回合
-            if operate == 0:
-                messages.append(await self.attack(sub, obj1))
-                self.enemy_skill_count += 10  # 普攻回复10技力点
-            elif operate in [1, 2, 3]:
-                messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
-                self.enemy_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
+        if not sub.immobile:
+            if sub in self.all_ops_list:  # 我方干员回合
+                if operate == 0:
+                    messages.append(await self.attack(sub, obj1))
+                    self.player_skill_count += 5  # 普攻回复5技力点
+                elif operate in [1, 2, 3]:
+                    messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
+                    self.player_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
+            else:  # 敌方干员回合
+                if operate == 0:
+                    messages.append(await self.attack(sub, obj1))
+                    self.enemy_skill_count += 5  # 普攻回复5技力点
+                elif operate in [1, 2, 3]:
+                    messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
+                    self.enemy_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
+        else:
+            messages.append(f"{sub.name}无法行动...")
         messages[0] += await self.finish_turn(sub)
         if not len(self.all_enemies_list):
             messages.append("作战成功")  # messages[1]装战斗结果信息
         elif not len(self.all_ops_list):
             messages.append("作战失败")
-        self.all_ops_list = bubble_sort(self.all_ops_list)
+        self.all_list = bubble_sort(self.all_list)
         return messages
 
     async def attack(self, sub: Operator, obj: Operator) -> str:
@@ -312,7 +316,7 @@ class PlayingManager:
                 persistence = 1
                 sub.def_add_f += skill.rate1
                 message += f"\n防御力提高{round(skill.rate1 * 100, 1)}%！"
-            elif sid in [7, 14]:
+            elif sid in [7, 14, 28]:
                 atk_type = sub.atk_type_p
                 atk_type_str = ""
                 damage_str: str = ""
@@ -473,6 +477,41 @@ class PlayingManager:
                 sub.atk_add_f += skill.rate1
                 sub.def_add_f += skill.rate2
                 message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%，防御力提高{round(skill.rate2 * 100, 1)}%！"
+            elif sid == 26:
+                persistence = 1
+                sub.atk_add_f += skill.rate1
+                sub.deathless = skill.persistence + 1
+                message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%，进入不死状态！"
+            elif sid == 27:
+                persistence = 1
+                sub.def_add_f -= skill.rate1
+                sub.atk_add_f += skill.rate2
+                message += f"\n防御力降低{round(skill.rate1 * 100, 1)}%，攻击力提高{round(skill.rate2 * 100, 1)}%！"
+            elif sid == 29:
+                is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
+                is_crit_str: str = "暴击并" if is_crit else ""
+                damage = int(sub.atk_p * skill.rate1 + (sub.atk_p * is_crit * sub.crit_d_p))
+                obj_health = obj1.health
+                await obj1.hurt(0, damage)
+                objs_list.append(obj1)
+                obj1.speed_p -= skill.rate3
+                if obj1.health < obj1.max_health_p * skill.rate2:
+                    obj1.health = int(obj1.max_health_p * skill.rate2)
+                message += f"\n{is_crit_str}对{obj1.name}造成了{obj_health - obj1.health}点物理伤害并使其速度减少{skill.rate3}！"
+            elif sid == 31:
+                rate = random.uniform(skill.rate1, skill.rate2)
+                is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
+                is_crit_str: str = "暴击并" if is_crit else ""
+                damage = int(sub.atk_p * rate + (sub.atk_p * is_crit * sub.crit_d_p))
+                for op in obj1.next_operators:
+                    if not isinstance(op, Operator):
+                        continue
+                    damage = await op.hurt(2, damage, skill.rate3)
+
+                    objs_list.append(op)
+                    objs_name += f" {op.name}"
+                    objs_damage += f" {damage}"
+                message += f"\n{is_crit_str}对{objs_name}\n分别造成了{objs_damage} 点物理伤害！"
 
         skill.count = skill.persistence + persistence
 
@@ -502,7 +541,7 @@ class PlayingManager:
                 if o.mocking_obj == op:
                     o.mocked = 0
                     o.mocking_obj = None
-        self.all_ops_list.remove(op)
+        self.all_list.remove(op)
 
     async def finish_turn(self, sub: Operator) -> str:
         """
@@ -517,13 +556,13 @@ class PlayingManager:
             if skill.count > 1:
                 skill.count -= 1
                 sid = skill.sid
-                if sid == 9:
+                if sid == 9:  # 冲锋号令_进攻
                     self.player_skill_count += int(skill.rate2)
                     message += f"\n{skill.name}生效！回复{int(skill.rate2)}点技力点"
-                elif sid == 11:
+                elif sid == 11:  # 支援号令
                     self.player_skill_count += int(skill.rate1)
                     message += f"\n{skill.name}生效！回复{int(skill.rate1)}点技力点"
-                elif sid == 12:
+                elif sid == 12:  # 支援号令_治疗
                     self.player_skill_count += int(skill.rate1)
                     message += f"\n{skill.name}生效！回复{int(skill.rate1)}点技力点"
                     ops_name = ""
@@ -534,33 +573,42 @@ class PlayingManager:
                         health_amount_str += f"{health_amount} "
                     message += f"\n同时为{ops_name} 分别恢复了\n{health_amount_str} 生命值！"
 
-                if skill.count == 0:
+                if skill.count == 0:  # 如果技能结束则将其添加进结束技能列表
                     finish_skill.append(skill)
 
-        for f_s in finish_skill:
+        for f_s in finish_skill:  # 遍历结束技能列表内的技能
+            message += f"\n{sub.name}的技能{f_s.name}结束了！"
             sid = f_s.sid
-            if sid == 2:
+            if sid == 2:  # 法术附魔
                 sub.atk_type_p = sub.atk_type
                 sub.atk_add_f -= f_s.rate2
-            elif sid == 5:
+            elif sid == 5:  # 攻击力增强
                 sub.atk_add_f -= f_s.rate1
-            elif sid == 6:
+            elif sid == 6:  # 防御力增强
                 sub.def_add_f -= f_s.rate1
-            elif sid == 9:
+            elif sid == 9:  # 冲锋号令_进攻
                 sub.atk_add_f -= f_s.rate2
-            elif sid == 18:
+            elif sid == 18:  # 急救模式
                 sub.atk_add_f -= f_s.rate2
-            elif sid == 19:
+            elif sid == 19:  # 壳状防御
                 sub.def_add_f -= f_s.rate2
-            elif sid == 21:
+            elif sid == 21:  # 赤色之瞳
                 sub.atk_add_f -= f_s.rate2
                 sub.speed_add_d -= f_s.rate3
-            elif sid == 24:
+            elif sid == 24:  # 狼魂
                 sub.atk_type_p = sub.atk_type
                 sub.atk_add_f -= f_s.rate2
-            elif sid == 25:
+            elif sid == 25:  # 星座守护
                 sub.atk_add_f -= f_s.rate1
                 sub.def_add_f -= f_s.rate2
+            elif sid == 26:  # 肉斩骨断
+                sub.atk_add_f -= f_s.rate1
+                sub.immobile = 2
+                message += f"\n{sub.name}眩晕了！"
+            elif sid == 27:  # 亮剑
+                sub.def_add_f += f_s.rate1
+                sub.atk_add_f -= f_s.rate2
+
         await sub.finish_turn()
         sub.speed_p = 0  # 速度设为0
         return message

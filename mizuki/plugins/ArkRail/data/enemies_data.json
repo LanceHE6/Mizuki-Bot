@@ -122,7 +122,7 @@
     "crit_d_plus": 0,
     "speed": 90,
     "speed_plus": 0.1,
-    "atk_type": 0,
+    "atk_type": 8,
     "skills": []
   },
   "7": {
@@ -164,7 +164,7 @@
     "crit_d_plus": 0,
     "speed": 80,
     "speed_plus": 0.1,
-    "atk_type": 0,
+    "atk_type": 8,
     "skills": []
   },
   "9": {
@@ -276,8 +276,8 @@
     "name": "碎骨",
     "stars": 5,
     "profession": "近卫-攻坚",
-    "health": 4500,
-    "health_plus": 40,
+    "health": 3500,
+    "health_plus": 30,
     "atk": 1000,
     "atk_plus": 5,
     "def": 150,
