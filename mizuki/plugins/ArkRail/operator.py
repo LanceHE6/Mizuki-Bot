@@ -19,10 +19,11 @@ uid:str         level:int           operators_all                               
 
 class Operator:
 
-    def __init__(self, name: str, level: int, stars: int, profession: str, health: int, atk: int,
+    def __init__(self, oid: int, name: str, level: int, stars: int, profession: str, health: int, atk: int,
                  defence: int, res: float, crit_r: float, crit_d: float, speed: float,
                  atk_type: int, skills_list: list[Skill]):
         """
+        :param oid: 干员id
         :param name: 干员名称
         :param level: 干员等级
         :param stars: 干员星级 / 敌人类型
@@ -45,6 +46,7 @@ class Operator:
         敌人类型列表
         1:普通  2:高级  3:精英  4:高级精英  5:领袖  6:强大领袖(双阶段)
         """
+        self.oid = oid
         self.name = name
         self.stars = stars
         self.profession = profession
@@ -258,7 +260,7 @@ async def new_instance(oid: int, level: int, skills_level: list[int], is_enemy: 
     sid_list = await get_op_attribute(oid, OPAttribute.skills, is_enemy)
     skills_list: list[Skill] = await get_skills_list(sid_list, skills_level, is_enemy)
 
-    return Operator(name, level, stars, profession, health, atk, defence, res, crit_r, crit_d, speed, atk_type,
+    return Operator(oid, name, level, stars, profession, health, atk, defence, res, crit_r, crit_d, speed, atk_type,
                     skills_list)
 
 

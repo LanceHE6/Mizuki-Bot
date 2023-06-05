@@ -9,10 +9,12 @@ from nonebot import on_command
 from nonebot.internal.matcher import Matcher
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
+
 from .playing_manager import PlayingManager, new_instance
 from ...Utils.PluginInfo import PluginInfo
 from ..DB import is_map_exist, get_map_attribute, MapAttribute
 from ...Currency.utils import change_user_lmc_num, change_user_sj_num
+from .draw_image import draw_fight_image
 
 play = on_command("play", aliases={"作战"}, block=True, priority=1)
 playing_user: list[int] = []  # 正在进行战斗的用户
@@ -251,26 +253,27 @@ async def send_status_message(pm: PlayingManager, handle):
     :param handle: 用于发送消息
     :return: 一个字符串列表，表示参战人员状态信息
     """
-    i = 1
-    reply1 = "我方干员："
-    for op in pm.all_ops_list:
-        reply1 += f"\n{i}.{op.name} {op.health}❤"
-        i += 1
-    reply1 += f"\n{pm.player_skill_count}◈"
-
-    j = 1
-    reply2 = "敌方干员："
-    for op in pm.all_enemies_list:
-        reply2 += f"\n{j}.{op.name} {op.health}❤"
-        j += 1
-    reply2 += f"\n{pm.enemy_skill_count}◈"
-
-    k = 1
-    reply3 = "行动顺序："
-    for op in pm.all_list:
-        reply3 += f"\n{k}.{op.name} {op.speed_p}↗"
-        k += 1
-
-    await handle.send(reply1)
-    await handle.send(reply2)
-    await handle.send(reply3)
+    await draw_fight_image(pm)
+    # i = 1
+    # reply1 = "我方干员："
+    # for op in pm.all_ops_list:
+    #     reply1 += f"\n{i}.{op.name} {op.health}❤"
+    #     i += 1
+    # reply1 += f"\n{pm.player_skill_count}◈"
+    #
+    # j = 1
+    # reply2 = "敌方干员："
+    # for op in pm.all_enemies_list:
+    #     reply2 += f"\n{j}.{op.name} {op.health}❤"
+    #     j += 1
+    # reply2 += f"\n{pm.enemy_skill_count}◈"
+    #
+    # k = 1
+    # reply3 = "行动顺序："
+    # for op in pm.all_list:
+    #     reply3 += f"\n{k}.{op.name} {op.speed_p}↗"
+    #     k += 1
+    #
+    # await handle.send(reply1)
+    # await handle.send(reply2)
+    # await handle.send(reply3)
