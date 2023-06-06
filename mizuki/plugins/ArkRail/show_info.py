@@ -19,6 +19,7 @@ from ..Utils.PluginInfo import PluginInfo
 attribute_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_info'
 stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'stars'
 profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profession'
+skill_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'skills'
 
 op_info = on_command("出战", aliases={"出战干员"}, block=True, priority=2)
 op_info_all = on_command("ops", aliases={"所有角色", "所有干员", "info all", "我的干员", "干员"}, block=True, priority=2)
@@ -184,7 +185,6 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
 
     img.paste(bg_img, (0, 0))
     img.paste(op_img, (1450, 100), mask=op_img)
-    os.remove(op_img_path)
     level_img = Image.open(f"{attribute_img_path}/level.png")
     img.paste(level_img, (50, 200), mask=level_img)
     # 七种属性图标
@@ -217,7 +217,6 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
     op_model = Image.open(op_model_path).resize((900, 900))
     img.paste(box, (280, 105), mask=box)
     img.paste(op_model, (50, -250), mask=op_model)
-    os.remove(op_model_path)
 
     # 干员信息
     stars = await get_op_attribute(oid, OPAttribute.stars)
@@ -246,8 +245,14 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
 
     i = 0
     for skill in op_skills_list:
+        font = ImageFont.truetype("simhei", 36)
+        sid = skill.sid
+        skill_img = Image.open(skill_img_path / f"{sid}.png").resize((120, 120))
+        img.paste(skill_img, (810, 340 + i * 300), mask=skill_img)
+        str_half_len = len(skill.name) if len(skill.name) < 5 else 5
+        draw.text((870-(str_half_len/2)*36, 460 + i * 300), f"{skill.name}", font=font, fill='white', stroke_fill='black', stroke_width=2)
         font = ImageFont.truetype("simhei", 48)
-        draw.text((780, 380 + i * 300), f"{skill.name}", font=font, fill='white', stroke_fill='black', stroke_width=2)
+        draw.text((940, 415 + i * 300), f"LV.{skill.level + 1}", font=font, fill="white")
         font = ImageFont.truetype("simhei", 30)
         skill_detail = await line_break(skill.detail, 10)
         draw.text((1100, 360 + i * 300), f"{skill_detail}", font=font, fill='white', stroke_fill='black',
@@ -258,4 +263,5 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
         i += 1
     save_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / f'{uid}_info.png'
     img.save(save_path)
+    img.show()
     return save_path

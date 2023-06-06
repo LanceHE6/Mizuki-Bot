@@ -25,9 +25,11 @@ async def draw_fight_image(pm: PlayingManager):
     image = Image.new("RGBA", bg_img.size, (0, 0, 0))
     draw = ImageDraw.ImageDraw(image)
     image.paste(bg_img)
-    # 干员模型
+
     oid = all_list[0].oid
     atk_type = all_list[0].atk_type_p
+    skills = all_list[0].skills_list
+    # 干员模型
     op_model_img = Image.open(res_path / f"op_models/{oid}_back.png")
     image.paste(op_model_img, (-50, -180), mask=op_model_img)
 
@@ -79,7 +81,6 @@ async def draw_fight_image(pm: PlayingManager):
         now_health = op.health
         max_health = op.max_health_p
         width = int(max_width*(max_health - now_health)/max_health)
-        print(now_health, max_health, width)
         if width != 0:
             draw.rectangle((max_width + 26 + i * 224 - width, 696, 26 + i * 224 + max_width - 3, 708), fill="#252525")
         # 显示血量
@@ -88,9 +89,14 @@ async def draw_fight_image(pm: PlayingManager):
         i += 1
 
     # skills
-    for i in range(0, 3):  # 应改为当前干员skills 循环
-        atk_bg_img = Image.open(res_path / "atk_type/atk_bg.png").resize((150, 150))
-        image.paste(atk_bg_img, (1275 - i * 166, 596), mask=atk_bg_img)
+    i = 0
+    for skill in skills:  # 应改为当前干员skills 循环
+        bg_img = Image.open(res_path / "atk_type/atk_bg.png").resize((150, 150))
+        sid = skill.sid
+        skill_img = Image.open(res_path / f"skills/{sid}_b.png")
+        image.paste(bg_img, (1275 - i * 166, 596), mask=bg_img)
+        image.paste(skill_img, (1287 - i * 166, 606), mask=skill_img)
+        i += 1
 
     # 攻击图标
 
