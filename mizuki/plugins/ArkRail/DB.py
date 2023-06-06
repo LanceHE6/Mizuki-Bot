@@ -117,6 +117,7 @@ class MapAttribute:
     """地图属性类"""
     enemies = "enemies"
     reward = "reward"
+    consume = "consume"
 
 
 async def get_op_attribute(oid: str or int, attribute: str, is_enemy: bool = False) -> any:
@@ -156,7 +157,7 @@ async def get_skill_attribute(sid: str or int, attribute: str, is_enemy: bool = 
 
 async def get_map_attribute(mid: str, attribute: str) -> any:
     """获取地图信息"""
-    if attribute not in ["enemies", "reward"]:
+    if attribute not in ["enemies", "reward", "consume"]:
         raise SkillAttributeNotFoundError(attribute)
     with open(maps_data, 'r', encoding='utf-8') as data:
         m_data = json.load(data)
@@ -172,8 +173,10 @@ async def get_map_attribute(mid: str, attribute: str) -> any:
         enemies_data_list.append(eid_list)
         enemies_data_list.append(level_list)
         return enemies_data_list
-    else:
+    elif attribute == "reward":
         return [e_data["name"], e_data["amount"]]  # 返回值,包含报酬名称和报酬数量
+    else:
+        return e_data  # 返回体力消耗
 
 
 async def get_user_level(uid: str or int) -> int:
@@ -500,13 +503,13 @@ async def user_agar(uid: int or str, num: int) -> int:
     使用体力，返回状态码
     :param uid:
     :param num: 数量（正数）
-    :return: -1体力不够， 0成功使用
+    :return: 0体力不够， 1成功使用
     """
     user_num = await get_user_agar_num(uid)
     if user_num < num:
-        return -1
+        return 0
     await MDB.db_execute(f"Update ArkRail_AgarUser Set agar_num=argar_num-{num} Where uid={uid}")
-    return 0
+    return 1
 
 async def get_agar_full_time(uid: int or str) -> int:
     """

@@ -160,10 +160,11 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     reply = MessageSegment.at(uid) + f"{mid}\n敌人数据"
     enemies_data_list = await get_map_attribute(mid, MapAttribute.enemies)
     reward_list = await get_map_attribute(mid, MapAttribute.reward)
+    consume = await get_map_attribute(mid, MapAttribute.consume)
     for i in range(len(enemies_data_list[0])):
         e_name = await get_op_attribute(enemies_data_list[0][i], OPAttribute.name, True)
         reply += f"\n{e_name}    等级：{enemies_data_list[1][i]}"
-    reply += f"\n\n关卡报酬：\n{reward_list[0]}\n数量：{reward_list[1]}"
+    reply += f"\n\n关卡报酬：\n{reward_list[0]}\n数量：{reward_list[1]}\n领取奖励所需琼脂：{consume}"
 
     await op_info_all.finish(reply)
 
