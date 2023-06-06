@@ -385,7 +385,7 @@
     "persistence_plus": 0.18
   },
   "25": {
-    "name": "星座守护",
+    "name": "星辉剑",
     "brief_d": "自身攻击力和防御力提升，持续一段时间",
     "detail": "自身攻击力提高${r1_float}，防御力提高${r2_float}，持续${persistence}回合",
     "rate1": 0.3,
@@ -895,6 +895,22 @@
     "consume_plus": 1,
     "persistence": 2,
     "persistence_plus": 0.15
+  },
+  "57": {
+    "name": "影霄·绝影",
+    "brief_d": "使奇美拉失效，然后连续寻找当前生命值最少的敌人进行数次法术斩击，然后伤害类型变为单体真实，持续至战斗结束",
+    "detail": "使奇美拉失效，然后连续寻找当前生命值最少的敌人进行${r1_int}次攻击力为${r2_float}的法术斩击，然后伤害类型变为单体真实，持续${persistence}回合",
+    "rate1": 8,
+    "rate1_plus": 0.25,
+    "rate2": 1.0,
+    "rate2_plus": 0.2,
+    "rate3": 6,
+    "rate3_plus": 0,
+    "obj_type": 3,
+    "consume": 100,
+    "consume_plus": 1,
+    "persistence": 250,
+    "persistence_plus": 0
   }
 
 }
