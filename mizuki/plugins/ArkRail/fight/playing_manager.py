@@ -407,10 +407,10 @@ class PlayingManager:
                     message += f"\n回复{int(skill.rate3)} * {len(self.all_enemies_list)}技力点！"
 
                 for op in self.all_enemies_list:
-                    damage = await op.hurt(atk_type, damage)
+                    damage_amount = await op.hurt(atk_type, damage)
                     objs_list.append(op)
                     objs_name += f" {op.name}"
-                    objs_damage += f" {damage}"
+                    objs_damage += f" {damage_amount}"
                 if sid in [15, 22, 30, 39, 45, 49]:
                     message += f"\n{is_crit_str}对{objs_name}\n分别造成了{objs_damage} 点{atk_type_str}伤害！"
                 else:
