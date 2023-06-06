@@ -133,13 +133,13 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         if pm.all_list[0] not in pm.all_ops_list:
             await operate_atk.finish("现在还不是你的回合哦！")
         op = pm.all_list[0]  # 行动干员
-        if op.atk_type_p == 7:
+        if op.atk_type_p == 9:
             await send_message_and_is_over(await pm.turn(op, 0), operate_atk)
         elif not str(atk_args).isdigit():
             await operate_atk.finish("参数错误！\n/atk <目标序号>\ntip:不普攻的干员可以不选目标")
         else:
             obj_num = int(str(atk_args))  # 目标序号
-            if op.atk_type_p in [0, 1, 2, 3, 6]:
+            if op.atk_type_p in [0, 1, 2, 3, 6, 7, 8]:
                 obj = pm.all_enemies_list[obj_num - 1]  # 目标对象
                 if op.mocked and op.mocking_obj != obj:
                     await operate_atk.finish(
