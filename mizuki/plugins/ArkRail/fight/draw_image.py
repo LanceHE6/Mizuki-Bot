@@ -29,27 +29,28 @@ async def draw_fight_image(pm: PlayingManager):
     oid = all_list[0].oid
     atk_type = all_list[0].atk_type_p
     skills = all_list[0].skills_list
-    # 干员模型
-    op_model_img = Image.open(res_path / f"op_models/{oid}_back.png")
-    image.paste(op_model_img, (-50, -180), mask=op_model_img)
 
     # 怪物模型
     i = 0
     for enemy in all_enemies_list:
         eid = enemy.oid
         if i == 0:
-            enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize((240, 240))
+            enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize((260, 260))
             image.paste(enemy_model_img, (600, 210), mask=enemy_model_img)
         if i == 1:
             enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize((300, 300))
             image.paste(enemy_model_img, (917, 127), mask=enemy_model_img)
         if i == 2:
-            enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize((240, 240))
-            image.paste(enemy_model_img, (1031, 294), mask=enemy_model_img)
+            enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize((280, 280))
+            image.paste(enemy_model_img, (1031, 270), mask=enemy_model_img)
         if i == 3:
-            enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize((240, 240))
+            enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize((260, 260))
             image.paste(enemy_model_img, (1330, 282), mask=enemy_model_img)
         i += 1
+
+    # 干员模型
+    op_model_img = Image.open(res_path / f"op_models/{oid}_back.png")
+    image.paste(op_model_img, (-50, -180), mask=op_model_img)
 
     # speed_bar
     i = 0
@@ -61,7 +62,7 @@ async def draw_fight_image(pm: PlayingManager):
         image.paste(movement_bg_img, (27, 5+i*89), mask=movement_bg_img)
         avatar_path = "op_heads" if obj in all_ops_list else "enemies"
         op_avatar = Image.open(res_path / avatar_path / f"{oid}.png").resize((90, 90))
-        image.paste(op_avatar, (27, 5+i*89), mask=op_avatar)
+        image.paste(op_avatar, (32, 5+i*89), mask=op_avatar)
         # 速度
         speed = obj.speed_p
         font = ImageFont.truetype("simhei", 14)
