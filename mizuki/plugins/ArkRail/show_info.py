@@ -263,5 +263,4 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
         i += 1
     save_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / f'{uid}_info.png'
     img.save(save_path)
-    img.show()
     return save_path
