@@ -13,8 +13,8 @@
     "consume": 0,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
-
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "2": {
     "name": "法术附魔",
@@ -30,7 +30,25 @@
     "consume": 22,
     "consume_plus": 0.4,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "2-1",
+        "e_t": 13,
+        "e_p": "${persistence}",
+        "e_d": "0",
+        "e_l": "${r1_int}",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "2-2",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "3": {
     "name": "生命回复",
@@ -46,7 +64,8 @@
     "consume": 20,
     "consume_plus": 0.4,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "4": {
     "name": "强力击_毁灭",
@@ -62,7 +81,8 @@
     "consume": 15,
     "consume_plus": 0.35,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "5": {
     "name": "攻击力增强",
@@ -78,7 +98,17 @@
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "5-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "6": {
     "name": "防御力增强",
@@ -94,7 +124,17 @@
     "consume": 25,
     "consume_plus": 0.35,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "6-1",
+        "e_t": 1,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "7": {
     "name": "二连击",
@@ -110,7 +150,8 @@
     "consume": 12,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "8": {
     "name": "附加治疗",
@@ -126,7 +167,8 @@
     "consume": 10,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "9": {
     "name": "冲锋号令_进攻",
@@ -142,7 +184,17 @@
     "consume": 0,
     "consume_plus": 0,
     "persistence": 2,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "9-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "10": {
     "name": "蛮力穿刺",
@@ -158,7 +210,17 @@
     "consume": 12,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "10-1",
+        "e_t": 9,
+        "e_p": "1",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "11": {
     "name": "支援号令",
@@ -174,7 +236,8 @@
     "consume": 0,
     "consume_plus": 0,
     "persistence": 2,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "12": {
     "name": "治愈之翼",
@@ -190,7 +253,8 @@
     "consume": 6,
     "consume_plus": 0.18,
     "persistence": 3,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "13": {
     "name": "强力击_吸取",
@@ -206,7 +270,8 @@
     "consume": 10,
     "consume_plus": 0.2,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "14": {
     "name": "红移",
@@ -214,15 +279,16 @@
     "detail": "对一名敌人连续造成${r1_int}次相当于自身攻击力${r2_float} ~ ${r3_float}的物理伤害",
     "rate1": 4,
     "rate1_plus": 0.25,
-    "rate2": 0.5,
-    "rate2_plus": 0.01,
-    "rate3": 0.55,
-    "rate3_plus": 0.01,
+    "rate2": 1.0,
+    "rate2_plus": 0.02,
+    "rate3": 1.1,
+    "rate3_plus": 0.02,
     "obj_type": 1,
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "15": {
     "name": "绯红刺刀",
@@ -238,7 +304,8 @@
     "consume": 25,
     "consume_plus": 0.35,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "16": {
     "name": "强力击_麻痹",
@@ -254,7 +321,8 @@
     "consume": 15,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "17": {
     "name": "急救",
@@ -270,7 +338,8 @@
     "consume": 5,
     "consume_plus": 0.18,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "18": {
     "name": "急救模式",
@@ -286,7 +355,25 @@
     "consume": 25,
     "consume_plus": 0.25,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "18-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "18-2",
+        "e_t": 13,
+        "e_p": "${persistence}",
+        "e_d": "0",
+        "e_l": "${r1_int}",
+        "e_ml": "0"
+      }
+    ]
   },
   "19": {
     "name": "壳状防御",
@@ -302,7 +389,17 @@
     "consume": 40,
     "consume_plus": 0.5,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "19-1",
+        "e_t": 1,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "20": {
     "name": "精调",
@@ -318,7 +415,8 @@
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "21": {
     "name": "赤色之瞳",
@@ -334,7 +432,25 @@
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "21-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "21-2",
+        "e_t": 10,
+        "e_p": "${persistence}",
+        "e_d": "${r3_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "22": {
     "name": "剑雨",
@@ -350,7 +466,8 @@
     "consume": 0,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "23": {
     "name": "精神摧毁",
@@ -366,12 +483,13 @@
     "consume": 0,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "24": {
     "name": "狼魂",
     "brief_d": "伤害类型变为群体法术，攻击力提升，持续一段时间",
-    "detail": "伤害类型变为群体法术，攻击力提升${r1_float}，持续${persistence}回合",
+    "detail": "伤害类型变为群体法术，攻击力提升${r2_float}，持续${persistence}回合",
     "rate1": 3,
     "rate1_plus": 0,
     "rate2": 0.5,
@@ -382,23 +500,67 @@
     "consume": 55,
     "consume_plus": 0.5,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "24-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "24-2",
+        "e_t": 13,
+        "e_p": "${persistence}",
+        "e_d": "0",
+        "e_l": "${r1_int}",
+        "e_ml": "0"
+      }
+    ]
   },
   "25": {
     "name": "星辉剑",
-    "brief_d": "自身攻击力和防御力提升，持续一段时间",
-    "detail": "自身攻击力提高${r1_float}，防御力提高${r2_float}，持续${persistence}回合",
+    "brief_d": "伤害类型变为群体法术，自身攻击力和防御力提升，持续一段时间",
+    "detail": "伤害类型变为群体法术，自身攻击力提高${r1_float}，防御力提高${r2_float}，持续${persistence}回合",
     "rate1": 0.3,
     "rate1_plus": 0.01,
     "rate2": 0.4,
     "rate2_plus": 0.02,
-    "rate3": 0,
+    "rate3": 3,
     "rate3_plus": 0,
     "obj_type": 0,
     "consume": 40,
     "consume_plus": 0.5,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "25-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "25-2",
+        "e_t": 1,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "25-3",
+        "e_t": 13,
+        "e_p": "${persistence}",
+        "e_d": "0",
+        "e_l": "${r3_int}",
+        "e_ml": "0"
+      }
+    ]
   },
   "26": {
     "name": "肉斩骨断",
@@ -414,13 +576,23 @@
     "consume": 30,
     "consume_plus": 0.5,
     "persistence": 2,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "26-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "27": {
     "name": "亮剑",
     "brief_d": "自身防御力大幅降低，攻击力大幅提升，持续一段时间",
-    "detail": "自身防御力降低${r1_float}，攻击力提高${r2_float}，持续${persistence}回合",
-    "rate1": 1.0,
+    "detail": "自身防御力降低${r1_int}(不会低于0)，攻击力提高${r2_float}，持续${persistence}回合",
+    "rate1": 1000,
     "rate1_plus": 0,
     "rate2": 1.0,
     "rate2_plus": 0.03,
@@ -430,7 +602,25 @@
     "consume": 50,
     "consume_plus": 0.5,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "27-1",
+        "e_t": 5,
+        "e_p": "${persistence}",
+        "e_d": "-${r1_int}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "27-2",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "28": {
     "name": "四连击",
@@ -446,7 +636,8 @@
     "consume": 26,
     "consume_plus": 0.45,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "29": {
     "name": "阻滞射击战术",
@@ -462,7 +653,8 @@
     "consume": 25,
     "consume_plus": 0.3,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "30": {
     "name": "霰射弹头",
@@ -478,7 +670,8 @@
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "31": {
     "name": "高爆弹头",
@@ -494,7 +687,8 @@
     "consume": 30,
     "consume_plus": 0.45,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "32": {
     "name": "反击电弧",
@@ -510,7 +704,33 @@
     "consume": 35,
     "consume_plus": 0.5,
     "persistence": 2,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "32-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "32-2",
+        "e_t": 10,
+        "e_p": "${persistence}",
+        "e_d": "-${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "32-3",
+        "e_t": 13,
+        "e_p": "${persistence}",
+        "e_d": "0",
+        "e_l": "${r1_int}",
+        "e_ml": "0"
+      }
+    ]
   },
   "33": {
     "name": "紧急包扎",
@@ -526,14 +746,15 @@
     "consume": 12,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "34": {
     "name": "不稳定血浆",
     "brief_d": "使一名我方干员流失一定生命值，并使其攻击力提升，持续一段时间",
     "detail": "使一名我方干员流失${r1_float}当前生命值，并使其攻击力增加${r2_float}，持续${persistence}回合",
-    "rate1": 0.3,
-    "rate1_plus": 0.01,
+    "rate1": 0.25,
+    "rate1_plus": -0.01,
     "rate2": 0.4,
     "rate2_plus": 0.02,
     "rate3": 0,
@@ -542,7 +763,17 @@
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 1,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "34-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "35": {
     "name": "速度提升",
@@ -558,7 +789,17 @@
     "consume": 16,
     "consume_plus": 0.25,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "35-1",
+        "e_t": 10,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "36": {
     "name": "凝滞",
@@ -574,7 +815,8 @@
     "consume": 5,
     "consume_plus": 0.18,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "37": {
     "name": "灵魂吸取",
@@ -590,7 +832,8 @@
     "consume": 16,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "38": {
     "name": "夜魇魔影",
@@ -606,7 +849,8 @@
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "39": {
     "name": "天坠之火",
@@ -622,7 +866,8 @@
     "consume": 35,
     "consume_plus": 0.5,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "40": {
     "name": "精神爆发",
@@ -631,14 +876,15 @@
     "rate1": 6,
     "rate1_plus": 0.2,
     "rate2": 0.4,
-    "rate2_plus": 0.01,
+    "rate2_plus": 0.02,
     "rate3": 0,
     "rate3_plus": 0,
     "obj_type": 3,
     "consume": 24,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "41": {
     "name": "奇美拉",
@@ -648,20 +894,46 @@
     "rate1_plus": 0.03,
     "rate2": 1.0,
     "rate2_plus": 0.05,
-    "rate3": 0,
+    "rate3": 6,
     "rate3_plus": 0,
     "obj_type": 0,
     "consume": 120,
     "consume_plus": 2,
     "persistence": 2,
-    "persistence_plus": 0.15
+    "persistence_plus": 0.15,
+    "effect_list": [
+      {
+        "e_id": "41-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "41-2",
+        "e_t": 2,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "41-3",
+        "e_t": 13,
+        "e_p": "${persistence}",
+        "e_d": "0",
+        "e_l": "${r3_int}",
+        "e_ml": "0"
+      }
+    ]
   },
   "42": {
     "name": "处决",
     "brief_d": "对一名敌人造成真实伤害",
     "detail": "对一名敌人造成相当于自身攻击力${r1_float}和${r2_float}目标已损生命值的真实伤害",
-    "rate1": 0.5,
-    "rate1_plus": 0.03,
+    "rate1": 0.8,
+    "rate1_plus": 0.02,
     "rate2": 0.2,
     "rate2_plus": 0.01,
     "rate3": 0,
@@ -670,13 +942,14 @@
     "consume": 18,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "43": {
     "name": "淬影突袭",
     "brief_d": "对一名敌人造成法术伤害，并回复一定技力点",
     "detail": "对一名敌人造成相当于自身攻击力${r1_float}的法术伤害，并回复${r2_int}技力点",
-    "rate1": 0.4,
+    "rate1": 0.6,
     "rate1_plus": 0.02,
     "rate2": 7,
     "rate2_plus": 0.25,
@@ -686,7 +959,8 @@
     "consume": 0,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "44": {
     "name": "潜入暗影",
@@ -702,7 +976,17 @@
     "consume": 16,
     "consume_plus": 0.25,
     "persistence": 2,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "44-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "45": {
     "name": "独影归途",
@@ -718,7 +1002,8 @@
     "consume": 0,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "46": {
     "name": "闭膛连发",
@@ -734,12 +1019,38 @@
     "consume": 45,
     "consume_plus": 0.5,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "46-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "46-2",
+        "e_t": 1,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "46-3",
+        "e_t": 10,
+        "e_p": "${persistence}",
+        "e_d": "$-{r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "47": {
     "name": "无动于衷",
     "brief_d": "对所有敌人进行嘲讽(概率成功)，自身防御力增加，每次受到攻击时自身攻击力增加且不会随技能结束而清除，持续一段时间",
-    "detail": "对所有敌人进行嘲讽(成功率为${r1_float})，自身防御力增加${r2_float}，每次受到攻击自身攻击力增加${r3_float}(最高增加200%)且不会随技能结束而清除，持续${persistence}回合",
+    "detail": "对所有敌人进行嘲讽(成功率为${r1_float})，自身防御力增加${r2_float}，每次受到攻击自身攻击力增加${r3_float}(最高叠加8层)且不会随技能结束而清除，持续${persistence}回合",
     "rate1": 0.6,
     "rate1_plus": 0.01,
     "rate2": 0.3,
@@ -750,7 +1061,25 @@
     "consume": 0,
     "consume_plus": 0,
     "persistence": 1,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "47-1",
+        "e_t": 1,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "47-2",
+        "e_t": 11,
+        "e_p": "-1",
+        "e_d": "${r3_float}",
+        "e_l": "0",
+        "e_ml": "8"
+      }
+    ]
   },
   "48": {
     "name": "未照耀的荣光",
@@ -766,7 +1095,8 @@
     "consume": 40,
     "consume_plus": 0.5,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "49": {
     "name": "不畏苦难",
@@ -782,7 +1112,8 @@
     "consume": 18,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "50": {
     "name": "灿焰长刃",
@@ -797,8 +1128,26 @@
     "obj_type": 0,
     "consume": 80,
     "consume_plus": 1.5,
-    "persistence": 250,
-    "persistence_plus": 0
+    "persistence": -1,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "50-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "50-2",
+        "e_t": 10,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "51": {
     "name": "耀阳颔首",
@@ -808,13 +1157,39 @@
     "rate1_plus": 0.02,
     "rate2": 0.2,
     "rate2_plus": 0.01,
-    "rate3": 0,
+    "rate3": 6,
     "rate3_plus": 0,
     "obj_type": 0,
     "consume": 60,
     "consume_plus": 1,
     "persistence": 2,
-    "persistence_plus": 0.15
+    "persistence_plus": 0.15,
+    "effect_list": [
+      {
+        "e_id": "51-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "51-2",
+        "e_t": 1,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "51-3",
+        "e_t": 13,
+        "e_p": "${persistence}",
+        "e_d": "0",
+        "e_l": "${r3_int}",
+        "e_ml": "0"
+      }
+    ]
   },
   "52": {
     "name": "横扫架势",
@@ -830,7 +1205,33 @@
     "consume": 0,
     "consume_plus": 0,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "52-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "52-2",
+        "e_t": 1,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "52-3",
+        "e_t": 14,
+        "e_p": "${persistence}",
+        "e_d": "${r3_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "53": {
     "name": "熔核巨影",
@@ -846,7 +1247,8 @@
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "54": {
     "name": "黄昏",
@@ -861,8 +1263,26 @@
     "obj_type": 0,
     "consume": 60,
     "consume_plus": 0.5,
-    "persistence": 250,
-    "persistence_plus": 0
+    "persistence": -1,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "54-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "54-2",
+        "e_t": 14,
+        "e_p": "${persistence}",
+        "e_d": "-${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "55": {
     "name": "雪境生存法则",
@@ -878,12 +1298,38 @@
     "consume": 30,
     "consume_plus": 0.45,
     "persistence": 2,
-    "persistence_plus": 0.18
+    "persistence_plus": 0.18,
+    "effect_list": [
+      {
+        "e_id": "55-1",
+        "e_t": 1,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "55-2",
+        "e_t": 10,
+        "e_p": "${persistence}",
+        "e_d": "-${r3_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "55-3",
+        "e_t": 14,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "56": {
     "name": "真银斩",
-    "brief_d": "自身防御力大幅降低，攻击力大幅增加，攻击类型变为物理群体攻击，持续一段时间",
-    "detail": "自身防御力降低${r1_float}，攻击力增加${r2_float}，攻击类型变为物理群体攻击，持续${persistence}回合",
+    "brief_d": "自身防御力大幅降低，攻击力大幅增加，伤害类型变为物理群体，持续一段时间",
+    "detail": "自身防御力降低${r1_float}，攻击力增加${r2_float}，伤害类型变为物理群体，持续${persistence}回合",
     "rate1": 0.8,
     "rate1_plus": -0.02,
     "rate2": 1.0,
@@ -894,7 +1340,33 @@
     "consume": 100,
     "consume_plus": 1,
     "persistence": 2,
-    "persistence_plus": 0.15
+    "persistence_plus": 0.15,
+    "effect_list": [
+      {
+        "e_id": "56-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "56-2",
+        "e_t": 1,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      },
+      {
+        "e_id": "56-3",
+        "e_t": 13,
+        "e_p": "${persistence}",
+        "e_d": "0",
+        "e_l": "${r3_int}",
+        "e_ml": "0"
+      }
+    ]
   },
   "57": {
     "name": "影霄·绝影",
@@ -909,8 +1381,18 @@
     "obj_type": 3,
     "consume": 100,
     "consume_plus": 1,
-    "persistence": 250,
-    "persistence_plus": 0
+    "persistence": -1,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "57-1",
+        "e_t": 13,
+        "e_p": "${persistence}",
+        "e_d": "0",
+        "e_l": "${r3_int}",
+        "e_ml": "0"
+      }
+    ]
   }
 
 }
