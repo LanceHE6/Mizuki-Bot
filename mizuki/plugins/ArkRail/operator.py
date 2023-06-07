@@ -7,6 +7,7 @@ from pathlib import Path
 from .DB import get_user_playing_ops, get_op_attribute, OPAttribute, get_map_attribute, MapAttribute
 from .skill import get_skills_list
 from .skill import Skill
+from .effect import Effect
 
 user_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'user_data.json'
 
@@ -21,7 +22,7 @@ class Operator:
 
     def __init__(self, oid: int, name: str, level: int, stars: int, profession: str, health: int, atk: int,
                  defence: int, res: float, crit_r: float, crit_d: float, speed: float,
-                 atk_type: int, skills_list: list[Skill]):
+                 atk_type: int, skills_list: list[Skill], is_enemy: bool):
         """
         :param oid: 干员id
         :param name: 干员名称
@@ -37,6 +38,7 @@ class Operator:
         :param speed: 干员初始速度
         :param atk_type: 干员攻击方式
         :param skills_list: 干员的技能列表
+        :param is_enemy: 是否为敌人
 
         后面有_p的变量表示干员战斗时该变量的实际值(xxx_p = xxx * (1 + xxx_add_f) + xxx_add_d)
 
@@ -57,10 +59,11 @@ class Operator:
         self.res = self.res_p = res
         self.crit_r = self.crit_r_p = crit_r
         self.crit_d = self.crit_d_p = crit_d
-        self.speed = self.speed_p = speed
+        self.max_speed = self.speed = self.max_speed_p = speed
         self.atk_type_p = self.atk_type = atk_type
         self.atk_type_str = "-"
         self.skills_list = skills_list
+        self.is_enemy = is_enemy
 
         if atk_type == 0:
             self.atk_type_str = "物理单体"
@@ -110,6 +113,7 @@ class Operator:
         blooding: 流血(每回合流失最大生命值)
         blooding_rate: 流血率(每回合流失多少最大生命值)
         
+        effect_list: 增益(削弱)效果列表
         next_operators: 身边的干员(包括自己)
         """
 
@@ -136,6 +140,7 @@ class Operator:
         self.blooding: int = 0
         self.blooding_rate: float = 0
 
+        self.effect_list: list[Effect] = []
         self.next_operators: list = []
 
     async def hurt(self, atk_type: int, damage: int, ignore_def: float = 0, ignore_res: float = 0) -> int:
@@ -176,6 +181,10 @@ class Operator:
                 temp = self.health
                 self.health = self.max_health_p
                 result = result - (temp - self.max_health_p)
+        for e in self.effect_list:
+            if e.effect_type == 11 and e.effect_level < e.max_level:
+                e.effect_level += 1
+                break
         return result
 
     async def is_die(self) -> bool:
@@ -190,6 +199,12 @@ class Operator:
         if self.deathless:  # 如果干员处于不死状态，则将其血量恢复为1
             self.health = 1
             return False
+
+        for e in self.effect_list:
+            if e.effect_type == 12:
+                stage_2 = new_instance(e.effect_level, self.level, [0, 0, 0], self.is_enemy)
+                self.__dict__.update(stage_2.__dict__)  # 更新干员属性
+                return False
         return True
 
     async def finish_turn(self):
@@ -220,13 +235,67 @@ class Operator:
         """
         更新干员各项属性的方法
         """
+        self.health_add_f = 0.0
+        self.atk_add_f = 0.0
+        self.def_add_f = 0.0
+        self.res_add_f = 0.0
+        self.health_add_d = 0
+        self.atk_add_d = 0
+        self.def_add_d = 0
+        self.res_add_d = 0
+        self.crit_r_add_d = 0
+        self.crit_d_add_d = 0
+        self.speed_add_d = 0
+        self.atk_type_p = self.atk_type
+        for e in self.effect_list:
+            e.persistence -= 1
+            if e.persistence == 0:  # 持续时间结束
+                self.effect_list.remove(e)
+                continue
+            # 根据效果种类给予属性加成
+            e_t = e.effect_type
+            e_d = e.effect_degree
+            if e_t == 0:
+                self.atk_add_f += e_d
+            elif e_t == 1:
+                self.def_add_f += e_d
+            elif e_t == 2:
+                self.health_add_f += e_d
+            elif e_t == 3:
+                self.res_add_f += e_d
+            elif e_t == 4:
+                self.atk_add_d += e_d
+            elif e_t == 5:
+                self.def_add_d += e_d
+            elif e_t == 6:
+                self.health_add_d += e_d
+            elif e_t == 7:
+                self.res_add_d += e_d
+            elif e_t == 8:
+                self.crit_r_add_d += e_d
+            elif e_t == 9:
+                self.crit_d_add_d += e_d
+            elif e_t == 10:
+                self.speed_add_d += e_d
+            elif e_t == 11:
+                self.atk_add_f += (e_d * e.effect_level)
+            elif e_t == 13:
+                self.atk_type_p = e.effect_level
+
         self.max_health_p = self.max_health * (1 + self.health_add_f) + self.health_add_d
+        self.max_health_p = 0 if self.max_health_p < 0 else self.max_health_p
         self.atk_p = self.atk * (1 + self.atk_add_f) + self.atk_add_d
+        self.atk_p = 0 if self.atk_p < 0 else self.atk_p
         self.defence_p = self.defence * (1 + self.def_add_f) + self.def_add_d
+        self.defence_p = 0 if self.defence_p < 0 else self.defence_p
         self.res_p = self.res * (1 + self.res_add_f) + self.res_add_d
+        self.res_p = 0 if self.res_p < 0 else self.res_p
         self.crit_r_p = self.crit_r + self.crit_r_add_d
+        self.crit_r_p = 0 if self.crit_r_p < 0 else self.crit_r_p
         self.crit_d_p = self.crit_d + self.crit_d_add_d
-        self.speed_p = self.speed + self.speed_add_d
+        self.crit_d_p = 0 if self.crit_d_p < 0 else self.crit_d_p
+        self.max_speed_p = self.max_speed + self.speed_add_d
+        self.max_speed_p = 10 if self.max_speed_p < 10 else self.max_speed_p
 
 
 async def new_instance(oid: int, level: int, skills_level: list[int], is_enemy: bool = False) -> Operator:
@@ -261,7 +330,7 @@ async def new_instance(oid: int, level: int, skills_level: list[int], is_enemy: 
     skills_list: list[Skill] = await get_skills_list(sid_list, skills_level, is_enemy)
 
     return Operator(oid, name, level, stars, profession, health, atk, defence, res, crit_r, crit_d, speed, atk_type,
-                    skills_list)
+                    skills_list, is_enemy)
 
 
 async def get_operator_list(uid: str or int) -> list[Operator]:
