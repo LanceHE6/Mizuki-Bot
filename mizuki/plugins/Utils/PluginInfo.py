@@ -8,7 +8,8 @@ from pathlib import Path
 import json
 import os
 
-plugin_info_path = Path() / 'data' / 'plugins'
+data_path = Path() / 'data'
+plugin_info_path = data_path / 'plugins'
 
 class PluginInfo:
 
@@ -29,6 +30,11 @@ class PluginInfo:
             "usage": usage,
             "extra": extra
         }
+
+        if not os.path.exists(data_path):
+            os.mkdir(data_path)
+            if not os.path.exists(plugin_info_path):
+                os.mkdir(plugin_info_path)
         with open(plugin_info_path/f"{plugin_name}.json", "w", encoding='utf-8') as plugin_meta_info:
             json.dump(plugin_info, plugin_meta_info, ensure_ascii=False, indent=4)
             plugin_meta_info.close()
