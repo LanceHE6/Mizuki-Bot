@@ -4,16 +4,20 @@
 # @Time:2023/5/3 15:53
 # @Software:PyCharm
 
+import os
 import sqlite3
 from pathlib import Path
 from nonebot.log import logger
 from colorama import Fore
 
-database = Path() / 'database' / 'Mizuki_DB.db'
+database_path = Path() / 'database'
+database = database_path / 'Mizuki_DB.db'
 
 
 def check_database():
     logger.info(Fore.BLUE + "[DB]检查数据库...")
+    if not os.path.exists(database):
+        os.mkdir(database_path)
     try:
         connection = sqlite3.Connection(database)
         logger.info(Fore.BLUE + "[DB]数据库连接正常")
