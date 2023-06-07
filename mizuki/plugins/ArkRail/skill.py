@@ -5,15 +5,7 @@
 # @Software:PyCharm
 
 from .DB import get_skill_attribute, SkillAttribute
-
-"""
-数据库技能表示例（只读
-type:int    name:str       brief_description:str         base_rate1:real    base_rate2:real   base_rate1_plus:real    base_rate2_plus:real
-    1         强力击            造成大量物理伤害                     2.5                 3.0                    0.03                    0.04
-    
-base_consumption int    base_persistence int    base_consumption_plus real    base_persistence_plus real
-        25                       2                          1                             0.25
-"""
+from .effect import Effect
 
 
 class Skill:
@@ -50,6 +42,14 @@ class Skill:
         self.persistence = persistence
 
         self.count = 0  # 技能持续回合(持续性技能用)
+
+    async def get_skill_effect(self) -> list[Effect]:
+        effect_list: list[Effect] = []
+        eid = sid
+        ep = self.persistence + 1
+        if sid == 2:
+            effect_list.append(Effect(eid, ep, 0, self.rate2))
+        return effect_list
 
 
 async def get_skills_list(sid_list: list[int], skills_level: list[int], is_enemy: bool) -> list[Skill]:
