@@ -120,7 +120,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
     pm: PlayingManager = await new_instance(uid, mid)  # 战斗数据
     playing_user.append(uid)  # 将用户id放进战斗中的用户id列表
-    await send_status_message(pm, play)
+    await send_status_image(pm)
 
     operate_atk = on_command("atk", aliases={"attack", "普通攻击", "普攻", "攻击"}, rule=is_doctor, block=True, priority=1)
     operate_skill = on_command("skill", aliases={"技能", "使用技能"}, rule=is_doctor, block=True, priority=1)
@@ -154,12 +154,12 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                     await send_message_and_is_over(await pm.turn(op, 0, obj), operate_atk)
                 else:
                     await operate_atk.finish("目标序号错误！\n/atk <友方序号>")
-        await send_status_message(pm, operate_atk)
+        await send_status_image(pm)
         await send_message_and_is_over(await pm.is_enemy_turn(), operate_atk)
         await operate_atk.finish()
 
     @operate_skill.handle()
-    async def _(skill_args: Message = CommandArg()):
+    async def _(skill_args: Messge = CommandArg()):
         if pm.all_list[0] not in pm.all_ops_list:
             await operate_skill.finish("现在还不是你的回合哦！")
         if pm.all_list[0].silent:
@@ -181,6 +181,8 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
         if skill.consume > pm.player_skill_count:
             await operate_skill.finish("您的技力点不足以释放这个技能！")
+        elif skill.persistence > 0:
+            await operate_skill.finish("该技能还在持续时间内！")
 
         if skill.obj_type in [1, 4]:  # 单攻或扩散技能
             if len(parm_list) >= 2 and 0 <= parm_list[1] < len(pm.all_enemies_list):
@@ -215,7 +217,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                 await operate_run.finish("参数不足或敌人序号错误！\n/skill <技能序号> <目标序号> <友方序号>")
         else:
             await send_message_and_is_over(await pm.turn(op, skill_num + 1), operate_skill)
-        await send_status_message(pm, operate_skill)
+        await send_status_image(pm)
         await send_message_and_is_over(await pm.is_enemy_turn(), operate_skill)
         await operate_skill.finish()
 
@@ -249,13 +251,11 @@ async def delete_handle(obj: Type[Matcher]):
     del obj
 
 
-async def send_status_message(pm: PlayingManager, handle):
+async def send_status_image(pm: PlayingManager):
     """
-    发送所有参战人员状态的函数
+    发送所有参战人员状态图片的函数
 
     :param pm: PlayingManage对象，包含了这场战斗的所有数据
-    :param handle: 用于发送消息
-    :return: 一个字符串列表，表示参战人员状态信息
     """
     await draw_fight_image(pm)
     # i = 1
