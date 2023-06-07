@@ -7,6 +7,7 @@ import random
 
 from ..operator import Operator, get_operator_list, get_enemies_list
 from ..skill import Skill
+from ..effect import Effect
 
 
 class PlayingManager:
@@ -19,29 +20,8 @@ class PlayingManager:
         self.player_skill_count = 20  # 我方初始技力点
         self.enemy_skill_count = 10  # 敌方初始技力点
 
-        for i in range(len(self.all_ops_list)):
-            self.all_ops_list[i].next_operators.clear()
-            if i - 1 >= 0:  # 左边的干员
-                self.all_ops_list[i].next_operators.append(self.all_ops_list[i - 1])
-            else:
-                self.all_ops_list[i].next_operators.append(0)
-            self.all_ops_list[i].next_operators.append(self.all_ops_list[i])  # 自身
-            if i + 1 < len(self.all_ops_list):  # 右边的干员
-                self.all_ops_list[i].next_operators.append(self.all_ops_list[i + 1])
-            else:
-                self.all_ops_list[i].next_operators.append(0)
-
-        for i in range(len(self.all_enemies_list)):
-            self.all_enemies_list[i].next_operators.clear()
-            if i - 1 >= 0:  # 左边的干员
-                self.all_enemies_list[i].next_operators.append(self.all_enemies_list[i - 1])
-            else:
-                self.all_enemies_list[i].next_operators.append(0)
-            self.all_enemies_list[i].next_operators.append(self.all_enemies_list[i])  # 自身
-            if i + 1 < len(self.all_enemies_list):  # 右边的干员
-                self.all_enemies_list[i].next_operators.append(self.all_enemies_list[i + 1])
-            else:
-                self.all_enemies_list[i].next_operators.append(0)
+        refresh_op_next_list(self.all_ops_list)
+        refresh_op_next_list(self.all_enemies_list)
 
     async def is_enemy_turn(self) -> list[str]:
         """
@@ -58,11 +38,12 @@ class PlayingManager:
                 if not obj.hidden:  # 如果所有干员都处于隐匿状态就糟咯awa
                     break
 
-            if len(move_op.skills_list) and random.randint(1, 100) <= 25 + (5 * move_op.stars) and \
+            if len(move_op.skills_list) and random.randint(1, 100) <= 15 + (8 * move_op.stars) and \
                     self.enemy_skill_count >= move_op.skills_list[0].consume and not move_op.silent:  # 条件达成则使用技能
 
                 for i in range(len(move_op.skills_list) - 1, -1, -1):
-                    if self.enemy_skill_count >= move_op.skills_list[i].consume:
+                    skill = move_op.skills_list[i]
+                    if self.enemy_skill_count >= skill.consume and skill.persistence <= 0:
                         result_message = await self.turn(move_op, i + 1, obj)
                         messages.append(result_message[0])
                         break
@@ -80,7 +61,7 @@ class PlayingManager:
         if await self.is_round_over():
             messages.append("当前轮已结束，进入下一轮！")
             for op in self.all_list:
-                op.speed_p = op.speed
+                op.speed = op.max_speed
             self.all_list = bubble_sort(self.all_list)  # 根据速度做冒泡排序
             messages += (await self.is_enemy_turn())
             messages.pop()  # 去掉一个"玩家的回合！"
@@ -96,7 +77,7 @@ class PlayingManager:
         """
         is_round_over: bool = True
         for op in self.all_list:
-            if op.speed_p != 0:
+            if op.speed != 0:
                 is_round_over = False
                 break
         return is_round_over
@@ -106,7 +87,7 @@ class PlayingManager:
         干员的一个回合
 
         :param sub: 行动者
-        :param operate: 操作序号 0普攻 1-3技能
+        :param operate: 操作序号 0普攻 1-3技能 -1不行动
         :param obj1: 目标对象1
         :param obj2: 目标对象2(可选)
         """
@@ -122,7 +103,7 @@ class PlayingManager:
             else:  # 敌方干员回合
                 if operate == 0:
                     messages.append(await self.attack(sub, obj1))
-                    self.enemy_skill_count += 5  # 普攻回复5技力点
+                    self.enemy_skill_count += 8  # 普攻回复8技力点
                 elif operate in [1, 2, 3]:
                     messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
                     self.enemy_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
@@ -306,7 +287,7 @@ class PlayingManager:
                     health_amount = await sub.hurt(4, int(total_damage * skill.rate3))
                     message += f"\n并恢复了{health_amount}点生命值！"
                 elif sid == 16:
-                    obj1.speed_p -= skill.rate3
+                    obj1.speed -= skill.rate3
                     message += f"\n并使其速度减少{skill.rate3}！"
             elif sid == 5:
                 persistence = 1
@@ -494,7 +475,7 @@ class PlayingManager:
                 obj_health = obj1.health
                 await obj1.hurt(0, damage)
                 objs_list.append(obj1)
-                obj1.speed_p -= skill.rate3
+                obj1.speed -= skill.rate3
                 if obj1.health < obj1.max_health_p * skill.rate2:
                     obj1.health = int(obj1.max_health_p * skill.rate2)
                 message += f"\n{is_crit_str}对{obj1.name}造成了{obj_health - obj1.health}点物理伤害并使其速度减少{skill.rate3}！"
@@ -529,14 +510,14 @@ class PlayingManager:
         """
         if op in self.all_enemies_list:
             self.all_enemies_list.remove(op)
-            await refresh_op_next_list(self.all_enemies_list)
+            refresh_op_next_list(self.all_enemies_list)
             for o in self.all_ops_list:  # 解除嘲讽效果
                 if o.mocking_obj == op:
                     o.mocked = 0
                     o.mocking_obj = None
         else:
             self.all_ops_list.remove(op)
-            await refresh_op_next_list(self.all_ops_list)
+            refresh_op_next_list(self.all_ops_list)
             for o in self.all_enemies_list:  # 解除嘲讽效果
                 if o.mocking_obj == op:
                     o.mocked = 0
@@ -610,7 +591,7 @@ class PlayingManager:
                 sub.atk_add_f -= f_s.rate2
 
         await sub.finish_turn()
-        sub.speed_p = 0  # 速度设为0
+        sub.speed = 0  # 速度设为0
         return message
 
 
@@ -620,7 +601,7 @@ async def new_instance(uid: str or int, mid: str) -> PlayingManager:
     return PlayingManager(player_ops_list, map_enemies_list)
 
 
-async def refresh_op_next_list(op_list: list[Operator]):
+def refresh_op_next_list(op_list: list[Operator]):
     """
     刷新干员身边的干员列表
 
@@ -644,6 +625,6 @@ def bubble_sort(arr: list[Operator]):
     n = len(arr)
     for i in range(n):
         for j in range(n - i - 1):
-            if arr[j].speed_p < arr[j + 1].speed_p:
+            if arr[j].speed < arr[j + 1].speed:
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
     return arr
