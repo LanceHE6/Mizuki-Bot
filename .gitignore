@@ -142,3 +142,4 @@ dmypy.json
 /database/Mizuki_DB.db
 /mizuki/plugins/ArkRail/res/
 /data/plugins/
+/database/
