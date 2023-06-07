@@ -99,7 +99,7 @@ async def new_instance(sid: int, level: int, is_enemy: bool) -> Skill:
         .replace("${r1_float}", str(round(rate1 * 100.0, 1)) + "%")\
         .replace("${r2_float}", str(round(rate2 * 100.0, 1)) + "%") \
         .replace("${r3_float}", str(round(rate3 * 100.0, 1)) + "%") \
-        .replace("${persistence}", str(int(persistence)))
+        .replace("${persistence}", str(int(persistence)) if int(persistence) >= 0 else "∞")
     if is_enemy:
         sid *= -1
     return Skill(sid, name, level, brief_d, detail, rate1, rate2, rate3, obj_type, consume, persistence)
