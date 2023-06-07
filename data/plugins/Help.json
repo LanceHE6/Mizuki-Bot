@@ -1,1 +1,0 @@
-{"plugin_name": "Help", "name": "指令菜单", "description": "查看指令菜单", "usage": "help ——查看指令菜单", "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 2}}

@@ -1,1 +1,0 @@
-{"plugin_name": "Currency_account", "name": "账户系统", "description": "显示用户货币数据", "usage": "account ——查看龙门币和合成玉数量", "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 2}}

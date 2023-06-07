@@ -1,1 +1,0 @@
-{"plugin_name": "ArkRail_gacha_pool_config", "name": "卡池配置", "description": "修改池子up干员", "usage": ["更改6星up", "更改5星up"], "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 3, "permission": "SUPERUSER"}}

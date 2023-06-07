@@ -1,1 +1,0 @@
-{"plugin_name": "Currency_sign_in", "name": "签到系统", "description": "每日签到获取龙门币", "usage": "签到 ——每日签到", "extra": {"author": "Hycer_Lance", "version": "0.1.0", "priority": 2}}
