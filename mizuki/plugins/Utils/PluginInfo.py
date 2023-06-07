@@ -30,7 +30,7 @@ class PluginInfo:
             "extra": extra
         }
         with open(plugin_info_path/f"{plugin_name}.json", "w", encoding='utf-8') as plugin_meta_info:
-            json.dump(plugin_info, plugin_meta_info, ensure_ascii=False)
+            json.dump(plugin_info, plugin_meta_info, ensure_ascii=False, indent=4)
             plugin_meta_info.close()
 
 
