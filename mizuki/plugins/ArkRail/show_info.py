@@ -208,7 +208,7 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
     draw.text((250, 575), f"{op.atk}", font=font, fill="black")  # atk
     draw.text((250, 635), f"{op.defence}", font=font, fill="black")  # def
     draw.text((250, 695), f"{op.res}", font=font, fill="black")  # res
-    draw.text((600, 515), f"{round(op.speed, 1)}", font=font, fill="black")  # speed
+    draw.text((600, 515), f"{round(op.max_speed, 1)}", font=font, fill="black")  # speed
     draw.text((600, 575), f"{round(100 * op.crit_r, 1)}%", font=font, fill="black")  # crit_r
     draw.text((600, 635), f"{round(100 * op.crit_d, 1)}%", font=font, fill="black")  # crit_d
 

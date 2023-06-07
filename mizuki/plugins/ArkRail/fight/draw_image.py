@@ -64,7 +64,7 @@ async def draw_fight_image(pm: PlayingManager):
         op_avatar = Image.open(res_path / avatar_path / f"{oid}.png").resize((90, 90))
         image.paste(op_avatar, (32, 5+i*89), mask=op_avatar)
         # 速度
-        speed = obj.speed_p
+        speed = obj.speed
         font = ImageFont.truetype("simhei", 14)
         draw.text((128, 80+i*89), f"{speed}", font=font)
         i += 1
