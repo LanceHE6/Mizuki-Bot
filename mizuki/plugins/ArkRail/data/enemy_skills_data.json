@@ -13,7 +13,8 @@
     "consume": 15,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "2": {
     "name": "D12",
@@ -29,12 +30,13 @@
     "consume": 25,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "3": {
     "name": "破甲榴弹",
-    "brief_d": "对一群敌方单位造成无视其一定防御力的物理伤害",
-    "detail": "对一名敌方单位及其周围敌方单位造成相当于自身攻击力${r1_float}的物理伤害，无视其${r2_float}的防御力",
+    "brief_d": "对一群敌方单位造成一定物理伤害，并使其防御力降低",
+    "detail": "对一名敌方单位及其周围敌方单位造成相当于自身攻击力${r1_float}的物理伤害，并使其防御力降低${r2_float}",
     "rate1": 0.5,
     "rate1_plus": 0,
     "rate2": 0.5,
@@ -45,7 +47,17 @@
     "consume": 25,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "-3-1",
+        "e_t": 1,
+        "e_p": "2",
+        "e_d": "-${r2_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "4": {
     "name": "突袭",
@@ -61,7 +73,8 @@
     "consume": 15,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "5": {
     "name": "自爆",
@@ -77,7 +90,8 @@
     "consume": 30,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "6": {
     "name": "枷锁",
@@ -93,7 +107,8 @@
     "consume": 20,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "7": {
     "name": "冰环",
@@ -109,13 +124,14 @@
     "consume": 30,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "8": {
     "name": "冻结",
     "brief_d": "对一名敌人造成大量法术伤害并使其无法行动一段时间",
     "detail": "对一名敌人造成相当于自身攻击力${r1_float}的法术伤害并使其无法行动${r2_int}回合",
-    "rate1": 1.5,
+    "rate1": 1.6,
     "rate1_plus": 0,
     "rate2": 1,
     "rate2_plus": 0,
@@ -125,23 +141,34 @@
     "consume": 20,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "9": {
     "name": "自愈",
-    "brief_d": "立刻恢复一定的生命值",
-    "detail": "立刻恢复${r1_float}最大生命值",
-    "rate1": 0.3,
+    "brief_d": "每回合恢复最大生命值，持续一段时间",
+    "detail": "每回合恢复${r1_float}最大生命值，持续${persistence}回合",
+    "rate1": 0.1,
     "rate1_plus": 0,
     "rate2": 0,
     "rate2_plus": 0,
     "rate3": 0,
     "rate3_plus": 0,
     "obj_type": 0,
-    "consume": 20,
+    "consume": 12,
     "consume_plus": 0,
-    "persistence": 0,
-    "persistence_plus": 0
+    "persistence": 3,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "-9-1",
+        "e_t": 14,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0"
+      }
+    ]
   },
   "10": {
     "name": "眩晕打击",
@@ -157,7 +184,8 @@
     "consume": 15,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "11": {
     "name": "隐匿",
@@ -173,7 +201,8 @@
     "consume": 10,
     "consume_plus": 0,
     "persistence": 1,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   },
   "12": {
     "name": "致命一击",
@@ -189,6 +218,7 @@
     "consume": 20,
     "consume_plus": 0,
     "persistence": 0,
-    "persistence_plus": 0
+    "persistence_plus": 0,
+    "effect_list": []
   }
 }
