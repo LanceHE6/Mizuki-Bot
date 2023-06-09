@@ -5,14 +5,14 @@
 # @Software:PyCharm
 
 from .DB import get_skill_attribute, SkillAttribute
-from .effect import Effect
+from .effect import Effect, new_effect_instance
 
 
 class Skill:
     def __init__(self, sid: int, name: str, level: int,
                  brief_d: str, detail: str, rate1: float,
                  rate2: float, rate3: float, obj_type: int,
-                 consume: int, persistence: int):
+                 consume: int, persistence: int, effect_list: list[Effect]):
         """
         :param sid: 技能id
         :param name: 技能名称
@@ -25,6 +25,7 @@ class Skill:
         :param obj_type: 目标类型(详见下面)
         :param consume: 释放技能的消耗
         :param persistence: 技能持续回合(对于非持续性技能，这个值为0)
+        :param effect_list: 效果列表
 
         目标类型列表
         0:自身  1:单个敌人  2:两个敌人  3:所有敌人  4:单个我方  5:两个我方  6:所有我方  7:单个敌方和单个我方
@@ -40,6 +41,7 @@ class Skill:
         self.obj_type = obj_type
         self.consume = consume
         self.persistence = persistence
+        self.effect_list = effect_list
 
         self.count = 0  # 技能持续回合(持续性技能用)
 
@@ -64,13 +66,13 @@ async def get_skills_list(sid_list: list[int], skills_level: list[int], is_enemy
     j = 0
     skills_list: list[Skill] = []
     for sid in sid_list:
-        skill_instance = await new_instance(sid, skills_level[j], is_enemy)
+        skill_instance = await new_skill_instance(sid, skills_level[j], is_enemy)
         skills_list.append(skill_instance)
         j += 1
     return skills_list
 
 
-async def new_instance(sid: int, level: int, is_enemy: bool) -> Skill:
+async def new_skill_instance(sid: int, level: int, is_enemy: bool) -> Skill:
     """
     通过传入的技能id和技能等级生成一个Skill实例，通常不需要直接调用这个方法
 
@@ -100,6 +102,18 @@ async def new_instance(sid: int, level: int, is_enemy: bool) -> Skill:
         .replace("${r2_float}", str(round(rate2 * 100.0, 1)) + "%") \
         .replace("${r3_float}", str(round(rate3 * 100.0, 1)) + "%") \
         .replace("${persistence}", str(int(persistence)) if int(persistence) >= 0 else "∞")
+    effect_str: str = str(await get_skill_attribute(sid, SkillAttribute.effect_list, is_enemy))
+    effect_str = effect_str.replace("${r1_int}", str(int(rate1)))\
+        .replace("${r2_int}", str(int(rate2)))\
+        .replace("${r3_int}", str(int(rate3)))\
+        .replace("${r1_float}", str(rate1))\
+        .replace("${r2_float}", str(rate2)) \
+        .replace("${r3_float}", str(rate3)) \
+        .replace("${persistence}", str(int(persistence)))
+    effect_str_list: list[dict] = eval(effect_str)
+    effect_list: list[Effect] = []
+    for d in effect_str_list:
+        effect_list.append(await new_effect_instance(d))
     if is_enemy:
         sid *= -1
-    return Skill(sid, name, level, brief_d, detail, rate1, rate2, rate3, obj_type, consume, persistence)
+    return Skill(sid, name, level, brief_d, detail, rate1, rate2, rate3, obj_type, consume, persistence, effect_list)

@@ -159,7 +159,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await operate_atk.finish()
 
     @operate_skill.handle()
-    async def _(skill_args: Messge = CommandArg()):
+    async def _(skill_args: Message = CommandArg()):
         if pm.all_list[0] not in pm.all_ops_list:
             await operate_skill.finish("现在还不是你的回合哦！")
         if pm.all_list[0].silent:
@@ -181,7 +181,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
         if skill.consume > pm.player_skill_count:
             await operate_skill.finish("您的技力点不足以释放这个技能！")
-        elif skill.persistence > 0:
+        elif skill.count > 0:
             await operate_skill.finish("该技能还在持续时间内！")
 
         if skill.obj_type in [1, 4]:  # 单攻或扩散技能

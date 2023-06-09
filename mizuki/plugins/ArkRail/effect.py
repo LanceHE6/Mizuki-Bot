@@ -6,11 +6,12 @@
 
 class Effect:
 
-    def __init__(self, effect_id: str, persistence: int, effect_type: int, effect_degree: float, effect_level: int = 0, max_level: int = 0):
+    def __init__(self, effect_id: str, effect_type: int, persistence: int, effect_degree: float, effect_level: int = 0,
+                 max_level: int = 0):
         """
         :param effect_id: 效果id(唯一标识符)
-        :param persistence: 效果持续时间(为负数时持续时间无限)
         :param effect_type: 效果种类
+        :param persistence: 效果持续时间(为负数时持续时间无限)
         :param effect_degree: 效果强度(可为负数)
         :param effect_level: 效果层数(攻击类型)
         :param max_level: 最大层数
@@ -29,10 +30,11 @@ class Effect:
         14: 恢复(每回合恢复最大生命值)(可为负数，负数时流血)
         15: 屏障(防御力提升，每次受到伤害防御力提升幅度减少)
         16: 愤怒(攻击力提升，每次进行攻击时攻击力额外提升)
+        17: 流血(每回合流失当前生命值)
         """
         self.effect_id = effect_id
-        self.persistence = persistence
         self.effect_type = effect_type
+        self.persistence = persistence
         self.effect_degree = effect_degree
         self.effect_level = effect_level
         self.max_level = max_level
@@ -69,7 +71,14 @@ class Effect:
             self.name = "攻击类型改变"
         elif e_t == 14:
             self.name = "恢复"
-        elif e_t == 12:
+        elif e_t == 15:
             self.name = "屏障"
-        elif e_t == 13:
+        elif e_t == 16:
             self.name = "愤怒"
+        elif e_t == 17:
+            self.name = "流血"
+
+
+async def new_effect_instance(effect_dict: dict):
+    return Effect(effect_dict["e_id"], int(effect_dict["e_t"]), int(effect_dict["e_p"]), float(effect_dict["e_d"]),
+                  int(effect_dict["e_l"]), int(effect_dict["e_ml"]))

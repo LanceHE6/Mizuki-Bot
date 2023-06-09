@@ -139,7 +139,7 @@ class PlayingManager:
                 atk_type_str = "法术"
             elif atk_type == 6:
                 atk_type_str = "真实"
-            damage = await obj.hurt(atk_type, damage)
+            damage = await obj.hurt(sub, atk_type, damage)
             message = f"{sub.name}对{obj.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点{atk_type_str}伤害！"  # 返回的字符串
             if sub.atk_type_p == 8 and random.randint(1, 100) < 50:  # 重装普攻有概率嘲讽敌方单位
                 message += f"\n{sub.name}嘲讽了{obj.name}！\n持续1回合！"
@@ -166,7 +166,7 @@ class PlayingManager:
                 if not isinstance(op, Operator):
                     continue
                 objs_name += f" {op.name}"
-                damage = await op.hurt(atk_type, damage)
+                damage = await op.hurt(sub, atk_type, damage)
                 objs_damage += f" {damage}"
                 if await op.is_die():
                     die_objs += f" {op.name}"
@@ -176,7 +176,7 @@ class PlayingManager:
                 message += f"\n{die_objs} 被击倒了！"
 
         elif sub.atk_type_p == 4:  # 单体治疗
-            health_amount = await obj.hurt(4, sub.atk_p)
+            health_amount = await obj.hurt(sub, 4, sub.atk_p)
             message = f"{sub.name}治疗了{obj.name}，恢复其{health_amount}生命值！"  # 返回的字符串
 
         elif sub.atk_type_p == 5:  # 群体治疗
@@ -187,7 +187,7 @@ class PlayingManager:
                 if not isinstance(op, Operator):
                     continue
                 objs_name += f" {op.name}"
-                health_amount = await op.hurt(4, sub.atk_p)
+                health_amount = await op.hurt(sub, 5, sub.atk_p)
                 objs_health += f"{health_amount} "
             message += f"{objs_name}，分别恢复他们{objs_health} 的生命值！"
 
@@ -217,7 +217,7 @@ class PlayingManager:
                 for op in obj1.next_operators:
                     if not isinstance(op, Operator):
                         continue
-                    damage = await op.hurt(3, int(sub.atk_p * skill.rate1))
+                    damage = await op.hurt(sub, 3, int(sub.atk_p * skill.rate1))
 
                     objs_list.append(op)
                     objs_name += f" {op.name}"
@@ -227,7 +227,7 @@ class PlayingManager:
                 for op in obj1.next_operators:
                     if not isinstance(op, Operator):
                         continue
-                    damage = await op.hurt(2, int(sub.atk_p * skill.rate1))
+                    damage = await op.hurt(sub, 2, int(sub.atk_p * skill.rate1))
 
                     objs_list.append(op)
                     objs_name += f" {op.name}"
@@ -237,7 +237,7 @@ class PlayingManager:
                 for op in obj1.next_operators:
                     if not isinstance(op, Operator):
                         continue
-                    damage = await op.hurt(2, int(sub.atk_p * skill.rate1), skill.rate2)
+                    damage = await op.hurt(sub, 2, int(sub.atk_p * skill.rate1), skill.rate2)
 
                     objs_list.append(op)
                     objs_name += f" {op.name}"
@@ -253,7 +253,7 @@ class PlayingManager:
                 sub.atk_add_f += skill.rate2
                 message += f"\n攻击力提高{round(skill.rate2 * 100, 1)}%并变为法术伤害！"
             elif sid == 3:
-                health_amount = await sub.hurt(4, int(skill.rate1 * sub.max_health_p))
+                health_amount = await sub.hurt(sub, 4, int(skill.rate1 * sub.max_health_p))
                 message += f"\n恢复{health_amount}%最大生命值！"
             elif sid in [4, 13, 16]:
                 rate = random.uniform(skill.rate1, skill.rate2)
@@ -271,20 +271,20 @@ class PlayingManager:
                     atk_type_str = "真实"
                 if atk_type in [0, 1, 6, 8]:
                     objs_list.append(obj1)
-                    damage = total_damage = await obj1.hurt(atk_type, damage)
+                    damage = total_damage = await obj1.hurt(sub, atk_type, damage)
                     message += f"\n{is_crit_str}对{obj1.name}造成了{damage}点{atk_type_str}伤害！"
                 elif atk_type in [2, 3, 7]:
                     for op in obj1.next_operators:
                         if not isinstance(op, Operator):
                             continue
-                        damage = await op.hurt(atk_type, damage)
+                        damage = await op.hurt(sub, atk_type, damage)
                         total_damage += damage
                         objs_list.append(op)
                         objs_name += f" {op.name}"
                         objs_damage += f" {damage}"
                     message += f"\n{is_crit_str}对{objs_name}\n分别造成了{objs_damage} 点{atk_type_str}伤害！"
                 if sid == 13:
-                    health_amount = await sub.hurt(4, int(total_damage * skill.rate3))
+                    health_amount = await sub.hurt(sub, 4, int(total_damage * skill.rate3))
                     message += f"\n并恢复了{health_amount}点生命值！"
                 elif sid == 16:
                     obj1.speed -= skill.rate3
@@ -313,7 +313,7 @@ class PlayingManager:
                         is_crit_sym: str = "★" if is_crit else ""
                         rate = random.uniform(skill.rate2, skill.rate3)
                         damage = int(sub.atk_p * rate + (sub.atk_p * is_crit * sub.crit_d_p))
-                        damage = await obj1.hurt(atk_type, damage)
+                        damage = await obj1.hurt(sub, atk_type, damage)
                         damage_str += f"{damage}{is_crit_sym}+"
                     damage_str = damage_str.rstrip("+")  # 去掉末尾的+号
                     objs_list.append(obj1)
@@ -327,7 +327,7 @@ class PlayingManager:
                             is_crit_sym: str = "★" if is_crit else ""
                             rate = random.uniform(skill.rate2, skill.rate3)
                             damage = int(sub.atk_p * rate + (sub.atk_p * is_crit * sub.crit_d_p))
-                            damage = await op.hurt(atk_type, damage)
+                            damage = await op.hurt(sub, atk_type, damage)
                             damage_str += f"{damage}{is_crit_sym}+"
                         damage_str = damage_str.rstrip("+")  # 去掉末尾的+号
                         objs_list.append(op)
@@ -336,8 +336,8 @@ class PlayingManager:
                     message += f"\n对{objs_name}\n分别造成了{objs_damage} 点{atk_type_str}伤害！"
             elif sid == 8:
                 treat1 = treat2 = int(sub.atk_p * skill.rate1)
-                treat1 = await obj1.hurt(4, treat1)
-                treat2 = await obj2.hurt(4, treat2)
+                treat1 = await obj1.hurt(sub, 4, treat1)
+                treat2 = await obj2.hurt(sub, 4, treat2)
                 message += f"\n为{obj1.name}和{obj2.name}分别恢复了 {treat1} {treat2} 点生命值！"
             elif sid == 9:
                 persistence = 1
@@ -348,7 +348,7 @@ class PlayingManager:
                 message += f"\n下次普攻必定暴击且暴击伤害增加{round(skill.rate1 * 100, 1)}%！\n"
                 await sub.upgrade_effect()
                 damage = int(sub.atk_p + (sub.atk_p * sub.crit_d_p))
-                damage = await obj1.hurt(0, damage)
+                damage = await obj1.hurt(sub, 0, damage)
                 message = f"\n{sub.name}对{obj1.name}发动了普通攻击，暴击并对其造成了{damage}点物理伤害！"  # 返回的字符串
                 sub.crit_d_add_d -= skill.rate1
                 objs_list.append(obj1)
@@ -388,7 +388,7 @@ class PlayingManager:
                     message += f"\n回复{int(skill.rate3)} * {len(self.all_enemies_list)}技力点！"
 
                 for op in self.all_enemies_list:
-                    damage_amount = await op.hurt(atk_type, damage)
+                    damage_amount = await op.hurt(sub, atk_type, damage)
                     objs_list.append(op)
                     objs_name += f" {op.name}"
                     objs_damage += f" {damage_amount}"
@@ -397,7 +397,7 @@ class PlayingManager:
                 else:
                     message += f"\n分别为{objs_name}\n恢复了{objs_damage} 点生命值！"
             elif sid == 17:
-                health_amount = await obj1.hurt(4, int(sub.atk_p * skill.rate1))
+                health_amount = await obj1.hurt(sub, 4, int(sub.atk_p * skill.rate1))
                 message += f"恢复{obj1.name}{health_amount}点生命值！"
             elif sid == 18:
                 sub.atk_type_p = skill.rate1
@@ -418,7 +418,7 @@ class PlayingManager:
                 message += f"\n{mock_ops} 被嘲讽了！"
             elif sid == 21:
                 persistence = 1
-                damage = await sub.hurt(6, int(sub.health * skill.rate1))
+                damage = await sub.hurt(sub, 6, int(sub.health * skill.rate1))
                 sub.atk_add_f += skill.rate2
                 sub.speed_add_d += skill.rate3
                 message += f"\n流失{damage}点生命值，攻击力提高{round(skill.rate2 * 100, 1)}%，速度提升{skill.rate3}点！"
@@ -433,7 +433,7 @@ class PlayingManager:
                 elif atk_type == 3:
                     atk_type_str = "法术"
                 if atk_type == 0:
-                    damage = await obj1.hurt(atk_type, damage)
+                    damage = await obj1.hurt(sub, atk_type, damage)
                     objs_list.append(obj1)
                     obj1.silent = skill.rate2
                     message += f"\n{is_crit_str}对{obj1.name}造成了{damage}点{atk_type_str}伤害！\n{obj1.name}被沉默了！"
@@ -441,7 +441,7 @@ class PlayingManager:
                     for op in obj1.next_operators:
                         if not isinstance(op, Operator):
                             continue
-                        damage = await op.hurt(atk_type, damage)
+                        damage = await op.hurt(sub, atk_type, damage)
                         objs_list.append(op)
                         op.silent = skill.rate2
                         objs_name += f" {op.name}"
@@ -473,7 +473,7 @@ class PlayingManager:
                 is_crit_str: str = "暴击并" if is_crit else ""
                 damage = int(sub.atk_p * skill.rate1 + (sub.atk_p * is_crit * sub.crit_d_p))
                 obj_health = obj1.health
-                await obj1.hurt(0, damage)
+                await obj1.hurt(sub, 0, damage)
                 objs_list.append(obj1)
                 obj1.speed -= skill.rate3
                 if obj1.health < obj1.max_health_p * skill.rate2:
@@ -487,7 +487,7 @@ class PlayingManager:
                 for op in obj1.next_operators:
                     if not isinstance(op, Operator):
                         continue
-                    damage = await op.hurt(2, damage, skill.rate3)
+                    damage = await op.hurt(sub, 2, damage, skill.rate3)
 
                     objs_list.append(op)
                     objs_name += f" {op.name}"
@@ -549,7 +549,7 @@ class PlayingManager:
                     ops_name = ""
                     health_amount_str = ""
                     for op in self.all_ops_list:
-                        health_amount = await op.hurt(4, int(sub.atk_p * skill.rate2))
+                        health_amount = await op.hurt(sub, 4, int(sub.atk_p * skill.rate2))
                         ops_name += f"{op.name} "
                         health_amount_str += f"{health_amount} "
                     message += f"\n同时为{ops_name} 分别恢复了\n{health_amount_str} 生命值！"

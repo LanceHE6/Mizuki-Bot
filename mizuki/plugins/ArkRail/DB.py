@@ -111,6 +111,7 @@ class SkillAttribute:
     consume_plus = "consume_plus"
     persistence = "persistence"
     persistence_plus = "persistence_plus"
+    effect_list = "effect_list"
 
 
 class MapAttribute:
@@ -147,7 +148,7 @@ async def get_skill_attribute(sid: str or int, attribute: str, is_enemy: bool = 
     :return: 属性信息
     """
     if attribute not in ["name", "brief_d", "detail", "rate1", "rate1_plus", "rate2", "rate2_plus", "rate3", "rate3_plus",
-                         "obj_type", "consume", "consume_plus", "persistence", "persistence_plus"]:
+                         "obj_type", "consume", "consume_plus", "persistence", "persistence_plus", "effect_list"]:
         raise SkillAttributeNotFoundError(attribute)
     with open(skills_data if not is_enemy else enemy_skills_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)

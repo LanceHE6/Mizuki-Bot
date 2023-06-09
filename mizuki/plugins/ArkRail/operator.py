@@ -115,6 +115,7 @@ class Operator:
         
         effect_list: 增益(削弱)效果列表
         next_operators: 身边的干员(包括自己)
+        damage_list: 收到的伤害(包括治疗量)
         """
 
         self.health_add_f: float = 0.0
@@ -142,11 +143,13 @@ class Operator:
 
         self.effect_list: list[Effect] = []
         self.next_operators: list = []
+        self.damage_list = []
 
-    async def hurt(self, atk_type: int, damage: int, ignore_def: float = 0, ignore_res: float = 0) -> int:
+    async def hurt(self, sub, atk_type: int, damage: int, ignore_def: float = 0, ignore_res: float = 0) -> int:
         """
         干员受到伤害时调用的方法
 
+        :param sub: 攻击者
         :param atk_type: 攻击类型。0:物理  1:法术  6:真实
         :param damage: 伤害量
         :param ignore_def: 无视防御比例
@@ -175,16 +178,26 @@ class Operator:
         result = int(result)
         if atk_type in [0, 1, 2, 3, 6, 7, 8]:
             self.health -= result
+            self.damage_list.append(-1 * result)  # 将伤害值存进伤害表里(负数)
         elif atk_type in [4, 5]:
             self.health += result
             if self.health > self.max_health_p:
                 temp = self.health
                 self.health = self.max_health_p
                 result = result - (temp - self.max_health_p)
+            self.damage_list.append(result)  # 将治疗量存进伤害表里(正数)
         for e in self.effect_list:
             if e.effect_type == 11 and e.effect_level < e.max_level:
                 e.effect_level += 1
-                break
+            elif e.effect_type == 15:
+                e.effect_level -= 1
+                if e.effect_level <= 0:
+                    self.effect_list.remove(e)
+
+        for e in sub.effect_list:
+            if e.effect_type == 16 and e.effect_level < e.max_level:
+                e.effect_level += 1
+
         return result
 
     async def is_die(self) -> bool:
@@ -225,10 +238,6 @@ class Operator:
             self.mocked -= 1
             if self.mocked == 0:
                 self.mocking_obj = None
-        if self.blooding:
-            self.blooding -= 1
-            if self.blooding == 0:
-                self.blooding_rate = 0
         await self.upgrade_effect()
 
     async def upgrade_effect(self):
@@ -281,6 +290,14 @@ class Operator:
                 self.atk_add_f += (e_d * e.effect_level)
             elif e_t == 13:
                 self.atk_type_p = e.effect_level
+            elif e_t == 14:
+                await self.hurt(4, int(self.max_health_p * e_d))
+            elif e_t == 15:
+                self.def_add_f += (e_d * e.effect_level)
+            elif e_t == 16:
+                self.atk_add_f += (e_d * e.effect_level)
+            elif e_t == 17:
+                await self.hurt(6, int(self.health * e_d))
 
         self.max_health_p = self.max_health * (1 + self.health_add_f) + self.health_add_d
         self.max_health_p = 0 if self.max_health_p < 0 else self.max_health_p
