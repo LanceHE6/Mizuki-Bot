@@ -45,14 +45,6 @@ class Skill:
 
         self.count = 0  # 技能持续回合(持续性技能用)
 
-    async def get_skill_effect(self) -> list[Effect]:
-        effect_list: list[Effect] = []
-        eid = sid
-        ep = self.persistence + 1
-        if sid == 2:
-            effect_list.append(Effect(eid, ep, 0, self.rate2))
-        return effect_list
-
 
 async def get_skills_list(sid_list: list[int], skills_level: list[int], is_enemy: bool) -> list[Skill]:
     """
