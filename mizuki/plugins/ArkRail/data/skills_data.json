@@ -35,18 +35,20 @@
       {
         "e_id": "2-1",
         "e_t": 13,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "0",
         "e_l": "${r1_int}",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "2-2",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -103,10 +105,11 @@
       {
         "e_id": "5-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -129,10 +132,11 @@
       {
         "e_id": "6-1",
         "e_t": 1,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -157,8 +161,8 @@
     "name": "附加治疗",
     "brief_d": "同时治疗两名我方干员",
     "detail": "指定恢复两名我方干员相当于自身攻击力${r1_float}的生命值",
-    "rate1": 1.0,
-    "rate1_plus": 0.05,
+    "rate1": 1.2,
+    "rate1_plus": 0.04,
     "rate2": 0,
     "rate2_plus": 0,
     "rate3": 0,
@@ -189,10 +193,11 @@
       {
         "e_id": "9-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -218,7 +223,8 @@
         "e_p": "1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -279,10 +285,10 @@
     "detail": "对一名敌人连续造成${r1_int}次相当于自身攻击力${r2_float} ~ ${r3_float}的物理伤害",
     "rate1": 4,
     "rate1_plus": 0.25,
-    "rate2": 1.0,
-    "rate2_plus": 0.02,
-    "rate3": 1.1,
-    "rate3_plus": 0.02,
+    "rate2": 1.2,
+    "rate2_plus": 0.03,
+    "rate3": 1.3,
+    "rate3_plus": 0.04,
     "obj_type": 1,
     "consume": 20,
     "consume_plus": 0.25,
@@ -360,18 +366,20 @@
       {
         "e_id": "18-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "18-2",
         "e_t": 13,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "0",
         "e_l": "${r1_int}",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -379,8 +387,8 @@
     "name": "壳状防御",
     "brief_d": "停止攻击，对所有敌人进行嘲讽(概率成功)，自身防御力提升，持续一段时间",
     "detail": "对所有敌人进行嘲讽(成功率为${r1_float})，自身防御力提升${r2_float}，持续${persistence}回合，技能持续期间将自动跳过该干员的回合",
-    "rate1": 0.4,
-    "rate1_plus": 0.02,
+    "rate1": 0.7,
+    "rate1_plus": 0.015,
     "rate2": 0.7,
     "rate2_plus": 0.03,
     "rate3": 0,
@@ -394,10 +402,11 @@
       {
         "e_id": "19-1",
         "e_t": 1,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -437,18 +446,20 @@
       {
         "e_id": "21-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "21-2",
         "e_t": 10,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r3_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -505,18 +516,20 @@
       {
         "e_id": "24-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "24-2",
         "e_t": 13,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "0",
         "e_l": "${r1_int}",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -539,26 +552,29 @@
       {
         "e_id": "25-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "25-2",
         "e_t": 1,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "25-3",
         "e_t": 13,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "0",
         "e_l": "${r3_int}",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -581,10 +597,11 @@
       {
         "e_id": "26-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -607,18 +624,20 @@
       {
         "e_id": "27-1",
         "e_t": 5,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "-${r1_int}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "27-2",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -709,26 +728,29 @@
       {
         "e_id": "32-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "32-2",
         "e_t": 10,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "-${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "32-3",
         "e_t": 13,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "0",
         "e_l": "${r1_int}",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -736,8 +758,8 @@
     "name": "紧急包扎",
     "brief_d": "恢复一名我方干员的生命值，并附加治疗目标最大生命值的一定比例",
     "detail": "恢复一名我方干员相当于自身攻击力${r1_float}以及${r2_float}目标最大生命值的生命值",
-    "rate1": 1.0,
-    "rate1_plus": 0.02,
+    "rate1": 1.2,
+    "rate1_plus": 0.03,
     "rate2": 0.15,
     "rate2_plus": 0.005,
     "rate3": 0,
@@ -751,11 +773,11 @@
   },
   "34": {
     "name": "不稳定血浆",
-    "brief_d": "使一名我方干员流失一定生命值，并使其攻击力提升，持续一段时间",
-    "detail": "使一名我方干员流失${r1_float}当前生命值，并使其攻击力增加${r2_float}，持续${persistence}回合",
-    "rate1": 0.25,
-    "rate1_plus": -0.01,
-    "rate2": 0.4,
+    "brief_d": "使自身和一名我方干员每回合流失生命值，但攻击力提升，持续一段时间",
+    "detail": "使自身和一名我方干员每回合流失${r1_float}当前生命值，但攻击力增加${r2_float}，持续${persistence}回合",
+    "rate1": 0.10,
+    "rate1_plus": -0.002,
+    "rate2": 0.5,
     "rate2_plus": 0.02,
     "rate3": 0,
     "rate3_plus": 0,
@@ -771,7 +793,17 @@
         "e_p": "${persistence}",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 1
+      },
+      {
+        "e_id": "34-2",
+        "e_t": 17,
+        "e_p": "${persistence}+1",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
       }
     ]
   },
@@ -786,7 +818,7 @@
     "rate3": 0,
     "rate3_plus": 0,
     "obj_type": 0,
-    "consume": 16,
+    "consume": 14,
     "consume_plus": 0.25,
     "persistence": 2,
     "persistence_plus": 0.18,
@@ -794,10 +826,11 @@
       {
         "e_id": "35-1",
         "e_t": 10,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -905,33 +938,36 @@
       {
         "e_id": "41-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "41-2",
         "e_t": 2,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "41-3",
         "e_t": 13,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "0",
         "e_l": "${r3_int}",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
   "42": {
     "name": "处决",
-    "brief_d": "对一名敌人造成真实伤害",
-    "detail": "对一名敌人造成相当于自身攻击力${r1_float}和${r2_float}目标已损生命值的真实伤害",
+    "brief_d": "对一名敌人造成真实伤害(此技能无法暴击)",
+    "detail": "对一名敌人造成相当于自身攻击力${r1_float}和${r2_float}目标已损生命值的真实伤害(此技能无法暴击)",
     "rate1": 0.8,
     "rate1_plus": 0.02,
     "rate2": 0.2,
@@ -949,8 +985,8 @@
     "name": "淬影突袭",
     "brief_d": "对一名敌人造成法术伤害，并回复一定技力点",
     "detail": "对一名敌人造成相当于自身攻击力${r1_float}的法术伤害，并回复${r2_int}技力点",
-    "rate1": 0.6,
-    "rate1_plus": 0.02,
+    "rate1": 0.8,
+    "rate1_plus": 0.04,
     "rate2": 7,
     "rate2_plus": 0.25,
     "rate3": 0,
@@ -981,10 +1017,11 @@
       {
         "e_id": "44-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -1017,33 +1054,36 @@
     "rate3_plus": 0,
     "obj_type": 0,
     "consume": 45,
-    "consume_plus": 0.5,
+    "consume_plus": 0.55,
     "persistence": 2,
     "persistence_plus": 0.18,
     "effect_list": [
       {
         "e_id": "46-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "46-2",
         "e_t": 1,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "46-3",
         "e_t": 10,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "$-{r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -1051,7 +1091,7 @@
     "name": "无动于衷",
     "brief_d": "对所有敌人进行嘲讽(概率成功)，自身防御力增加，每次受到攻击时自身攻击力增加且不会随技能结束而清除，持续一段时间",
     "detail": "对所有敌人进行嘲讽(成功率为${r1_float})，自身防御力增加${r2_float}，每次受到攻击自身攻击力增加${r3_float}(最高叠加8层)且不会随技能结束而清除，持续${persistence}回合",
-    "rate1": 0.6,
+    "rate1": 0.5,
     "rate1_plus": 0.01,
     "rate2": 0.3,
     "rate2_plus": 0.02,
@@ -1066,10 +1106,11 @@
       {
         "e_id": "47-1",
         "e_t": 1,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "47-2",
@@ -1077,7 +1118,8 @@
         "e_p": "-1",
         "e_d": "${r3_float}",
         "e_l": "0",
-        "e_ml": "8"
+        "e_ml": "8",
+        "obj_type": 0
       }
     ]
   },
@@ -1096,7 +1138,17 @@
     "consume_plus": 0.5,
     "persistence": 0,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "47-2",
+        "e_t": 11,
+        "e_p": "1",
+        "e_d": "${r3_float}",
+        "e_l": "0",
+        "e_ml": "8",
+        "obj_type": 0
+      }
+    ]
   },
   "49": {
     "name": "不畏苦难",
@@ -1134,18 +1186,20 @@
       {
         "e_id": "50-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "50-2",
         "e_t": 10,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -1168,26 +1222,29 @@
       {
         "e_id": "51-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "51-2",
         "e_t": 1,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "51-3",
         "e_t": 13,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "0",
         "e_l": "${r3_int}",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -1210,37 +1267,40 @@
       {
         "e_id": "52-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "52-2",
         "e_t": 1,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "52-3",
         "e_t": 14,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r3_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
   "53": {
     "name": "熔核巨影",
-    "brief_d": "对一群敌人造成一定法术伤害",
-    "detail": "对一名敌人及其周围敌人造成相当于自身攻击力${r1_float}的法术伤害",
+    "brief_d": "对一群敌人造成一定无视其一定法抗法术伤害",
+    "detail": "对一名敌人及其周围敌人造成相当于自身攻击力${r1_float}的法术伤害，且无视其{r2_float}法抗",
     "rate1": 1.0,
     "rate1_plus": 0.02,
-    "rate2": 0,
-    "rate2_plus": 0,
+    "rate2": 0.35,
+    "rate2_plus": 0.01,
     "rate3": 0,
     "rate3_plus": 0,
     "obj_type": 1,
@@ -1269,18 +1329,20 @@
       {
         "e_id": "54-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "54-2",
         "e_t": 14,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "-${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -1303,26 +1365,29 @@
       {
         "e_id": "55-1",
         "e_t": 1,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "55-2",
         "e_t": 10,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "-${r3_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "55-3",
         "e_t": 14,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -1345,26 +1410,29 @@
       {
         "e_id": "56-1",
         "e_t": 0,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r2_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "56-2",
         "e_t": 1,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
         "e_l": "0",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       },
       {
         "e_id": "56-3",
         "e_t": 13,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "0",
         "e_l": "${r3_int}",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -1387,10 +1455,11 @@
       {
         "e_id": "57-1",
         "e_t": 13,
-        "e_p": "${persistence}",
+        "e_p": "${persistence}+1",
         "e_d": "0",
         "e_l": "${r3_int}",
-        "e_ml": "0"
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   }
