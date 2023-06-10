@@ -193,10 +193,10 @@ class Operator:
                 e.effect_level -= 1
                 if e.effect_level <= 0:
                     self.effect_list.remove(e)
-
-        for e in sub.effect_list:
-            if e.effect_type == 16 and e.effect_level < e.max_level:
-                e.effect_level += 1
+        if sub is not None:
+            for e in sub.effect_list:
+                if e.effect_type == 16 and e.effect_level < e.max_level:
+                    e.effect_level += 1
 
         return result
 
@@ -238,6 +238,17 @@ class Operator:
             self.mocked -= 1
             if self.mocked == 0:
                 self.mocking_obj = None
+
+        for e in self.effect_list:
+            if e.effect_type == 14:
+                await self.hurt(None, 4, int(self.max_health_p * e_d))
+            elif e.effect_type == 17:
+                await self.hurt(None, 6, int(self.health * e_d))
+
+            e.persistence -= 1
+            if e.persistence == 0:  # 持续时间结束
+                self.effect_list.remove(e)
+
         await self.upgrade_effect()
 
     async def upgrade_effect(self):
@@ -257,10 +268,6 @@ class Operator:
         self.speed_add_d = 0
         self.atk_type_p = self.atk_type
         for e in self.effect_list:
-            e.persistence -= 1
-            if e.persistence == 0:  # 持续时间结束
-                self.effect_list.remove(e)
-                continue
             # 根据效果种类给予属性加成
             e_t = e.effect_type
             e_d = e.effect_degree
@@ -290,14 +297,10 @@ class Operator:
                 self.atk_add_f += (e_d * e.effect_level)
             elif e_t == 13:
                 self.atk_type_p = e.effect_level
-            elif e_t == 14:
-                await self.hurt(4, int(self.max_health_p * e_d))
             elif e_t == 15:
                 self.def_add_f += (e_d * e.effect_level)
             elif e_t == 16:
                 self.atk_add_f += (e_d * e.effect_level)
-            elif e_t == 17:
-                await self.hurt(6, int(self.health * e_d))
 
         self.max_health_p = self.max_health * (1 + self.health_add_f) + self.health_add_d
         self.max_health_p = 0 if self.max_health_p < 0 else self.max_health_p
