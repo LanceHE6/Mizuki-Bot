@@ -6,8 +6,8 @@
 
 class Effect:
 
-    def __init__(self, effect_id: str, effect_type: int, persistence: int, effect_degree: float, effect_level: int = 0,
-                 max_level: int = 0):
+    def __init__(self, effect_id: str, effect_type: int, persistence: int, effect_degree: float, effect_level: int,
+                 max_level: int, obj_type: int):
         """
         :param effect_id: 效果id(唯一标识符)
         :param effect_type: 效果种类
@@ -15,6 +15,7 @@ class Effect:
         :param effect_degree: 效果强度(可为负数)
         :param effect_level: 效果层数(攻击类型)
         :param max_level: 最大层数
+        :param obj_type: 目标类型(0为我方, 1为敌方)
 
         效果种类:
         数值类
@@ -38,6 +39,7 @@ class Effect:
         self.effect_degree = effect_degree
         self.effect_level = effect_level
         self.max_level = max_level
+        self.obj_type = obj_type
 
         e_t = self.effect_type
         self.name = ""
@@ -80,5 +82,5 @@ class Effect:
 
 
 async def new_effect_instance(effect_dict: dict):
-    return Effect(effect_dict["e_id"], int(effect_dict["e_t"]), int(effect_dict["e_p"]), float(effect_dict["e_d"]),
-                  int(effect_dict["e_l"]), int(effect_dict["e_ml"]))
+    return Effect(effect_dict["e_id"], int(effect_dict["e_t"]), eval(effect_dict["e_p"]), float(effect_dict["e_d"]),
+                  int(effect_dict["e_l"]), int(effect_dict["e_ml"]), int(effect_dict["obj_type"]))
