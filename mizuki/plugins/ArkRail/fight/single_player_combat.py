@@ -97,7 +97,8 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                     await handle.send("您的琼脂不足，无法获取关卡奖励！")
             is_over = True
         for s in message:
-            await handle.send(s)
+            pass
+            # await handle.send(s)
         if is_over:
             await finish_playing()
 

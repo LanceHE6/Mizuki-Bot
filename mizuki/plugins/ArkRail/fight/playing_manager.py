@@ -3,7 +3,7 @@
 # @Author:Silence
 # @Time:2023/5/11 11:32
 # @Software:PyCharm
-import random
+import random, copy
 
 from ..operator import Operator, get_operator_list, get_enemies_list
 from ..skill import Skill
@@ -193,7 +193,7 @@ class PlayingManager:
 
         elif sub.atk_type_p == 9:  # 不攻击
             message = f"{sub.name}无动于衷..."
-            pass
+
         return message
 
     async def use_skill(self, sub: Operator, skill_num: int, obj1: Operator, obj2: Operator = None) -> str:
@@ -249,8 +249,6 @@ class PlayingManager:
                 message += f"\n回复{int(skill.rate1)}技力点！"
             elif sid == 2:
                 persistence = 1
-                sub.atk_type_p = skill.rate1
-                sub.atk_add_f += skill.rate2
                 message += f"\n攻击力提高{round(skill.rate2 * 100, 1)}%并变为法术伤害！"
             elif sid == 3:
                 health_amount = await sub.hurt(sub, 4, int(skill.rate1 * sub.max_health_p))
@@ -288,14 +286,12 @@ class PlayingManager:
                     message += f"\n并恢复了{health_amount}点生命值！"
                 elif sid == 16:
                     obj1.speed -= skill.rate3
-                    message += f"\n并使其速度减少{skill.rate3}！"
+                    message += f"\n并使其速度减少{round(skill.rate3, 2)}！"
             elif sid == 5:
                 persistence = 1
-                sub.atk_add_f += skill.rate1
                 message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%！"
             elif sid == 6:
                 persistence = 1
-                sub.def_add_f += skill.rate1
                 message += f"\n防御力提高{round(skill.rate1 * 100, 1)}%！"
             elif sid in [7, 14, 28]:
                 atk_type = sub.atk_type_p
@@ -344,13 +340,10 @@ class PlayingManager:
                 sub.atk_add_f += skill.rate1
                 message += f"\n每回合回复{int(skill.rate2)}技力点，攻击力提高{round(skill.rate1 * 100, 1)}%！"
             elif sid == 10:
-                sub.crit_d_add_d += skill.rate1
                 message += f"\n下次普攻必定暴击且暴击伤害增加{round(skill.rate1 * 100, 1)}%！\n"
-                await sub.upgrade_effect()
-                damage = int(sub.atk_p + (sub.atk_p * sub.crit_d_p))
+                damage = int(sub.atk_p + (sub.atk_p * (sub.crit_d_p + skill.rate1)))
                 damage = await obj1.hurt(sub, 0, damage)
                 message = f"\n{sub.name}对{obj1.name}发动了普通攻击，暴击并对其造成了{damage}点物理伤害！"  # 返回的字符串
-                sub.crit_d_add_d -= skill.rate1
                 objs_list.append(obj1)
             elif sid == 11:
                 persistence = 1
@@ -398,10 +391,8 @@ class PlayingManager:
                     message += f"\n分别为{objs_name}\n恢复了{objs_damage} 点生命值！"
             elif sid == 17:
                 health_amount = await obj1.hurt(sub, 4, int(sub.atk_p * skill.rate1))
-                message += f"恢复{obj1.name}{health_amount}点生命值！"
+                message += f"\n恢复{obj1.name}{health_amount}点生命值！"
             elif sid == 18:
-                sub.atk_type_p = skill.rate1
-                sub.atk_add_f += skill.rate2
                 message += f"\n攻击方式变为单体治疗，攻击力提高{round(skill.rate2 * 100, 1)}%！"
             elif sid == 19:
                 persistence = 1
@@ -413,15 +404,12 @@ class PlayingManager:
                         op.mocking_obj = sub
                         mock_ops += f"{op.name} "
 
-                sub.def_add_f += skill.rate2
                 message += f"\n防御力提高{round(skill.rate2 * 100, 1)}%并尝试嘲讽所有敌人！"
                 message += f"\n{mock_ops} 被嘲讽了！"
             elif sid == 21:
                 persistence = 1
-                damage = await sub.hurt(sub, 6, int(sub.health * skill.rate1))
-                sub.atk_add_f += skill.rate2
-                sub.speed_add_d += skill.rate3
-                message += f"\n流失{damage}点生命值，攻击力提高{round(skill.rate2 * 100, 1)}%，速度提升{skill.rate3}点！"
+                damage = await sub.hurt(None, 6, int(sub.health * skill.rate1))
+                message += f"\n流失{damage}点生命值，攻击力提高{round(skill.rate2 * 100, 1)}%，速度提升{round(skill.rate3, 2)}点！"
             elif sid == 23:
                 is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
                 is_crit_str: str = "暴击并" if is_crit else ""
@@ -450,24 +438,17 @@ class PlayingManager:
                     pass
             elif sid == 24:
                 persistence = 1
-                sub.atk_type_p = skill.rate1
-                sub.atk_add_f += skill.rate2
                 message += f"\n攻击类型变为群体法术，攻击力提高{round(skill.rate2 * 100, 1)}%！"
             elif sid == 25:
                 persistence = 1
-                sub.atk_add_f += skill.rate1
-                sub.def_add_f += skill.rate2
-                message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%，防御力提高{round(skill.rate2 * 100, 1)}%！"
+                message += f"\n攻击类型变为群体法术，攻击力提高{round(skill.rate1 * 100, 1)}%，防御力提高{round(skill.rate2 * 100, 1)}%！"
             elif sid == 26:
                 persistence = 1
-                sub.atk_add_f += skill.rate1
                 sub.deathless = skill.persistence + 1
                 message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%，进入不死状态！"
             elif sid == 27:
                 persistence = 1
-                sub.def_add_f -= skill.rate1
-                sub.atk_add_f += skill.rate2
-                message += f"\n防御力降低{round(skill.rate1 * 100, 1)}%，攻击力提高{round(skill.rate2 * 100, 1)}%！"
+                message += f"\n防御力降低{int(skill.rate1)}，攻击力提高{round(skill.rate2 * 100, 1)}%！"
             elif sid == 29:
                 is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
                 is_crit_str: str = "暴击并" if is_crit else ""
@@ -478,7 +459,7 @@ class PlayingManager:
                 obj1.speed -= skill.rate3
                 if obj1.health < obj1.max_health_p * skill.rate2:
                     obj1.health = int(obj1.max_health_p * skill.rate2)
-                message += f"\n{is_crit_str}对{obj1.name}造成了{obj_health - obj1.health}点物理伤害并使其速度减少{skill.rate3}！"
+                message += f"\n{is_crit_str}对{obj1.name}造成了{obj_health - obj1.health}点物理伤害并使其速度减少{round(skill.rate3, 2)}！"
             elif sid == 31:
                 rate = random.uniform(skill.rate1, skill.rate2)
                 is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
@@ -493,13 +474,100 @@ class PlayingManager:
                     objs_name += f" {op.name}"
                     objs_damage += f" {damage}"
                 message += f"\n{is_crit_str}对{objs_name}\n分别造成了{objs_damage} 点物理伤害！"
+            elif sid == 32:
+                persistence = 1
+                message += f"\n攻击类型变为群体法术，攻击力提高{round(skill.rate1 * 100, 1)}%但速度减少{round(skill.rate2, 2)}"
+            elif sid == 33:
+                health_amount = await obj1.hurt(sub, 4, int((sub.atk_p * skill.rate1) + (obj1.max_health_p * skill.rate2)))
+                message += f"\n恢复{obj1.name}{health_amount}点生命值！"
+            elif sid == 34:
+                persistence = 1
+                objs_list.append(sub)
+                objs_list.append(obj1)
+                message += f"\n使自己和{obj1.name}攻击力提高{round(skill.rate2, 2)}但每回合流失{round(skill.rate1, 3)}最大生命值！"
+            elif sid == 35:
+                persistence = 1
+                message += f"\n自身速度增加{round(skill.rate1, 2)}！"
+            elif sid in [36, 38]:  # 减速类
+                if sid == 36:
+                    atk_type = 1
+                    atk_type_str = "法术"
+                else:
+                    atk_type = 6
+                    atk_type_str = "真实"
+                is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
+                is_crit_str: str = "暴击并" if is_crit else ""
+                damage = int(sub.atk_p * skill.rate1 + (sub.atk_p * is_crit * sub.crit_d_p))
+                damage = await obj1.hurt(sub, atk_type, damage)
+                objs_list.append(obj1)
+                message += f"\n{is_crit_str}对{obj1.name}造成了{damage}点{atk_type_str}伤害！并使其速度减少{round(skill.rate2, 2)}"
+            elif sid == 37:
+                is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
+                is_crit_str: str = "暴击并" if is_crit else ""
+                damage = int(sub.atk_p * skill.rate1 + (sub.atk_p * is_crit * sub.crit_d_p))
+                damage = await obj1.hurt(sub, 1, damage)
+                health_amount = int(sub.atk_p * skill.rate2)
+                health_amount = await obj2.hurt(obj2, 4, health_amount)
+                objs_list.append(obj1)
+                message += f"\n{is_crit_str}对{obj1.name}造成了{damage}点物理伤害！并为{obj2.name}恢复{health_amount}点生命值！"
+            elif sid == 40:
+                if sub.atk_type_p == 1:
+                    atk_type_str = "法术"
+                else:
+                    atk_type_str = "真实"
+                random_obj_list = random.choices(self.all_enemies_list, k=int(skill.rate1))
+                for op in random_obj_list:
+                    is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
+                    is_crit_str: str = "★" if is_crit else ""
+                    damage = int(sub.atk_p * skill.rate2 + (sub.atk_p * is_crit * sub.crit_d_p))
+                    damage = await op.hurt(sub, sub.atk_type_p, damage)
+                    objs_list.append(op)
+                    message += f"\n对{op.name}造成{is_crit_str}{damage}"
+                message += f"\n点{atk_type_str}伤害！"
+            elif sid == 41:
+                persistence = 1
+                message += f"\n攻击类型变为单体真实，生命值上限提高{round(skill.rate1 * 100, 1)}%，攻击力提高{round(skill.rate2 * 100, 1)}%"
+            elif sid == 42:
+                damage = int((sub.atk_p * skill.rate1) + ((obj1.max_health_p - obj1.health) * skill.rate2))
+                damage = await obj1.hurt(sub, 6, damage)
+                objs_list.append(obj1)
+                message += f"\n对{obj1.name}造成了{damage}点真实伤害！"
+            elif sid == 43:
+                is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
+                is_crit_str: str = "暴击并" if is_crit else ""
+                damage = int(sub.atk_p * skill.rate1 + (sub.atk_p * is_crit * sub.crit_d_p))
+                damage = await obj1.hurt(sub, 1, damage)
+                objs_list.append(obj1)
+                self.player_skill_count += int(skill.rate2)
+                message += f"\n{is_crit_str}对{obj1.name}造成了{damage}点物理伤害！并回复{int(skill.rate2)}技力点！"
+            elif sid == 44:
+                persistence = 1
+                sub.hidden = skill.persistence + 1
+                message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%，进入隐匿状态！"
+            elif sid == 46:
+                persistence = 1
+                message += f"\n攻击力和防御力提高{round(skill.rate1 * 100, 1)}%，进入隐匿状态！"
 
         skill.count = skill.persistence + persistence
+        sub_effect_list: list[Effect] = []
+        obj_effect_list: list[Effect] = []
+        for e in skill.effect_list:
+            if e.obj_type == 0:
+                sub_effect_list.append(e)
+            else:
+                obj_effect_list.append(e)
 
+        # 要用deepcopy来创建新的Effect类对象，不然效果之间会互相影响
+        sub.effect_list += copy.deepcopy(sub_effect_list)
+        objs_list = list(set(objs_list))  # 除去列表里的相同元素
         for op in objs_list:
             if await op.is_die():
                 message += f"\n{op.name}被击倒了！"
                 await self.op_die(op)
+            else:
+                # 要用deepcopy来创建新的Effect类对象，不然效果之间会互相影响
+                op.effect_list += copy.deepcopy(obj_effect_list)
+                await op.upgrade_effect()
         return message
 
     async def op_die(self, op: Operator):
@@ -560,35 +628,9 @@ class PlayingManager:
         for f_s in finish_skill:  # 遍历结束技能列表内的技能
             message += f"\n{sub.name}的技能{f_s.name}结束了！"
             sid = f_s.sid
-            if sid == 2:  # 法术附魔
-                sub.atk_type_p = sub.atk_type
-                sub.atk_add_f -= f_s.rate2
-            elif sid == 5:  # 攻击力增强
-                sub.atk_add_f -= f_s.rate1
-            elif sid == 6:  # 防御力增强
-                sub.def_add_f -= f_s.rate1
-            elif sid == 9:  # 冲锋号令_进攻
-                sub.atk_add_f -= f_s.rate2
-            elif sid == 18:  # 急救模式
-                sub.atk_add_f -= f_s.rate2
-            elif sid == 19:  # 壳状防御
-                sub.def_add_f -= f_s.rate2
-            elif sid == 21:  # 赤色之瞳
-                sub.atk_add_f -= f_s.rate2
-                sub.speed_add_d -= f_s.rate3
-            elif sid == 24:  # 狼魂
-                sub.atk_type_p = sub.atk_type
-                sub.atk_add_f -= f_s.rate2
-            elif sid == 25:  # 星座守护
-                sub.atk_add_f -= f_s.rate1
-                sub.def_add_f -= f_s.rate2
-            elif sid == 26:  # 肉斩骨断
-                sub.atk_add_f -= f_s.rate1
+            if sid == 26:  # 肉斩骨断
                 sub.immobile = 2
                 message += f"\n{sub.name}眩晕了！"
-            elif sid == 27:  # 亮剑
-                sub.def_add_f += f_s.rate1
-                sub.atk_add_f -= f_s.rate2
 
         await sub.finish_turn()
         sub.speed = 0  # 速度设为0
