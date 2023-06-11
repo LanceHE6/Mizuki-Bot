@@ -5,46 +5,61 @@
 # @Software:PyCharm
 import requests
 import json
-from nonebot import on_message
+from nonebot import on_message, on_command
 from nonebot.rule import *
-from nonebot.adapters.onebot.v11 import Message, Event, MessageSegment
+from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
 from ..Utils.PluginInfo import PluginInfo
 
-# 思知机器人
-data = {
-    "appid": "daea57f1906444d87c408a74d1b7ea9f",
-    "userid": "9URYu8cD",
-    "spoken": ""
-}
-chat = on_message(rule=to_me(), priority=2, block=True)
+from .SessionManager import Session, SessionManager
 
-__plugin_info__ = PluginInfo(
+chat = on_message(rule=to_me(), priority=2, block=True)
+rm_session = on_command("rm_session", aliases={"清除会话记录", "清除聊天记录", "重置聊天", "重置聊天记录"}, priority=2, block=True)
+
+__plugin_info__ = [PluginInfo(
     plugin_name="Chat",
     name="Chat",
     description="与bot愉快的聊天吧",
     usage="@bot<内容> ——与bot聊天",
     extra={
         "author": "Hycer_Lance",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "priority": 2
     }
-)
+), PluginInfo(
+    plugin_name="Chat_rm_session",
+    name="重置聊天",
+    description="重置用户ChatGPT聊天",
+    usage="重置聊天 ——重置与bot的聊天记录",
+    extra={
+        "author": "Hycer_Lance",
+        "version": "0.2.0",
+        "priority": 2
+    }
+),]
+
+session_manager = SessionManager()
 
 @chat.handle()
-async def reply(event: Event):
-    spoken = str(event.get_message())
-    # data["spoken"] = str(event.get_message())
-    # api = 'https://api.ownthink.com/bot'#思知bot
+async def reply(event: MessageEvent):
+    uid = event.get_user_id()
+    # 判断当前用户会话是否存在
+    if not await session_manager.is_session_exist(uid):
+        # 不存在则添加进会话管理中
+        await session_manager.add_session(uid, Session())
+        session = await session_manager.get_session(uid)
+    else:
+        session = await session_manager.get_session(uid)
 
-    # result = json.loads(requests.post(url=api, data=json.dumps(data)).content)
-    # essage = result['data']['info']['text']
-    # 第三方api http://api.sc1.fun/?action=doc&id=3
-    api = f'http://api.sc1.fun/API/ChatGPT.php?msg={spoken}&type=wifi&id=1&mos=json'
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                      "Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.57 "
-    }
-    result = json.loads(requests.get(url=api, headers=headers).content)["message"]
+    user_content = str(event.get_message())
+    await session.add_user_content(user_content)
+    response = await session.get_response()
+    await chat.finish(response, at_sender=True)
 
-    await chat.finish(MessageSegment.at(event.get_user_id()) + Message(result))
+@rm_session.handle()
+async def _(event: MessageEvent):
+    uid = event.get_user_id()
+    if not await session_manager.is_session_exist(uid):
+        await rm_session.finish("你还没有和我聊过天哦", at_sender=True)
+    await session_manager.remove_session(uid)
+    await rm_session.finish("聊天已重置", at_sender=True)
 
