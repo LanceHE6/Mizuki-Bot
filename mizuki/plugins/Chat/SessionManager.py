@@ -3,8 +3,10 @@
 # @Author:Hycer_Lance
 # @Time:2023/6/11 17:15
 # @Software:PyCharm
+import asyncio
 
 from .Session import Session
+from .Timer import Timer
 
 class SessionManager:
 
@@ -30,6 +32,9 @@ class SessionManager:
         :return: none
         """
         self.session_map[f"{uid}"] = session
+        # 创建计时器
+        timer = Timer(self, uid)
+        asyncio.create_task(timer.start())
 
     async def remove_session(self, uid: int or str):
         """
