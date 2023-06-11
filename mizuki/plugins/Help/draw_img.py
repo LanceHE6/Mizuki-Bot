@@ -13,30 +13,31 @@ bg_img_path = Path() / 'mizuki' / 'plugins' / 'Help' / 'res' / 'bg.png'
 mizuki_img_path = Path() / 'mizuki' / 'plugins' / 'Help' / 'res' / 'mizuki.png'
 casual_img_path = Path() / 'mizuki' / 'plugins' / 'Help'
 
+
 async def draw_help_img() -> Path:
     plugins_info_list = PluginsInfoList().plugins_list
     bg_img = Image.open(bg_img_path)
     mizuki_img = Image.open(mizuki_img_path)
     img = Image.new("RGB", bg_img.size, (255, 255, 255))
-    img.paste(bg_img, (0,0))
-    img.paste(mizuki_img, (900,700), mask=mizuki_img)
+    img.paste(bg_img, (0, 0))
+    img.paste(mizuki_img, (900, 700), mask=mizuki_img)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype("simhei", 64)
-    draw.text((650, 100), "指令列表",font=font, fill='black')
+    draw.text((650, 100), "指令列表", font=font, fill='black')
     font = ImageFont.truetype("simhei", 32)
-    draw.text((1150, 160), "<>为必填,[]为选填", font=font, fill='red')
+    draw.text((1150, 140), "<>为必填,[]为选填", font=font, fill='red')
     font = ImageFont.truetype("simhei", 24)
     draw.text((1150, 1120), "Create By Mizuki-bot", font=font, fill=(0, 162, 255))
     command_start = list(get_driver().config.command_start)[0]
     i = 0
+    x = 200
     for plugin in plugins_info_list:
-        x = 200
-        base_y =180
+        base_y = 180
         font_size = 32
         font = ImageFont.truetype("simhei", font_size)
-        if isinstance(plugin.usage, list):#判断用法是否为列表
+        if isinstance(plugin.usage, list):  # 判断用法是否为列表
             for per in plugin.usage:
-                if str(per).startswith("@"):#判断是否为@bot
+                if str(per).startswith("@"):  # 判断是否为@bot
                     content = per
                 else:
                     content = command_start + per
@@ -54,7 +55,7 @@ async def draw_help_img() -> Path:
             draw.text((x, base_y + i * (font_size + 6)), f"{content}", font=font, fill='white')
             i += 1
         if base_y + i * (font_size + 6) > 1080:  # 左边排满了往右边排
-            x = 1000
+            x = 850
             i = 0
 
     save_path = casual_img_path / 'help.png'
