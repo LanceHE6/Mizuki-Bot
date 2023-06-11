@@ -104,11 +104,20 @@ Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的�
 ```
 HOST=127.0.0.1  # 主机地址
 PORT=13570 # 监听端口号
-FASTAPI_RELOAD=true
+FASTAPI_RELOAD=false
 
 SUPERUSERS=["2765543491"]  # 配置 NoneBot 超级用户
 NICKNAME=["Mizuki", "水月", "mizuki"]  # 配置机器人的昵称
 COMMAND_START=["/"]  # 配置命令起始字符
+
+#ArkRail相关
+AUTO_CHECK_RES=false  # 启动自动检查图片资源
+
+#ChatGPT相关
+API_KEY=  # api key sk-xxxxxx
+ENABLE_PROXY=false  # 是否启用代理
+PROXY=  # 代理地址 https://example.com
+TIMEOUT=600  # 定时清理用户会话 xx秒
 ```
 
 ### <span id="jump4-3">安装项目依赖
