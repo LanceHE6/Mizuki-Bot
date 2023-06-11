@@ -3,11 +3,10 @@
 # @Author:Hycer_Lance
 # @Time:2023/5/1 14:10
 # @Software:PyCharm
-import requests
-import json
+
 from nonebot import on_message, on_command
 from nonebot.rule import *
-from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import MessageEvent
 from ..Utils.PluginInfo import PluginInfo
 
 from .SessionManager import Session, SessionManager
@@ -16,8 +15,8 @@ chat = on_message(rule=to_me(), priority=2, block=True)
 rm_session = on_command("rm_session", aliases={"清除会话记录", "清除聊天记录", "重置聊天", "重置聊天记录"}, priority=2, block=True)
 
 __plugin_info__ = [PluginInfo(
-    plugin_name="Chat",
-    name="Chat",
+    plugin_name="ChatGPT",
+    name="ChatGPT",
     description="与bot愉快的聊天吧",
     usage="@bot<内容> ——与bot聊天",
     extra={
@@ -26,7 +25,7 @@ __plugin_info__ = [PluginInfo(
         "priority": 2
     }
 ), PluginInfo(
-    plugin_name="Chat_rm_session",
+    plugin_name="ChatGPT_rm_session",
     name="重置聊天",
     description="重置用户ChatGPT聊天",
     usage="重置聊天 ——重置与bot的聊天记录",
@@ -35,7 +34,7 @@ __plugin_info__ = [PluginInfo(
         "version": "0.2.0",
         "priority": 2
     }
-),]
+)]
 
 session_manager = SessionManager()
 
@@ -62,4 +61,3 @@ async def _(event: MessageEvent):
         await rm_session.finish("你还没有和我聊过天哦", at_sender=True)
     await session_manager.remove_session(uid)
     await rm_session.finish("聊天已重置", at_sender=True)
-
