@@ -110,12 +110,10 @@ class Operator:
         invincible: 无敌(无法受到任何伤害)
         mocked: 被嘲讽(攻击时只能攻击指定单位)
         mocking_obj: 嘲讽者(被嘲讽时只能攻击的单位)
-        blooding: 流血(每回合流失最大生命值)
-        blooding_rate: 流血率(每回合流失多少最大生命值)
         
         effect_list: 增益(削弱)效果列表
         next_operators: 身边的干员(包括自己)
-        damage_list: 收到的伤害(包括治疗量)
+        damage_list: 受到的伤害(包括治疗量)
         """
 
         self.health_add_f: float = 0.0
@@ -138,8 +136,6 @@ class Operator:
         self.invincible: int = 0
         self.mocked: int = 0
         self.mocking_obj = None
-        self.blooding: int = 0
-        self.blooding_rate: float = 0
 
         self.effect_list: list[Effect] = []
         self.next_operators: list = []
@@ -247,6 +243,8 @@ class Operator:
 
             e.persistence -= 1
             if e.persistence == 0:  # 持续时间结束
+                if e.effect_id == 25:
+                    self.health = -10000
                 self.effect_list.remove(e)
 
         await self.upgrade_effect()
