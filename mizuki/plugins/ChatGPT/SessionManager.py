@@ -3,10 +3,12 @@
 # @Author:Hycer_Lance
 # @Time:2023/6/11 17:15
 # @Software:PyCharm
+
 import asyncio
+from nonebot import get_driver, logger
 
 from .Session import Session
-from .Timer import Timer
+from ..Utils.Timer import Timer
 
 class SessionManager:
 
@@ -33,8 +35,8 @@ class SessionManager:
         """
         self.session_map[f"{uid}"] = session
         # 创建计时器
-        timer = Timer(self, uid)
-        asyncio.create_task(timer.start())
+        timer = Timer(int(get_driver().config.timeout))
+        asyncio.create_task(timer.start(self.remove_session, uid))
 
     async def remove_session(self, uid: int or str):
         """
@@ -43,6 +45,7 @@ class SessionManager:
         :return: none
         """
         self.session_map.pop(f"{uid}")
+        logger.info(f"[ChatGPT] {uid} 用户Session已清除")
 
     async def is_session_exist(self, uid: int or str) -> bool:
         """
