@@ -1,8 +1,8 @@
 {
   "1": {
     "name": "溅射法术",
-    "brief_d": "对一群敌方单位造成法术伤害",
-    "detail": "对一名敌方单位及其周围敌方单位造成相当于自身攻击力${r1_float}的法术伤害",
+    "brief_d": "对一群敌方单位造成法术伤害(该技能无法暴击)",
+    "detail": "对一名敌方单位及其周围敌方单位造成相当于自身攻击力${r1_float}的法术伤害(该技能无法暴击)",
     "rate1": 0.8,
     "rate1_plus": 0,
     "rate2": 0,
@@ -18,8 +18,8 @@
   },
   "2": {
     "name": "D12",
-    "brief_d": "对一群敌方单位造成高额物理伤害",
-    "detail": "对一名敌方单位及其周围敌方单位造成相当于自身攻击力${r1_float}的物理伤害",
+    "brief_d": "对一群敌方单位造成高额物理伤害(该技能无法暴击)",
+    "detail": "对一名敌方单位及其周围敌方单位造成相当于自身攻击力${r1_float}的物理伤害(该技能无法暴击)",
     "rate1": 1.5,
     "rate1_plus": 0,
     "rate2": 0,
@@ -35,8 +35,8 @@
   },
   "3": {
     "name": "破甲榴弹",
-    "brief_d": "对一群敌方单位造成一定物理伤害，并使其防御力降低",
-    "detail": "对一名敌方单位及其周围敌方单位造成相当于自身攻击力${r1_float}的物理伤害，并使其防御力降低${r2_float}",
+    "brief_d": "对一群敌方单位造成一定物理伤害，并使其防御力降低(该技能无法暴击)",
+    "detail": "对一名敌方单位及其周围敌方单位造成相当于自身攻击力${r1_float}的物理伤害，并使其防御力降低${r2_float}(该技能无法暴击)",
     "rate1": 0.5,
     "rate1_plus": 0,
     "rate2": 0.5,
@@ -79,8 +79,8 @@
   },
   "5": {
     "name": "自爆",
-    "brief_d": "对一群敌人造成巨额物理伤害后强制退场",
-    "detail": "对一群敌人造成相当于自身攻击力${r1_float}的物理伤害后强制退场",
+    "brief_d": "对一群敌人造成巨额物理伤害后强制退场(该技能无法暴击)",
+    "detail": "对一群敌人造成相当于自身攻击力${r1_float}的物理伤害后强制退场(该技能无法暴击)",
     "rate1": 5.0,
     "rate1_plus": 0,
     "rate2": 0,
@@ -92,12 +92,22 @@
     "consume_plus": 0,
     "persistence": 0,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "-5-2",
+        "e_t": 25,
+        "e_p": "0",
+        "e_d": "0",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
+      }
+    ]
   },
   "6": {
     "name": "枷锁",
-    "brief_d": "对一名敌人造成一定法术伤害并使其无法行动一段时间",
-    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的法术伤害并使其无法行动${r2_int}回合",
+    "brief_d": "对一名敌人造成一定法术伤害并使其无法行动一段时间(该技能无法暴击)",
+    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的法术伤害并使其无法行动${r2_int}回合(该技能无法暴击)",
     "rate1": 0.8,
     "rate1_plus": 0,
     "rate2": 1,
@@ -109,29 +119,49 @@
     "consume_plus": 0,
     "persistence": 0,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "-6-2",
+        "e_t": 23,
+        "e_p": "${r2_int}",
+        "e_d": "0",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
   },
   "7": {
     "name": "冰环",
-    "brief_d": "对所有敌人造成一定法术伤害并使其减速",
-    "detail": "对所有敌人造成相当于自身攻击力${r1_float}的法术伤害并使其速度减少${r2_int}",
+    "brief_d": "对所有敌人造成一定法术伤害并使其速度降低，持续一段时间(该技能无法暴击)",
+    "detail": "对所有敌人造成相当于自身攻击力${r1_float}的法术伤害并使其速度降低${r2_float}，持续${r3_int}回合(该技能无法暴击)",
     "rate1": 1.2,
     "rate1_plus": 0,
-    "rate2": 15,
+    "rate2": 0.4,
     "rate2_plus": 0,
-    "rate3": 0,
+    "rate3": 1,
     "rate3_plus": 0,
     "obj_type": 3,
     "consume": 30,
     "consume_plus": 0,
     "persistence": 0,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "-7-2",
+        "e_t": 10,
+        "e_p": "${r3_int}",
+        "e_d": "-${r2_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
   },
   "8": {
     "name": "冻结",
-    "brief_d": "对一名敌人造成大量法术伤害并使其无法行动一段时间",
-    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的法术伤害并使其无法行动${r2_int}回合",
+    "brief_d": "对一名敌人造成大量法术伤害并使其无法行动一段时间(该技能无法暴击)",
+    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的法术伤害并使其无法行动${r2_int}回合(该技能无法暴击)",
     "rate1": 1.6,
     "rate1_plus": 0,
     "rate2": 1,
@@ -143,13 +173,23 @@
     "consume_plus": 0,
     "persistence": 0,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "-8-2",
+        "e_t": 24,
+        "e_p": "${r2_int}",
+        "e_d": "0",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
   },
   "9": {
     "name": "自愈",
     "brief_d": "每回合恢复最大生命值，持续一段时间",
     "detail": "每回合恢复${r1_float}最大生命值，持续${persistence}回合",
-    "rate1": 0.1,
+    "rate1": 0.05,
     "rate1_plus": 0,
     "rate2": 0,
     "rate2_plus": 0,
@@ -158,7 +198,7 @@
     "obj_type": 0,
     "consume": 12,
     "consume_plus": 0,
-    "persistence": 3,
+    "persistence": 2,
     "persistence_plus": 0,
     "effect_list": [
       {
@@ -168,14 +208,14 @@
         "e_d": "${r1_float}",
         "e_l": "0",
         "e_ml": "0",
-        "obj_type": 1
+        "obj_type": 0
       }
     ]
   },
   "10": {
     "name": "眩晕打击",
-    "brief_d": "对一名敌人造成伤害并使其无法行动一段时间",
-    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的伤害并使其无法行动${r2_int}回合",
+    "brief_d": "对一名敌人造成伤害并使其无法行动一段时间(该技能无法暴击)",
+    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的伤害并使其无法行动${r2_int}回合(该技能无法暴击)",
     "rate1": 1.0,
     "rate1_plus": 0,
     "rate2": 1,
@@ -187,7 +227,17 @@
     "consume_plus": 0,
     "persistence": 0,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "-10-2",
+        "e_t": 23,
+        "e_p": "${r2_int}",
+        "e_d": "0",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
   },
   "11": {
     "name": "隐匿",
@@ -204,12 +254,22 @@
     "consume_plus": 0,
     "persistence": 1,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "-11-2",
+        "e_t": 19,
+        "e_p": "${persistence}+1",
+        "e_d": "0",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
+      }
+    ]
   },
   "12": {
     "name": "致命一击",
-    "brief_d": "对一名敌人造成巨额伤害",
-    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的物理伤害",
+    "brief_d": "对一名敌人造成巨额伤害(该技能无法暴击)",
+    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的物理伤害(该技能无法暴击)",
     "rate1": 2.0,
     "rate1_plus": 0,
     "rate2": 0,
