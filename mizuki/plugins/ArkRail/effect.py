@@ -32,6 +32,16 @@ class Effect:
         15: 屏障(防御力提升，每次受到伤害防御力提升幅度减少)
         16: 愤怒(攻击力提升，每次进行攻击时攻击力额外提升)
         17: 流血(每回合流失当前生命值)
+        25: 死战(持续时间结束后血量清空)
+
+        实际功能不在这里实现，仅用于绘制图标的属性
+        18: 嘲讽(嘲讽对象必须为选中目标)
+        19: 隐匿(无法被选中)
+        20: 不死(血量不会小于1)
+        21: 无敌(免疫所有伤害)
+        22: 沉默(无法使用技能)
+        23: 眩晕(无法行动)
+        24: 冻结(无法行动)
         """
         self.effect_id = effect_id
         self.effect_type = effect_type
@@ -79,6 +89,22 @@ class Effect:
             self.name = "愤怒"
         elif e_t == 17:
             self.name = "流血"
+        elif e_t == 18:
+            self.name = "嘲讽"
+        elif e_t == 19:
+            self.name = "隐匿"
+        elif e_t == 20:
+            self.name = "不死"
+        elif e_t == 21:
+            self.name = "无敌"
+        elif e_t == 22:
+            self.name = "沉默"
+        elif e_t == 23:
+            self.name = "眩晕"
+        elif e_t == 24:
+            self.name = "冻结"
+        elif e_t == 25:
+            self.name = "死战"
 
 
 async def new_effect_instance(effect_dict: dict):
