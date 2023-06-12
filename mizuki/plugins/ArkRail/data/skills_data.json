@@ -177,11 +177,11 @@
   "9": {
     "name": "冲锋号令_进攻",
     "brief_d": "攻击力少量提升，每回合(包含当前回合)回复一定的技力点，持续一段时间",
-    "detail": "自身攻击力提升${r1_float}，立刻回复${r2_int}技力点，然后每回合回复${r2_int}技力点 ，持续${persistence}回合",
-    "rate1": 0.1,
-    "rate1_plus": 0.005,
-    "rate2": 4,
-    "rate2_plus": 0.25,
+    "detail": "自身攻击力提升${r2_float}，立刻回复${r1_int}技力点，然后每回合回复${r1_int}技力点 ，持续${persistence}回合",
+    "rate1": 4,
+    "rate1_plus": 0.25,
+    "rate2": 0.2,
+    "rate2_plus": 0.01,
     "rate3": 0,
     "rate3_plus": 0,
     "obj_type": 0,
@@ -194,7 +194,7 @@
         "e_id": "9-1",
         "e_t": 0,
         "e_p": "${persistence}+1",
-        "e_d": "${r1_float}",
+        "e_d": "${r2_float}",
         "e_l": "0",
         "e_ml": "0",
         "obj_type": 0
@@ -216,23 +216,13 @@
     "consume_plus": 0.25,
     "persistence": 0,
     "persistence_plus": 0,
-    "effect_list": [
-      {
-        "e_id": "10-1",
-        "e_t": 9,
-        "e_p": "1",
-        "e_d": "${r1_float}",
-        "e_l": "0",
-        "e_ml": "0",
-        "obj_type": 0
-      }
-    ]
+    "effect_list": []
   },
   "11": {
     "name": "支援号令",
     "brief_d": "停止攻击，每回合(包含当前回合)回复一定技力点，持续一段时间",
     "detail": "立刻回复${r1_int}技力点，然后每回合回复${r1_int}技力点，持续${persistence}回合，技能持续期间将自动跳过该干员的回合",
-    "rate1": 10,
+    "rate1": 12,
     "rate1_plus": 0.25,
     "rate2": 0,
     "rate2_plus": 0,
@@ -243,24 +233,53 @@
     "consume_plus": 0,
     "persistence": 2,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "11-1",
+        "e_t": 23,
+        "e_p": "${persistence}+1",
+        "e_d": "0",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
+      }
+    ]
   },
   "12": {
     "name": "治愈之翼",
-    "brief_d": "停止攻击，立刻回复一定技力点，然后每回合回复一定技力点并恢复我方所有干员的生命值，持续一段时间",
-    "detail": "立刻回复${r1_int}技力点，然后每回合回复${r1_int}技力点并恢复我方所有干员相当于自身攻击力${r2_float}的生命值，持续${persistence}回合，技能持续期间将自动跳过该干员的回合",
-    "rate1": 9,
+    "brief_d": "停止攻击，立刻回复一定技力点，然后每回合回复一定技力点并使我方所有干员恢复生命值，持续一段时间",
+    "detail": "立刻回复${r1_int}技力点，然后每回合回复${r1_int}技力点并使我方所有干员每回合恢复${r2_float}最大生命值，持续${persistence}回合，技能持续期间将自动跳过该干员的回合",
+    "rate1": 10,
     "rate1_plus": 0.18,
-    "rate2": 0.25,
-    "rate2_plus": 0.01,
+    "rate2": 0.02,
+    "rate2_plus": 0.001,
     "rate3": 0,
     "rate3_plus": 0,
     "obj_type": 0,
-    "consume": 6,
-    "consume_plus": 0.18,
+    "consume": 0,
+    "consume_plus": 0,
     "persistence": 3,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "12-1",
+        "e_t": 23,
+        "e_p": "${persistence}+1",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
+      },
+      {
+        "e_id": "12-2",
+        "e_t": 14,
+        "e_p": "${persistence}+1",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
   },
   "13": {
     "name": "强力击_吸取",
@@ -285,7 +304,7 @@
     "detail": "对一名敌人连续造成${r1_int}次相当于自身攻击力${r2_float} ~ ${r3_float}的物理伤害",
     "rate1": 4,
     "rate1_plus": 0.25,
-    "rate2": 1.2,
+    "rate2": 0.8,
     "rate2_plus": 0.03,
     "rate3": 1.3,
     "rate3_plus": 0.04,
@@ -315,8 +334,8 @@
   },
   "16": {
     "name": "强力击_麻痹",
-    "brief_d": "对一名敌人造成一定物理伤害，并使其减速",
-    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的物理伤害，并使其速度减少${r2_int}",
+    "brief_d": "对一名敌人造成一定物理伤害，并使其减速，持续一段时间",
+    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的物理伤害，并使其速度减少${r2_int}，持续1回合",
     "rate1": 1.5,
     "rate1_plus": 0.05,
     "rate2": 1.6,
@@ -328,7 +347,17 @@
     "consume_plus": 0.25,
     "persistence": 0,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "16-1",
+        "e_t": 10,
+        "e_p": "1",
+        "e_d": "${r2_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
   },
   "17": {
     "name": "急救",
@@ -495,7 +524,17 @@
     "consume_plus": 0,
     "persistence": 0,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "23-1",
+        "e_t": 22,
+        "e_p": "${persistence}",
+        "e_d": "0",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
   },
   "24": {
     "name": "狼魂",
@@ -602,6 +641,15 @@
         "e_l": "0",
         "e_ml": "0",
         "obj_type": 0
+      },
+      {
+        "e_id": "26-2",
+        "e_t": 20,
+        "e_p": "${persistence}+1",
+        "e_d": "0",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -652,25 +700,25 @@
     "rate3": 1.2,
     "rate3_plus": 0.04,
     "obj_type": 1,
-    "consume": 26,
-    "consume_plus": 0.45,
+    "consume": 24,
+    "consume_plus": 0.35,
     "persistence": 0,
     "persistence_plus": 0,
     "effect_list": []
   },
   "29": {
     "name": "阻滞射击战术",
-    "brief_d": "对一名敌人造成巨额伤害，但无法使其血量低于一定比例，同时并降低其速度",
+    "brief_d": "对一名敌人造成巨额伤害，但无法使其血量低于一定比例，同时使其速度减少",
     "detail": "对一名敌人造成相当于自身攻击力${r1_float}的物理伤害，但无法使其血量低于其最大生命值的${r2_float}，同时使其速度降低${r3_int}",
     "rate1": 2.2,
     "rate1_plus": 0.1,
-    "rate2": 0.45,
+    "rate2": 0.40,
     "rate2_plus": -0.01,
-    "rate3": 20,
-    "rate3_plus": 1,
+    "rate3": 25,
+    "rate3_plus": 2,
     "obj_type": 1,
-    "consume": 25,
-    "consume_plus": 0.3,
+    "consume": 30,
+    "consume_plus": 0.45,
     "persistence": 0,
     "persistence_plus": 0,
     "effect_list": []
@@ -775,7 +823,7 @@
     "name": "不稳定血浆",
     "brief_d": "使自身和一名我方干员每回合流失生命值，但攻击力提升，持续一段时间",
     "detail": "使自身和一名我方干员每回合流失${r1_float}当前生命值，但攻击力增加${r2_float}，持续${persistence}回合",
-    "rate1": 0.10,
+    "rate1": 0.08,
     "rate1_plus": -0.002,
     "rate2": 0.5,
     "rate2_plus": 0.02,
@@ -836,20 +884,30 @@
   },
   "36": {
     "name": "凝滞",
-    "brief_d": "对一名敌人造成法术伤害，同时使其减速",
-    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的法术伤害，同时使其速度减少${r2_int}",
+    "brief_d": "对一名敌人造成法术伤害，同时使其减速，持续一段时间",
+    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的法术伤害，同时使其速度减少${r2_int}，持续${r3_int}回合",
     "rate1": 1.0,
     "rate1_plus": 0.02,
     "rate2": 15,
     "rate2_plus": 0.5,
-    "rate3": 0,
-    "rate3_plus": 0,
+    "rate3": 1,
+    "rate3_plus": 0.18,
     "obj_type": 1,
     "consume": 5,
     "consume_plus": 0.18,
     "persistence": 0,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "36-1",
+        "e_t": 10,
+        "e_p": "${r3_int}",
+        "e_d": "$-{r2_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
   },
   "37": {
     "name": "灵魂吸取",
@@ -870,20 +928,30 @@
   },
   "38": {
     "name": "夜魇魔影",
-    "brief_d": "对一名敌人造成真实伤害，同时使其减速",
-    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的真实伤害，同时使其速度减少${r2_int}",
+    "brief_d": "对一名敌人造成真实伤害，同时使其减速，持续一段时间",
+    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的真实伤害，同时使其速度减少${r2_int}，持续${r3_int}回合",
     "rate1": 1.5,
     "rate1_plus": 0.03,
-    "rate2": 15,
-    "rate2_plus": 0.5,
-    "rate3": 0,
-    "rate3_plus": 0,
+    "rate2": 12,
+    "rate2_plus": 0.4,
+    "rate3": 1,
+    "rate3_plus": 0.18,
     "obj_type": 1,
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 0,
     "persistence_plus": 0,
-    "effect_list": []
+    "effect_list": [
+      {
+        "e_id": "38-1",
+        "e_t": 10,
+        "e_p": "${r3_int}",
+        "e_d": "$-{r2_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
   },
   "39": {
     "name": "天坠之火",
@@ -904,8 +972,8 @@
   },
   "40": {
     "name": "精神爆发",
-    "brief_d": "连续攻击数次，每次对随机一名敌人造成一定的法术伤害",
-    "detail": "连续攻击${r1_int}次，每次对随机一名敌人造成相当于自身攻击力${r2_float}的法术伤害",
+    "brief_d": "连续攻击数次，每次对随机一名敌人造成一定的伤害",
+    "detail": "连续攻击${r1_int}次，每次对随机一名敌人造成相当于自身攻击力${r2_float}的伤害",
     "rate1": 6,
     "rate1_plus": 0.2,
     "rate2": 0.4,
@@ -949,6 +1017,15 @@
         "e_t": 2,
         "e_p": "${persistence}+1",
         "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
+      },
+      {
+        "e_id": "41-3",
+        "e_t": 25,
+        "e_p": "${persistence}+1",
+        "e_d": "0",
         "e_l": "0",
         "e_ml": "0",
         "obj_type": 0
@@ -1022,6 +1099,15 @@
         "e_l": "0",
         "e_ml": "0",
         "obj_type": 0
+      },
+      {
+        "e_id": "44-2",
+        "e_t": 19,
+        "e_p": "${persistence}+1",
+        "e_d": "0",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
       }
     ]
   },
@@ -1044,12 +1130,12 @@
   },
   "46": {
     "name": "闭膛连发",
-    "brief_d": "自身攻击力和防御力大幅增加但速度减小，持续一段时间，立即对一个敌人进行一次三连击",
-    "detail": "自身攻击力和防御力增加${r1_float}但速度减小${r2_int}，持续${persistence}回合，立即对一个敌人进行一次三连击",
+    "brief_d": "自身攻击力和防御力大幅增加但速度减小，持续一段时间，然后立即对一个敌人进行一次三连击",
+    "detail": "自身攻击力和防御力增加${r1_float}但速度减小${r2_int}，持续${persistence}回合，然后立即对一个敌人进行一次三连击",
     "rate1": 0.7,
     "rate1_plus": 0.03,
-    "rate2": 15,
-    "rate2_plus": 0.5,
+    "rate2": 12,
+    "rate2_plus": 0.4,
     "rate3": 0,
     "rate3_plus": 0,
     "obj_type": 0,
@@ -1095,11 +1181,11 @@
     "rate1_plus": 0.01,
     "rate2": 0.3,
     "rate2_plus": 0.02,
-    "rate3": 0.25,
-    "rate3_plus": 0.01,
+    "rate3": 0.20,
+    "rate3_plus": 0.005,
     "obj_type": 3,
-    "consume": 0,
-    "consume_plus": 0,
+    "consume": 10,
+    "consume_plus": 0.25,
     "persistence": 1,
     "persistence_plus": 0,
     "effect_list": [
@@ -1125,7 +1211,7 @@
   },
   "48": {
     "name": "未照耀的荣光",
-    "brief_d": "对所有敌人造成巨额物理伤害和一定的真实伤害后清除自身伤害加成",
+    "brief_d": "对所有敌人造成高额物理伤害和一定的真实伤害后清除自身伤害加成",
     "detail": "对所有敌人造成相当于自身攻击力${r1_float}的物理伤害和自身攻击力${r2_float}的真实伤害，然后清除自身伤害加成",
     "rate1": 1.2,
     "rate1_plus": 0.04,
@@ -1169,7 +1255,7 @@
   },
   "50": {
     "name": "灿焰长刃",
-    "brief_d": "自身攻击力和速度提高，持续至战斗结束",
+    "brief_d": "自身攻击力和速度提高，持续时间无限",
     "detail": "自身攻击力增加${r1_float}，速度增加${r2_int}，持续${persistence}回合",
     "rate1": 0.4,
     "rate1_plus": 0.02,
@@ -1251,7 +1337,7 @@
   "52": {
     "name": "横扫架势",
     "brief_d": "自身攻击力提升，防御力下降，每回合恢复一定生命值，持续一段时间",
-    "detail": "自身攻击力增加${r1_float}，防御力降低${r2_float}，每回合恢复最大生命值的${r3_float}，持续${persistence}回合",
+    "detail": "自身攻击力增加${r1_float}，防御力降低${r2_float}，每回合恢复${r3_float}最大生命值，持续${persistence}回合",
     "rate1": 0.4,
     "rate1_plus": 0.02,
     "rate2": 0.3,
@@ -1296,13 +1382,13 @@
   "53": {
     "name": "熔核巨影",
     "brief_d": "对一群敌人造成一定无视其一定法抗法术伤害",
-    "detail": "对一名敌人及其周围敌人造成相当于自身攻击力${r1_float}的法术伤害，且无视其{r2_float}法抗",
+    "detail": "对一名敌人及其周围敌人造成相当于自身攻击力${r1_float} ~ ${r2_float}的法术伤害，且无视其{r3_float}法抗",
     "rate1": 1.0,
     "rate1_plus": 0.02,
-    "rate2": 0.35,
-    "rate2_plus": 0.01,
-    "rate3": 0,
-    "rate3_plus": 0,
+    "rate2": 1.1,
+    "rate2_plus": 0.02,
+    "rate3": 0.35,
+    "rate3_plus": 0.01,
     "obj_type": 1,
     "consume": 20,
     "consume_plus": 0.25,
@@ -1321,7 +1407,7 @@
     "rate3": 0,
     "rate3_plus": 0,
     "obj_type": 0,
-    "consume": 60,
+    "consume": 50,
     "consume_plus": 0.5,
     "persistence": -1,
     "persistence_plus": 0,
@@ -1438,8 +1524,8 @@
   },
   "57": {
     "name": "影霄·绝影",
-    "brief_d": "使奇美拉失效，然后连续寻找当前生命值最少的敌人进行数次法术斩击，然后伤害类型变为单体真实，持续至战斗结束",
-    "detail": "使奇美拉失效，然后连续寻找当前生命值最少的敌人进行${r1_int}次攻击力为${r2_float}的法术斩击，然后伤害类型变为单体真实，持续${persistence}回合",
+    "brief_d": "清除自身所有效果，然后连续寻找当前生命值最少的敌人进行数次法术斩击，然后伤害类型变为单体真实，持续时间无限",
+    "detail": "清除自身所有效果，然后连续寻找当前生命值最少的敌人进行${r1_int}次攻击力为${r2_float}的法术斩击，然后伤害类型变为单体真实，持续${persistence}回合",
     "rate1": 8,
     "rate1_plus": 0.25,
     "rate2": 1.0,
