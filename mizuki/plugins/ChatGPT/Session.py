@@ -5,6 +5,8 @@
 # @Software:PyCharm
 
 import requests
+
+from nonebot.log import logger
 from nonebot import get_driver
 
 
@@ -42,7 +44,6 @@ class Session:
         # 解析响应
         if response.status_code == 200:
             result = response.json()
-            print(result)
             # 提取生成的文本
             generated_text = result["choices"][0]["message"]["content"]
             # 将回复消息添加进message中
