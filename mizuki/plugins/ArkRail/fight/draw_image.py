@@ -7,14 +7,19 @@ import json
 
 from PIL import Image, ImageFont, ImageDraw
 
-from .playing_manager import PlayingManager
+from .playing_manager import PlayingManager, new_instance
 from pathlib import Path
-
 
 res_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
 
 
-async def draw_fight_image(pm: PlayingManager):
+async def draw_player_fight_image(pm: PlayingManager, message_list):
+    """
+    绘制战斗图像的方法(我方干员行动)
+
+    :param pm: 战斗数据
+    :param message_list: 消息(显示在图像下方)
+    """
     player_skill_count = pm.player_skill_count  # 我方初始技力点
     enemy_skill_count = pm.enemy_skill_count
     all_list = pm.all_list
@@ -22,7 +27,9 @@ async def draw_fight_image(pm: PlayingManager):
     all_enemies_list = pm.all_enemies_list
 
     bg_img = Image.open(res_path / "atk_places/1_f.png")  # 背景
-    image = Image.new("RGBA", bg_img.size, (0, 0, 0))
+    bg_img_size = bg_img.size
+    bg_size = (bg_img_size[0], bg_img_size[1] + 240)
+    image = Image.new("RGBA", bg_size, (127, 199, 255, 255))
     draw = ImageDraw.ImageDraw(image)
     image.paste(bg_img)
 
@@ -49,25 +56,26 @@ async def draw_fight_image(pm: PlayingManager):
         i += 1
 
     # 干员模型
-    op_model_img = Image.open(res_path / f"op_models/{oid}_back.png")
-    image.paste(op_model_img, (-50, -180), mask=op_model_img)
+    op_model_img = Image.open(res_path / f"op_models/{oid}_back.png").resize((660, 660))
+    image.paste(op_model_img, (130, 0), mask=op_model_img)
 
     # speed_bar
     i = 0
-    for obj in all_list:  # 应改为all_list 循环4次
-        if i == 4:
+    for obj in all_list:  # 应改为all_list 循环5次
+        if i == 5:
             break
         oid = obj.oid
         movement_bg_img = Image.open(res_path / "atk_info/movement_bg.png")
-        image.paste(movement_bg_img, (27, 5+i*89), mask=movement_bg_img)
+        image.paste(movement_bg_img, (27, 5 + i * 89), mask=movement_bg_img)
         avatar_path = "op_heads" if obj in all_ops_list else "enemies"
         op_avatar = Image.open(res_path / avatar_path / f"{oid}.png").resize((90, 90))
-        image.paste(op_avatar, (32, 5+i*89), mask=op_avatar)
+        image.paste(op_avatar, (32, 5 + i * 89), mask=op_avatar)
         # 速度
         speed = obj.speed
         font = ImageFont.truetype("simhei", 14)
-        draw.text((128, 80+i*89), f"{speed}", font=font)
+        draw.text((128, 80 + i * 89), f"{speed}", font=font)
         i += 1
+
     # status_bar
     i = 0
     for op in all_ops_list:
@@ -77,16 +85,57 @@ async def draw_fight_image(pm: PlayingManager):
         # 满血条
         max_width = 197
         # 从左往右
-        draw.rectangle((26+i*224, 693, max_width+26+i*224, 711), fill="#00ffff", outline="#757575", width=3)
+        draw.rectangle((26 + i * 224, 693, max_width + 26 + i * 224, 711), fill="#00ffff", outline="#757575", width=3)
         # 扣血条
         now_health = op.health
         max_health = op.max_health_p
-        width = int(max_width*(max_health - now_health)/max_health)
+        width = int(max_width * (max_health - now_health) / max_health)
         if width != 0:
             draw.rectangle((max_width + 26 + i * 224 - width, 696, 26 + i * 224 + max_width - 3, 708), fill="#252525")
         # 显示血量
         font = ImageFont.truetype("simhei", 14)
-        draw.text((159 + i * 224, 676), f"{now_health}/{max_health}", font=font)
+        draw.text((159 + i * 224, 676), f"{int(now_health)}/{int(max_health)}", font=font)
+
+        alpha = 255  # 透明度
+        j = 0
+        for damage in op.damage_list:  # 绘制干员受到的伤害/治疗(等于0的数值不绘制)
+            font = ImageFont.truetype("simhei", 36)
+            if damage > 0:
+                damage_str = f"+{damage}"
+                draw.text((144 + i * 224, 633 - j * 35), f"{damage_str}", font=font, fill=(0, 255, 80, alpha))
+                alpha -= 80
+                j += 1
+            elif damage < 0:
+                damage_str = f"{damage}"
+                draw.text((144 + i * 224, 633 - j * 35), f"{damage_str}", font=font, fill=(255, 0, 0, alpha))
+                alpha -= 80
+                j += 1
+
+        k = 0
+        for e in op.effect_list:  # 绘制效果
+            k += 1
+            if k >= 5:  # 只绘制前四个效果，超过4个效果加省略号
+                font = ImageFont.truetype("simhei", 16)
+                draw.text((206 + i * 224, 719), "...", font=font)
+                break
+            e_bg_img = Image.open(res_path / "effects/effect_bg.png").resize((40, 40))
+            e_id = e.effect_type
+            effect_img = Image.open(res_path / f"effects/{e_id}.png").resize((35, 35))
+            image.paste(e_bg_img, (23 + (k - 1) * 47 + i * 224, 711), mask=e_bg_img)
+            image.paste(effect_img, (25 + (k - 1) * 47 + i * 224, 713), mask=effect_img)
+
+            font = ImageFont.truetype("simhei", 12)  # 绘制持续回合
+            persistence_str = e.persistence if e.persistence >= 0 else "∞"  # 小于0的话持续时间无限
+            draw.text((21 + (k - 1) * 47 + i * 224, 742), f"{persistence_str}", font=font)
+
+            if e.effect_level > 0:  # 绘制效果层数
+                font = ImageFont.truetype("simhei", 18)
+                draw.text((56 + (k - 1) * 47 + i * 224, 737), f"{persistence_str}", font=font)
+
+            if e.effect_degree != 0:  # 绘制效果箭头，用于判断是增益还是削弱
+                arrow_str = "" if e.effect_degree > 0 else "de"
+                e_arrow = Image.open(res_path / f"effects/{arrow_str}buff.png").resize((16, 20))
+                image.paste(e_arrow, (17 + (k - 1) * 47 + i * 224, 709), mask=e_arrow)
         i += 1
 
     # skills
@@ -94,15 +143,28 @@ async def draw_fight_image(pm: PlayingManager):
     for skill in skills:  # 应改为当前干员skills 循环
         bg_img = Image.open(res_path / "atk_type/atk_bg.png").resize((150, 150))
         sid = skill.sid
-        skill_img = Image.open(res_path / f"skills/{sid}_b.png")
+        skill_img = Image.open(res_path / f"skills/{sid}_b.png").resize((100, 100))
         image.paste(bg_img, (1275 - i * 166, 596), mask=bg_img)
-        image.paste(skill_img, (1287 - i * 166, 606), mask=skill_img)
+        image.paste(skill_img, (1300 - i * 166, 620), mask=skill_img)
         i += 1
 
-    # 攻击图标
+    player_skill_count_img = Image.open(res_path / "atk_info/player_skill_count.png")
+    image.paste(player_skill_count_img, (1494, 13), mask=player_skill_count_img)
+    enemy_skill_count_img = Image.open(res_path / "atk_info/enemy_skill_count.png")
+    image.paste(enemy_skill_count_img, (1494, 80), mask=enemy_skill_count_img)
+    font = ImageFont.truetype("simhei", 48)
+    draw.text((1562, 23), f"{player_skill_count}", font=font)
+    draw.text((1562, 92), f"{enemy_skill_count}", font=font)
 
+    # 攻击图标
     atk_img = Image.open(res_path / f"atk_type/atk_bg_{atk_type}.png").resize((180, 180))
     image.paste(atk_img, (1464, 520), mask=atk_img)
+
+    # 战斗信息
+    if message_list is not None:
+        message_str = "\n".join(message_list)
+        font = ImageFont.truetype("simhei", 24)
+        draw.text((8, 766), f"{message_str}", font=font, fill=(0, 0, 0))
 
     image.show()
 
