@@ -215,9 +215,9 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
     # 干员模型
     box = Image.new("RGBA", (480, 395), (0, 0, 0, 150))
     op_model_path = await get_op_model(oid)
-    op_model = Image.open(op_model_path).resize((900, 900))
+    op_model = Image.open(op_model_path).resize((500, 500))
     img.paste(box, (280, 105), mask=box)
-    img.paste(op_model, (50, -250), mask=op_model)
+    img.paste(op_model, (250, -50), mask=op_model)
 
     # 干员信息
     stars = await get_op_attribute(oid, OPAttribute.stars)
@@ -264,4 +264,5 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
         i += 1
     save_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / f'{uid}_info.png'
     img.save(save_path)
+    img.show()
     return save_path
