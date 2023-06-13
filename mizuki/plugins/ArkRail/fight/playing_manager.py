@@ -27,47 +27,66 @@ class PlayingManager:
     async def is_enemy_turn(self) -> list[str]:
         """
         判断是否为敌人回合，如果是则敌人行动，直到玩家回合为止
+
         :return 返回战斗消息
         """
         move_op = self.all_list[0]  # 当前行动者
         messages: list[str] = []  # 返回的战斗信息
         result_message: list[str] = []  # 结果信息，用于判断战斗是否结束
+
+        # 如果干员无法行动
+        while move_op.immobile:
+            messages += await self.turn(move_op, -1)  # 结束干员回合
+            move_op = self.all_list[0]  # 刷新行动者
+
+        # 敌方持续行动，直到行动者为我方干员为止
         while move_op in self.all_enemies_list and not await self.is_round_over():
-            while True:  # 如果未被嘲讽则随机选一个目标
+            # 如果干员无法行动
+            if move_op.immobile:
+                messages += await self.turn(move_op, -1)  # 结束干员回合
+                move_op = self.all_list[0]  # 刷新行动者
+                continue
+
+            # 如果未被嘲讽则随机选一个目标
+            while True:
                 random_num: int = random.randint(0, len(self.all_ops_list) - 1)
                 obj: Operator = self.all_ops_list[random_num] if not move_op.mocked else move_op.mocking_obj
-                if not obj.hidden:  # 如果所有干员都处于隐匿状态就糟咯awa
+                if not obj.hidden:  # [死循环隐患]如果所有干员都处于隐匿状态就糟咯awa
                     break
 
+            # 条件达成则使用技能
             if len(move_op.skills_list) and random.randint(1, 100) <= 15 + (8 * move_op.stars) and \
-                    self.enemy_skill_count >= move_op.skills_list[0].consume and not move_op.silent:  # 条件达成则使用技能
+                    self.enemy_skill_count >= move_op.skills_list[0].consume and not move_op.silent:
 
+                # 倒序遍历技能列表(一般后面的技能更厉害)
                 for i in range(len(move_op.skills_list) - 1, -1, -1):
-                    skill = move_op.skills_list[i]
-                    if self.enemy_skill_count >= skill.consume and skill.persistence == 0:
+                    skill = move_op.skills_list[i]  # 获取技能对象
+
+                    #  如果技能点足够且技能不在持续时间内
+                    if self.enemy_skill_count >= skill.consume and skill.count == 0:
                         result_message = await self.turn(move_op, i + 1, obj)
                         messages.append(result_message[0])
                         break
-
-            else:  # 否则进行普攻
+            # 否则进行普攻
+            else:
                 result_message = await self.turn(move_op, 0, obj)
                 messages.append(result_message[0])
+
+            # 判断作战是否结束
             if result_message[len(result_message) - 1] in ["作战失败", "作战成功"]:
                 messages.append(result_message[len(result_message) - 1])
                 return messages
+
+            # 刷新行动干员
             move_op = self.all_list[0]
-        while move_op.immobile:
-            messages += await self.turn(move_op, -1)
-            move_op = self.all_list[0]
+
         if await self.is_round_over():
             messages.append("当前轮已结束，进入下一轮！")
             for op in self.all_list:
-                op.speed = op.max_speed
+                op.speed = op.max_speed_p
             self.all_list = bubble_sort(self.all_list)  # 根据速度做冒泡排序
             messages += (await self.is_enemy_turn())
-            messages.pop()  # 去掉一个"玩家的回合！"
 
-        messages.append("玩家的回合！")
         return messages
 
     async def is_round_over(self):
@@ -91,30 +110,37 @@ class PlayingManager:
         :param operate: 操作序号 0普攻 1-3技能 -1不行动
         :param obj1: 目标对象1
         :param obj2: 目标对象2(可选)
+        :return : messages[0]为返回信息，如果战斗结束的话，messages[1]只会为“作战成功”或“作战失败”，否则没有message[1]
         """
         messages = []  # 返回的消息
         if not sub.immobile:
             if sub in self.all_ops_list:  # 我方干员回合
                 if operate == 0:
                     messages.append(await self.attack(sub, obj1))
-                    self.player_skill_count += 5  # 普攻回复5技力点
+                    self.player_skill_count += int(5)  # 普攻回复5技力点
                 elif operate in [1, 2, 3]:
                     messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
-                    self.player_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
+                    self.player_skill_count -= int(sub.skills_list[operate - 1].consume)  # 使用技能消耗技力点
             else:  # 敌方干员回合
                 if operate == 0:
                     messages.append(await self.attack(sub, obj1))
-                    self.enemy_skill_count += 8  # 普攻回复8技力点
+                    self.enemy_skill_count += int(5)  # 普攻回复5技力点
                 elif operate in [1, 2, 3]:
                     messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
-                    self.enemy_skill_count -= sub.skills_list[operate - 1].consume  # 使用技能消耗技力点
+                    self.enemy_skill_count -= int(sub.skills_list[operate - 1].consume)  # 使用技能消耗技力点
         else:
             messages.append(f"{sub.name}无法行动...")
+
+        # 结束干员回合
         messages[0] += await self.finish_turn(sub)
+
+        # 如果我方干员列表或敌方干员列表长度为0则结束战斗
         if not len(self.all_enemies_list):
             messages.append("作战成功")  # messages[1]装战斗结果信息
         elif not len(self.all_ops_list):
-            messages.append("作战失败")
+            messages.append("作战失败")  # messages[1]装战斗结果信息
+
+        # 对所有干员列表按照速度从大到小进行冒泡排序
         self.all_list = bubble_sort(self.all_list)
         return messages
 
@@ -686,15 +712,18 @@ class PlayingManager:
                 obj_effect_list.append(e)
 
         # 要用deepcopy来创建新的Effect类对象，不然效果之间会互相影响
-        sub.effect_list += copy.deepcopy(sub_effect_list)
+        # 给行动者加buff
+        await sub.append_effect_list(copy.deepcopy(sub_effect_list))
         objs_list = list(set(objs_list))  # 除去列表里的相同元素
+
+        # 给目标加buff(顺便判断目标是否被击倒)
         for op in objs_list:
-            if await op.is_die():
+            if await op.is_die():  # 如果目标被击倒
                 message += f"\n{op.name}被击倒了！"
                 await self.op_die(op)
             else:
                 # 要用deepcopy来创建新的Effect类对象，不然效果之间会互相影响
-                op.effect_list += copy.deepcopy(obj_effect_list)
+                await op.append_effect_list(copy.deepcopy(obj_effect_list))
                 await op.upgrade_effect()
         return message
 
@@ -725,34 +754,48 @@ class PlayingManager:
         干员回合结束时调用的函数
 
         :param sub: 结束回合的对象
-        :return: 回合结束信息
+        :return: message代表回合结束返回的信息
         """
         message: str = ""  # 返回的信息
-        finish_skill: list[Skill] = []
+        finish_skill: list[Skill] = []  # 持续时间结束的技能列表
+
+        # 回合结束后生效的技能效果在这里实现
+        # 这里也进行技能持续时间是否结束的判断
         for skill in sub.skills_list:
+            # 如果技能持续时间大于1回合(对于持续时间无限的技能，skill.count为-1)
             if skill.count > 1:
-                skill.count -= 1
+                skill.count -= 1  # 技能持续时间减少1回合
+
+                # 技能效果生效逻辑在这里
                 sid = skill.sid
                 if sid in [9, 11, 12]:  # 冲锋号令_进攻 支援号令 支援号令_治疗
                     self.player_skill_count += int(skill.rate1)
                     message += f"\n{skill.name}生效！回复{int(skill.rate1)}点技力点"
 
-                if skill.count == 0:  # 如果技能结束则将其添加进结束技能列表
+                # 如果技能结束则将其添加进结束技能列表
+                if skill.count == 0:
                     finish_skill.append(skill)
 
-        for f_s in finish_skill:  # 遍历结束技能列表内的技能
+        # 遍历结束技能列表内的技能
+        for f_s in finish_skill:
             message += f"\n{sub.name}的技能{f_s.name}结束了！"
             sid = f_s.sid
+
+            # 技能结束后效果生效逻辑在这里
             if sid == 26:  # 肉斩骨断
-                sub.immobile = 2
                 sub.effect_list.append(Effect("26-3", 23, 2, 0, 0, 0, 0))
                 message += f"\n{sub.name}眩晕了！"
 
+        # 调用干员的回合结束函数
         await sub.finish_turn()
+
+        # 如果干员被击倒(这通常是因为流血buff导致的，当然也有可能是死战buff)
         if await sub.is_die():
             message += f"\n{sub.name}被击倒了！"
-            await self.op_die(op)
-        sub.speed = 0  # 速度设为0
+            await self.op_die(op)  # 调用干员倒地函数
+
+        # 干员速度设为0(我以后可能会改成跟星铁那样的行动条)
+        sub.speed = 0
         return message
 
 
