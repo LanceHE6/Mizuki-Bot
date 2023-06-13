@@ -5,9 +5,15 @@
 # @Software:PyCharm
 
 import json
+import os
+
 import requests
+import time
+
+from pathlib import Path
 from .SetuImage import SetuImage
 
+setu_path = Path() / os.path.abspath(os.path.dirname(__file__)) / 'setu'
 
 class Lolicon:
     __LOLICON_API: str = "https://api.lolicon.app/setu/v2"
@@ -42,13 +48,14 @@ class Lolicon:
             "size": size,
             "proxy": proxy
         }
+        self.__setu_list: list[SetuImage] = []
 
     async def get_image(self) -> list[SetuImage] or str:
         """
         依据构造的数据获取图片
         :return: 包含SetuImage对象的列表， 若为str则发生请求错误
         """
-        setu_list = []
+        self.__setu_list = []
         response = json.loads(requests.post(
             url=self.__LOLICON_API,
             headers=self.__HEADERS,
@@ -84,5 +91,25 @@ class Lolicon:
                 upload_date,
                 url
             )
-            setu_list.append(setu_image)
-        return setu_list
+            self.__setu_list.append(setu_image)
+        return self.__setu_list
+
+    async def get_path(self) -> list[Path] or str:
+        """
+        下载图片并返回本地地址
+        :return: 包含Path对象的列表， 若为str则发生请求错误
+        """
+        setu_path_list: list[Path] = []
+        if len(self.__setu_list) == 0:
+            self.__setu_list = await self.get_image()
+            if isinstance(self.__setu_list, str):
+                return self.__setu_list
+        for setu in self.__setu_list:
+            now_time = int(time.time())
+            setu_image_path = setu_path / f"{now_time}.{await setu.get_ext()}"
+            setu_data = requests.get(url=await setu.get_url()).content
+            with open(setu_image_path, "wb") as data:
+                data.write(setu_data)
+                data.close()
+            setu_path_list.append(setu_image_path)
+        return setu_path_list
