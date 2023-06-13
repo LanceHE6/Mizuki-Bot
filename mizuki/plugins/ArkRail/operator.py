@@ -174,14 +174,14 @@ class Operator:
         result = int(result)
         if atk_type in [0, 1, 2, 3, 6, 7, 8]:
             self.health -= result
-            self.damage_list.append(-1 * result)  # 将伤害值存进伤害表里(负数)
+            self.damage_list.append(int(-1 * result))  # 将伤害值存进伤害表里(负数)
         elif atk_type in [4, 5]:
             self.health += result
             if self.health > self.max_health_p:
                 temp = self.health
                 self.health = self.max_health_p
                 result = result - (temp - self.max_health_p)
-            self.damage_list.append(result)  # 将治疗量存进伤害表里(正数)
+            self.damage_list.append(int(result))  # 将治疗量存进伤害表里(正数)
         for e in self.effect_list:
             if e.effect_type == 11 and e.effect_level < e.max_level:
                 e.effect_level += 1
@@ -211,7 +211,7 @@ class Operator:
 
         for e in self.effect_list:
             if e.effect_type == 12:
-                stage_2 = new_instance(e.effect_level, self.level, [0, 0, 0], self.is_enemy)
+                stage_2 = new_instance(int(e.effect_degree), self.level, [0, 0, 0], self.is_enemy)
                 self.__dict__.update(stage_2.__dict__)  # 更新干员属性
                 return False
         return True
@@ -220,32 +220,19 @@ class Operator:
         """
         干员结束当前回合时需要执行的函数
         """
-        if self.immobile:
-            self.immobile -= 1
-        if self.silent:
-            self.silent -= 1
-        if self.hidden:
-            self.hidden -= 1
-        if self.deathless:
-            self.deathless -= 1
-        if self.invincible:
-            self.invincible -= 1
-        if self.mocked:
-            self.mocked -= 1
-            if self.mocked == 0:
-                self.mocking_obj = None
 
         for e in self.effect_list:
             if e.effect_type == 14:
-                await self.hurt(None, 4, int(self.max_health_p * e_d))
+                await self.hurt(None, 4, int(self.max_health_p * e.effect_degree))
             elif e.effect_type == 17:
-                await self.hurt(None, 6, int(self.health * e_d))
+                await self.hurt(None, 6, int(self.health * e.effect_degree))
 
             e.persistence -= 1
             if e.persistence == 0:  # 持续时间结束
-                if e.effect_id == 25:
+                if e.effect_id == 25:  # 死战效果结束干员直接倒地
                     self.health = -10000
-                self.effect_list.remove(e)
+
+                self.effect_list.remove(e)  # 将技能移出列表
 
         await self.upgrade_effect()
 
@@ -265,6 +252,14 @@ class Operator:
         self.crit_d_add_d = 0
         self.speed_add_d = 0
         self.atk_type_p = self.atk_type
+
+        self.mocked = 0
+        self.hidden = 0
+        self.deathless = 0
+        self.invincible = 0
+        self.silent = 0
+        self.immobile = 0
+
         for e in self.effect_list:
             # 根据效果种类给予属性加成
             e_t = e.effect_type
@@ -294,11 +289,26 @@ class Operator:
             elif e_t == 11:
                 self.atk_add_f += (e_d * e.effect_level)
             elif e_t == 13:
-                self.atk_type_p = e.effect_level
+                self.atk_type_p = int(e.effect_degree)
             elif e_t == 15:
                 self.def_add_f += (e_d * e.effect_level)
             elif e_t == 16:
                 self.atk_add_f += (e_d * e.effect_level)
+            elif e_t == 18:
+                self.mocked = 1
+            elif e_t == 19:
+                self.hidden = 1
+            elif e_t == 20:
+                self.deathless = 1
+            elif e_t == 21:
+                self.invincible = 1
+            elif e_t == 22:
+                self.silent = 1
+            elif e_t in [23, 24]:
+                self.immobile = 1
+
+        if self.mocked == 0:
+            self.mocking_obj = None
 
         self.max_health_p = self.max_health * (1 + self.health_add_f) + self.health_add_d
         self.max_health_p = 0 if self.max_health_p < 0 else self.max_health_p
@@ -314,6 +324,31 @@ class Operator:
         self.crit_d_p = 0 if self.crit_d_p < 0 else self.crit_d_p
         self.max_speed_p = self.max_speed + self.speed_add_d
         self.max_speed_p = 10 if self.max_speed_p < 10 else self.max_speed_p
+
+    async def append_effect_list(self, effect_list: list[Effect]):
+        """
+        给干员添加效果的方法(请不要直接将Effect列表直接用"+"或者"+="添加进effect_list中)
+
+        :param effect_list: 要添加的效果列表
+        """
+        for e in effect_list:
+            for i in range(len(self.effect_list)):
+                if self.effect_list[i].effect_id == e.effect_id:  # 合并同id效果
+                    self.effect_list[i] = e
+                    return
+            self.effect_list.append(e)
+
+    async def append_effect(self, e: Effect):
+        """
+        给干员添加效果的方法(请不要直接用list.append()函数将效果添加进effect_list中)
+
+        :param e: 要添加的效果
+        """
+        for i in range(len(self.effect_list)):
+            if self.effect_list[i].effect_id == e.effect_id:  # 合并同id效果
+                self.effect_list[i] = e
+                return
+        self.effect_list.append(e)
 
 
 async def new_instance(oid: int, level: int, skills_level: list[int], is_enemy: bool = False) -> Operator:
