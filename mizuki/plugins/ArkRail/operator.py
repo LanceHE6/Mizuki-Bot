@@ -150,7 +150,7 @@ class Operator:
         :param damage: 伤害量
         :param ignore_def: 无视防御比例
         :param ignore_res: 无视法抗比例
-        :return: 返回受到的伤害
+        :return: 返回受到的伤害/治疗量
         """
         result = 0  # 返回的伤害或治疗量
         if not self.invincible:  # 自身处于无敌状态则不会扣血
@@ -194,7 +194,7 @@ class Operator:
                 if e.effect_type == 16 and e.effect_level < e.max_level:
                     e.effect_level += 1
 
-        return result
+        return int(result)
 
     async def is_die(self) -> bool:
         """
