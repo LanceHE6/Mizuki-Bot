@@ -12,6 +12,7 @@ from typing import Dict
 
 from .Lolicon import Lolicon
 from ..Utils.CDManager import CDManager
+from ..Utils.MBot import MBot
 
 setu_re = on_regex("^来(?P<num>.*?)(张|份)(?P<kw>.*?)(的|)(涩图|setu|色图|图)$")
 
@@ -21,6 +22,7 @@ cd_manager = CDManager()
 @setu_re.handle()
 async def _(bot: Bot, event: GroupMessageEvent, data: Dict = RegexDict()):
     uid = event.get_user_id()
+    mbot = MBot(bot)
     if await cd_manager.is_in_cd(uid):
         remain_time = await cd_manager.get_remaining_time(uid)
         await setu_re.finish(f"冷却中,剩余 {remain_time} s", at_sender=True)
@@ -58,4 +60,4 @@ async def _(bot: Bot, event: GroupMessageEvent, data: Dict = RegexDict()):
             }
             reply.append(meta_node)
         await cd_manager.add_user(uid)
-        await bot.call_api("send_group_forward_msg", group_id=event.group_id, messages=reply)
+        await mbot.send_group_forward_msg(group_id=event.group_id, messages=reply)
