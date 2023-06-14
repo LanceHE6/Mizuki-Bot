@@ -6,7 +6,7 @@
 
 import asyncio
 
-from Timer import Timer
+from .Timer import Timer
 class CDManager:
     """
     一个CD管理类 用户与Timer的映射
