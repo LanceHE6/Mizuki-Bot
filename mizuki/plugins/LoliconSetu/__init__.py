@@ -16,7 +16,7 @@ from ..Utils.MBot import MBot
 
 setu_re = on_regex("^来(?P<num>.*?)(张|份)(?P<kw>.*?)(的|)(涩图|setu|色图|图)$")
 
-cd_manager = CDManager()
+cd_manager = CDManager(60)
 
 # noinspection PyDefaultArgument
 @setu_re.handle()
