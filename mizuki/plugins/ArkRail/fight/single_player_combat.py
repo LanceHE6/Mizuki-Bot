@@ -75,16 +75,16 @@ __plugin_info__ = [
 
 @play.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
-    async def send_message_and_is_over(message: list[str], handle):
+    async def send_message_and_is_over(messages: list[str], handle):
         """
         发送消息并判断战斗时候结束所使用的的函数
 
-        :param message: 要发送的信息列表
+        :param messages: 要发送的信息列表
         :param handle: 用于发送消息
         """
         is_over: bool = False
-        if len(message) > 1 and message[len(message) - 1] in ["作战失败", "作战成功"]:  # 删除战斗信息
-            if message[len(message) - 1] == "作战成功":  # 获取奖励
+        if len(messages) > 1 and messages[len(messages) - 1] in ["作战失败", "作战成功"]:  # 删除战斗信息
+            if messages[len(messages) - 1] == "作战成功":  # 获取奖励
                 consume = await get_map_attribute(mid, MapAttribute.consume)
                 if not await user_agar(uid, consume):
                     reward = await get_map_attribute(mid, MapAttribute.reward)
@@ -96,9 +96,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                 else:
                     await handle.send("您的琼脂不足，无法获取关卡奖励！")
             is_over = True
-        for s in message:
-            pass
-            # await handle.send(s)
+            await handle.send(messages[len(messages) - 1])
         if is_over:
             await finish_playing()
 
@@ -127,8 +125,9 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     operate_run = on_command("run", aliases={"逃跑", "润", "溜了"}, rule=is_doctor, block=True, priority=1)
 
     # 先进行一次判断，如果是敌人先手则敌方先行动
-    await send_message_and_is_over(await pm.is_enemy_turn(), play)
-    await send_status_image(pm)  # 绘制战斗数据图片
+    message = await pm.is_enemy_turn()
+    await send_message_and_is_over(message, play)
+    await send_status_image(pm, message)  # 绘制战斗数据图片
 
     # 后面就是命令定义了
 
@@ -138,7 +137,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         干员普攻指令/atk [目标序号(int)]
         :param atk_args: [目标序号(int)]，只有当干员的攻击类型为“不攻击”时才能为空
         """
-        message: list[str] = []  # 消息列表
+        message_atk: list[str] = []  # 消息列表
         # 判断是否是我方回合，如果不是的话则退出当前方法
         if pm.all_list[0] not in pm.all_ops_list:
             await operate_atk.finish(f"现在是{pm.all_list[0].name}的回合哦！")
@@ -148,8 +147,8 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
         # 根据行动干员攻击类型的不同做出不同的操作
         if op.atk_type_p == 9:  # 9代表不攻击，不攻击的干员不需要参数
-            message = await pm.turn(op, 0)
-            await send_message_and_is_over(message, operate_atk)
+            message_atk = await pm.turn(op, 0)
+            await send_message_and_is_over(message_atk, operate_atk)
 
         # 如果输入的参数无法转换为数字
         elif not str(atk_args).isdigit():
@@ -174,9 +173,13 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                     await operate_atk.finish(
                         f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
 
+                # 不能以隐匿状态下的敌人为目标
+                elif obj.hidden:
+                    await operate_atk.finish(f"{obj.name}处于隐匿状态，无法被选中！")
+
                 # 进行普攻
-                message = await pm.turn(op, 0, obj)
-                await send_message_and_is_over(message, operate_atk)
+                message_atk = await pm.turn(op, 0, obj)
+                await send_message_and_is_over(message_atk, operate_atk)
 
             # 如果干员的攻击目标是我方干员
             else:
@@ -189,16 +192,16 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                 obj = pm.all_ops_list[obj_num - 1]
 
                 # 进行普攻
-                message = await pm.turn(op, 0, obj)
-                await send_message_and_is_over(message, operate_atk)
+                message_atk = await pm.turn(op, 0, obj)
+                await send_message_and_is_over(message_atk, operate_atk)
 
         # 我方行动后判断是否是敌方干员回合，如果是则让敌方干员行动
         message2 = await pm.is_enemy_turn()
-        message += message2
+        message_atk += message2
         await send_message_and_is_over(message2, operate_atk)
 
         # 再次等到我方干员回合再绘制战斗状态图
-        await send_status_image(pm, message)
+        await send_status_image(pm, message_atk)
 
         # 方法结束
         await operate_atk.finish()
@@ -213,7 +216,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
         :param skill_args: <技能序号(int)> [目标序号1(int)] [目标序号2(int)]，技能序号必填，根据技能类型选填目标序号
         """
-        message: list[str] = []  # 消息列表
+        message_skill: list[str] = []  # 消息列表
 
         # 判断是否是我方干员回合
         if pm.all_list[0] not in pm.all_ops_list:
@@ -274,9 +277,13 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                     await operate_atk.finish(
                         f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
 
+                # 不能以隐匿状态下的敌人为目标
+                elif obj1.hidden:
+                    await operate_atk.finish(f"{obj1.name}处于隐匿状态，无法被选中！")
+
                 # 干员释放技能
-                message = await pm.turn(op, skill_num + 1, obj1)
-                await send_message_and_is_over(message, operate_skill)
+                message_skill = await pm.turn(op, skill_num + 1, obj1)
+                await send_message_and_is_over(message_skill, operate_skill)
 
             # 参数错误则退出方法
             else:
@@ -302,9 +309,17 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                 if skill.obj_type == 3 and op.mocked and op.mocking_obj != obj1 and op.mocking_obj != obj2:
                     await operate_atk.finish(f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\nta必须为攻击目标之一！")
 
+                # 不能以隐匿状态下的敌人为目标
+                elif obj1.hidden:
+                    await operate_atk.finish(f"{obj1.name}处于隐匿状态，无法被选中！")
+
+                # 不能以隐匿状态下的敌人为目标
+                elif obj2.hidden:
+                    await operate_atk.finish(f"{obj2.name}处于隐匿状态，无法被选中！")
+
                 # 干员释放技能
-                message = await pm.turn(op, skill_num + 1, obj1, obj2)
-                await send_message_and_is_over(message, operate_skill)
+                message_skill = await pm.turn(op, skill_num + 1, obj1, obj2)
+                await send_message_and_is_over(message_skill, operate_skill)
 
             # 参数错误则退出方法
             else:
@@ -325,9 +340,13 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                 if op.mocked and op.mocking_obj != obj1:
                     await operate_atk.finish(f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
 
+                # 不能以隐匿状态下的敌人为目标
+                elif obj1.hidden:
+                    await operate_atk.finish(f"{obj1.name}处于隐匿状态，无法被选中！")
+
                 # 干员释放技能
-                message = await pm.turn(op, skill_num + 1, obj1, obj2)
-                await send_message_and_is_over(message, operate_skill)
+                message_skill = await pm.turn(op, skill_num + 1, obj1, obj2)
+                await send_message_and_is_over(message_skill, operate_skill)
 
             # 参数错误则退出方法
             else:
@@ -336,16 +355,16 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         # 不需要指定目标的技能(全体类技能或目标是自己的技能)
         else:
             # 干员释放技能
-            message = await pm.turn(op, skill_num + 1)
-            await send_message_and_is_over(message, operate_skill)
+            message_skill = await pm.turn(op, skill_num + 1)
+            await send_message_and_is_over(message_skill, operate_skill)
 
         # 干员释放技能后判断是否是敌方干员回合，如果是则敌方行动
         message2 = await pm.is_enemy_turn()
-        message += message2
+        message_skill += message2
         await send_message_and_is_over(message2, operate_skill)
 
         # 绘制战斗数据
-        await send_status_image(pm, message)
+        await send_status_image(pm, message_skill)
 
         # 方法结束
         await operate_skill.finish()
@@ -391,5 +410,5 @@ async def send_status_image(pm: PlayingManager, message_list=None):
     :param message_list: 消息列表
     """
     await draw_player_fight_image(pm, message_list)  # 绘制战斗图片
-    for op in pm.all_ops_list:  # 清空伤害列表
+    for op in pm.all_list:  # 清空伤害列表
         op.damage_list.clear()
