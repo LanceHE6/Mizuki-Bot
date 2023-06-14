@@ -605,7 +605,7 @@
     "crit_d_plus": 0,
     "speed": 90,
     "speed_plus": 0.1,
-    "atk_type": 0,
+    "atk_type": 1,
     "skills": [1]
   },
   "30": {
