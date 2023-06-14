@@ -1,6 +1,7 @@
 colorama==0.4.6
 nonebot==1.9.1
 nonebot-adapter-onebot==2.2.3
+nonebot-plugin-guild-patch>=0.2.3
 Pillow==9.5.0
 Requests==2.31.0
 beautifulsoup4~=4.12.2

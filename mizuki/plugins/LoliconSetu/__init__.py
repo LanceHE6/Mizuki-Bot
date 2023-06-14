@@ -11,17 +11,26 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment, Bot, 
 from typing import Dict
 
 from .Lolicon import Lolicon
+from ..Utils.CDManager import CDManager
+from ..Utils.MBot import MBot
 
 setu_re = on_regex("^来(?P<num>.*?)(张|份)(?P<kw>.*?)(的|)(涩图|setu|色图|图)$")
 
+cd_manager = CDManager()
 
 # noinspection PyDefaultArgument
 @setu_re.handle()
 async def _(bot: Bot, event: GroupMessageEvent, data: Dict = RegexDict()):
-    if not str(data["num"]).isdigit():
-        await setu_re.finish("未知数量参数", at_sender=True)
-    if data["num"] == "":
+    uid = event.get_user_id()
+    mbot = MBot(bot)
+    if await cd_manager.is_in_cd(uid):
+        remain_time = await cd_manager.get_remaining_time(uid)
+        await setu_re.finish(f"冷却中,剩余 {remain_time} s", at_sender=True)
+    if data["num"] == "" or data["num"] is None:
         get_num = 1
+    elif not str(data["num"]).isdigit():
+        get_num = 1
+        await setu_re.finish("未知数量参数", at_sender=True)
     else:
         get_num = int(data["num"])
     kw = data["kw"]
@@ -32,11 +41,13 @@ async def _(bot: Bot, event: GroupMessageEvent, data: Dict = RegexDict()):
     if get_num <= 2:
         reply = ""
         for setu in setu_list:
-            reply += MessageSegment.image(await setu.get_url())
+            print(await setu.get_url())
+            reply += MessageSegment.image(await setu.get_url()) + f"{await setu.get_title()}"
+        await cd_manager.add_user(uid)
         await setu_re.finish(reply)
     else:
         reply = []
-        # 转换为结点发送
+        # 转换为转发消息结点发送
         for setu in setu_list:
             meta_node = {
                 "type": "node",
@@ -48,4 +59,5 @@ async def _(bot: Bot, event: GroupMessageEvent, data: Dict = RegexDict()):
                 }
             }
             reply.append(meta_node)
-        await bot.call_api("send_group_forward_msg", group_id=event.group_id, messages=reply)
+        await cd_manager.add_user(uid)
+        await mbot.send_group_forward_msg(group_id=event.group_id, messages=reply)
