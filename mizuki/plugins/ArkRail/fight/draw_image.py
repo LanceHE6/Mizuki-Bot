@@ -41,18 +41,92 @@ async def draw_player_fight_image(pm: PlayingManager, message_list):
     i = 0
     for enemy in all_enemies_list:
         eid = enemy.oid
+
+        # 确定敌人位置和大小
         if i == 0:
-            enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize((260, 260))
-            image.paste(enemy_model_img, (600, 210), mask=enemy_model_img)
-        if i == 1:
-            enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize((300, 300))
-            image.paste(enemy_model_img, (917, 127), mask=enemy_model_img)
-        if i == 2:
-            enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize((280, 280))
-            image.paste(enemy_model_img, (1031, 270), mask=enemy_model_img)
-        if i == 3:
-            enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize((260, 260))
-            image.paste(enemy_model_img, (1330, 282), mask=enemy_model_img)
+            point = (600, 210)
+            size = (260, 260)
+        elif i == 1:
+            point = (917, 127)
+            size = (300, 300)
+        elif i == 2:
+            point = (1031, 270)
+            size = (280, 280)
+        else:
+            point = (1330, 282)
+            size = (260, 260)
+
+        # 绘制敌人模型
+        enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize(size)
+        image.paste(enemy_model_img, point, mask=enemy_model_img)
+
+        # 获取血条坐标
+        x = point[0] + 43
+        y = point[1] + 270
+
+        # 根据敌人是否是boss确定血条颜色和高度(长度是一样的)
+        if enemy.stars < 5:  # 大于等于5星的敌人算作boss
+            color = (218, 105, 54, 204)
+            height = 10
+        else:
+            color = (220, 40, 40, 204)
+            height = 12
+
+            # 绘制boss图标
+            boss_symbol_img = Image.open(res_path / "atk_info/boss.png").resize((38, 38))
+            image.paste(boss_symbol_img, (x + 71, y - 13), mask=boss_symbol_img)
+
+        # 满血条
+        max_width = 180
+        # 从左往右
+        draw.rectangle((x, y, max_width + x, y + height), fill=color)
+        # 扣血条
+        now_health = enemy.health
+        max_health = enemy.max_health_p
+        width = int(max_width * (max_health - now_health) / max_health)
+        if width != 0:
+            draw.rectangle((x + max_width - width, y, max_width + x, y + height), fill=(0, 0, 0, 100))
+
+        alpha = 255  # 透明度
+        j = 0
+        for damage in enemy.damage_list:  # 绘制敌人受到的伤害/治疗(等于0的数值不绘制)
+            font = ImageFont.truetype("simhei", 30)
+            if damage > 0:
+                damage_str = f"+{damage}"
+                draw.text((x + 62, y - 250 - j * 32), f"{damage_str}", font=font, fill=(0, 255, 80, alpha))
+                alpha -= 80
+                j += 1
+            elif damage < 0:
+                damage_str = f"{damage}"
+                draw.text((x + 62, y - 250 - j * 32), f"{damage_str}", font=font, fill=(255, 0, 0, alpha))
+                alpha -= 80
+                j += 1
+
+        k = 0
+        for e in enemy.effect_list:  # 绘制敌人效果
+            k += 1
+            if k >= 6:  # 只绘制前五个效果，超过5个效果加省略号
+                font = ImageFont.truetype("simhei", 14)
+                draw.text((x + 162, y + 14), "...", font=font)
+                break
+            e_bg_img = Image.open(res_path / "effects/effect_bg.png").resize((22, 22))
+            e_id = e.effect_type
+            effect_img = Image.open(res_path / f"effects/{e_id}.png").resize((20, 20))
+            image.paste(e_bg_img, (x + (k - 1) * 27, y + 13), mask=e_bg_img)
+            image.paste(effect_img, (x + 1 + (k - 1) * 27, y + 14), mask=effect_img)
+
+            font = ImageFont.truetype("simhei", 10)  # 绘制持续回合
+            persistence_str = int(e.persistence) if e.persistence >= 0 else "∞"  # 小于0的话持续时间无限
+            draw.text((x - 2 + (k - 1) * 27, y + 29), f"{persistence_str}", font=font)
+
+            if e.effect_level > 0:  # 绘制效果层数
+                font = ImageFont.truetype("simhei", 14)
+                draw.text((x + 17 + (k - 1) * 27, y + 26), f"{int(e.effect_level)}", font=font)
+
+            if e.effect_degree != 0:  # 绘制效果箭头，用于判断是增益还是削弱
+                arrow_str = "" if e.effect_degree > 0 else "de"
+                e_arrow = Image.open(res_path / f"effects/{arrow_str}buff.png").resize((9, 11))
+                image.paste(e_arrow, (x - 4 + (k - 1) * 27, y + 10), mask=e_arrow)
         i += 1
 
     # 干员模型
@@ -125,12 +199,12 @@ async def draw_player_fight_image(pm: PlayingManager, message_list):
             image.paste(effect_img, (25 + (k - 1) * 47 + i * 224, 713), mask=effect_img)
 
             font = ImageFont.truetype("simhei", 12)  # 绘制持续回合
-            persistence_str = e.persistence if e.persistence >= 0 else "∞"  # 小于0的话持续时间无限
+            persistence_str = int(e.persistence) if e.persistence >= 0 else "∞"  # 小于0的话持续时间无限
             draw.text((21 + (k - 1) * 47 + i * 224, 742), f"{persistence_str}", font=font)
 
             if e.effect_level > 0:  # 绘制效果层数
                 font = ImageFont.truetype("simhei", 18)
-                draw.text((56 + (k - 1) * 47 + i * 224, 737), f"{persistence_str}", font=font)
+                draw.text((56 + (k - 1) * 47 + i * 224, 737), f"{int(e.effect_level)}", font=font)
 
             if e.effect_degree != 0:  # 绘制效果箭头，用于判断是增益还是削弱
                 arrow_str = "" if e.effect_degree > 0 else "de"
