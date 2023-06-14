@@ -220,7 +220,7 @@ class Operator:
         """
         干员结束当前回合时需要执行的函数
         """
-
+        finish_effect_list: list[Effect] = []
         for e in self.effect_list:
             if e.effect_type == 14:
                 await self.hurt(None, 4, int(self.max_health_p * e.effect_degree))
@@ -228,11 +228,16 @@ class Operator:
                 await self.hurt(None, 6, int(self.health * e.effect_degree))
 
             e.persistence -= 1
+
             if e.persistence == 0:  # 持续时间结束
                 if e.effect_id == 25:  # 死战效果结束干员直接倒地
                     self.health = -10000
 
-                self.effect_list.remove(e)  # 将技能移出列表
+                finish_effect_list.append(e)  # 将技能放入待移除列表(直接在这里移除的话该循环会出现遍历异常)
+
+        # 将技能移出列表
+        for f_e in finish_effect_list:
+            self.effect_list.remove(f_e)
 
         await self.upgrade_effect()
 
