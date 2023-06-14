@@ -18,7 +18,7 @@ class MBot:
         """
         获取当前账号在线客户端列表
         :param no_cache: 无视缓存
-        :return:
+        :return: clients	Device[]	在线客户端列表
         """
         return await self.__bot__.call_api("get_online_clients", no_cache=no_cache)
 
@@ -34,17 +34,18 @@ class MBot:
         """
         获取合并转发内容
         :param message_id: 消息ID
-        :return:
+        :return: messages	forward message[]	消息列表
         """
-        await self.__bot__.call_api("get_forward_msg", message_id=message_id)
+        return await self.__bot__.call_api("get_forward_msg", message_id=message_id)
 
     async def send_group_forward_msg(self, group_id: int, messages: list):
         """
         发送合并转发 ( 群聊 )
         :param group_id:目标群号
         :param messages: 自定义转发消息，详情请看CQ码
-        :return:    message_id	int64	消息 ID
-forward             _id	string	转发消息 ID
+        :return:
+        message_id	int64	消息 ID
+        forward_id	string	转发消息 ID
         """
         return await self.__bot__.call_api("send_group_forward_msg", group_id=group_id, messages=messages)
 
@@ -53,8 +54,9 @@ forward             _id	string	转发消息 ID
         发送合并转发 ( 群聊 )
         :param user_id:目标群号
         :param messages: 自定义转发消息，详情请看CQ码
-        :return:    message_id	int64	消息 ID
-forward             _id	string	转发消息 ID
+        :return:
+        message_id	int64	消息 ID
+        forward_id	string	转发消息 ID
         """
         return await self.__bot__.call_api("send_private_forward_msg", user_id=user_id, messages=messages)
 
@@ -71,9 +73,10 @@ forward             _id	string	转发消息 ID
     async def get_group_system_msg(self):
         """
         获取群系统消息
-        :return:    invited_requests	InvitedRequest[]	邀请消息列表
-                    join_requests	JoinRequest[]	进群消息列表
-                    如果列表不存在任何消息, 将返回 null
+        :return:
+        invited_requests	InvitedRequest[]	邀请消息列表
+        join_requests	JoinRequest[]	进群消息列表
+        如果列表不存在任何消息, 将返回 null
         """
         return await self.__bot__.call_api("get_group_system_msg")
 
@@ -89,9 +92,10 @@ forward             _id	string	转发消息 ID
         """
         获取群 @全体成员 剩余次数
         :param group_id: 群号
-        :return:    can_at_all	bool	是否可以 @全体成员
-                    remain_at_all_count_for_group	int16	群内所有管理当天剩余 @全体成员 次数
-                    remain_at_all_count_for_uin	int16	Bot 当天剩余 @全体成员 次数
+        :return:
+        can_at_all	bool	是否可以 @全体成员
+        remain_at_all_count_for_group	int16	群内所有管理当天剩余 @全体成员 次数
+        remain_at_all_count_for_uin	int16	Bot 当天剩余 @全体成员 次数
         """
         return await self.__bot__.call_api("get_group_at_all_remain", group_id=group_id)
 
