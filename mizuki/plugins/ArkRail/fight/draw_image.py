@@ -84,7 +84,7 @@ async def draw_player_fight_image(pm: PlayingManager, message_list):
         now_health = enemy.health
         max_health = enemy.max_health_p
         width = int(max_width * (max_health - now_health) / max_health)
-        if width != 0:
+        if width > 0:
             draw.rectangle((x + max_width - width, y, max_width + x, y + height), fill=(0, 0, 0, 100))
 
         alpha = 255  # 透明度
@@ -164,7 +164,7 @@ async def draw_player_fight_image(pm: PlayingManager, message_list):
         now_health = op.health
         max_health = op.max_health_p
         width = int(max_width * (max_health - now_health) / max_health)
-        if width != 0:
+        if width > 0:
             draw.rectangle((max_width + 26 + i * 224 - width, 696, 26 + i * 224 + max_width - 3, 708), fill="#252525")
         # 显示血量
         font = ImageFont.truetype("simhei", 14)

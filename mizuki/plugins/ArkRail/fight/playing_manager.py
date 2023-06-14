@@ -766,8 +766,8 @@ class PlayingManager:
         # 回合结束后生效的技能效果在这里实现
         # 这里也进行技能持续时间是否结束的判断
         for skill in sub.skills_list:
-            # 如果技能持续时间大于1回合(对于持续时间无限的技能，skill.count为-1)
-            if skill.count > 1:
+            # 如果技能持续时间大于等于1回合(对于持续时间无限的技能，skill.count为-1)
+            if skill.count >= 1:
                 skill.count -= 1  # 技能持续时间减少1回合
 
                 # 技能效果生效逻辑在这里
@@ -783,10 +783,10 @@ class PlayingManager:
         # 遍历结束技能列表内的技能
         for f_s in finish_skill:
             message += f"\n{sub.name}的技能{f_s.name}结束了！"
-            sid = f_s.sid
+            f_sid = f_s.sid
 
             # 技能结束后效果生效逻辑在这里
-            if sid == 26:  # 肉斩骨断
+            if f_sid == 26:  # 肉斩骨断
                 await sub.append_effect(Effect("26-3", 23, 2, 0, 0, 0, 0))
                 message += f"\n{sub.name}眩晕了！"
 
