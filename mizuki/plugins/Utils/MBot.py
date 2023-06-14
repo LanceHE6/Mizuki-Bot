@@ -152,6 +152,7 @@ class MBot:
         """
         上传群文件
         在不提供 folder 参数的情况下默认上传到根目录
+        file 和 folder属性详情请参考 https://docs.go-cqhttp.org/api/
         :param group_id: 群号
         :param file: 本地文件路径
         :param name: 储存名称
@@ -169,9 +170,100 @@ class MBot:
     async def delete_group_file(self, group_id: int, file_id: str, bus_id: int):
         """
         删除群文件
+        file 和 folder属性详情请参考 https://docs.go-cqhttp.org/api/
         :param group_id: 群号
         :param file_id: 文件ID
         :param bus_id: 文件类型
         :return: None
         """
         await self.__bot__.call_api("delete_group_file", group_id=group_id, file_id=file_id, busid=bus_id)
+
+    async def create_group_file_folder(self, group_id: int, name: str):
+        """
+        创建群文件夹
+        :param group_id: 群号
+        :param name: 文件夹名字
+        :return: None
+        """
+        await self.__bot__.call_api("create_group_file_folder", group_id=group_id, name=name, parent_id="/")
+
+    async def delete_group_folder(self, group_id: int, folder_id: int):
+        """
+        删除群文件夹
+        file 和 folder属性详情请参考 https://docs.go-cqhttp.org/api/
+        :param group_id: 群号
+        :param folder_id: 文件夹ID
+        :return: None
+        """
+        await self.__bot__.call_api("delete_group_folder", group_id=group_id, folder_id=folder_id)
+
+    async def get_group_file_system_info(self, group_id: int):
+        """
+        获取群文件系统信息
+        :param group_id: 群号
+        :return:
+        file_count	int32	文件总数
+        limit_count	int32	文件上限
+        used_space	int64	已使用空间
+        total_space	int64	空间上限
+        """
+        return await self.__bot__.call_api("get_group_file_system_info", group_id=group_id)
+
+    async def get_group_root_files(self, group_id):
+        """
+        获取群根目录文件列表
+        :param group_id: 群号
+        :return:
+        files	File[]	文件列表
+        folders	Folder[]	文件夹列表
+        """
+        return await self.__bot__.call_api("get_group_root_files", group_id=group_id)
+
+    async def get_group_files_by_folder(self, group_id: int, folder_id: int):
+        """
+        获取群子目录文件列表
+        file 和 folder属性详情请参考 https://docs.go-cqhttp.org/api/
+        :param group_id: 群号
+        :param folder_id: 文件夹ID
+        :return:
+        files	File[]	文件列表
+        folders	Folder[]	文件夹列表
+        """
+        return await self.__bot__.call_api("get_group_files_by_folder", group_id=group_id, folder_id=folder_id)
+
+    async def get_group_file_url(self, group_id: int, file_id: int, bus_id: int) -> str:
+        """
+        获取群文件资源链接
+        file 和 folder属性详情请参考 https://docs.go-cqhttp.org/api/
+        :param group_id: 群号
+        :param file_id: 文件ID
+        :param bus_id: 文件类型
+        :return: url 文件下载链接
+        """
+        return await self.__bot__.call_api("get_group_file_url", group_id=group_id, file_id=file_id, busid=bus_id)
+
+    async def upload_private_file(self, user_id: int, file: str, name: str):
+        """
+        上传私聊文件
+        :param user_id: 对方QQ
+        :param file: 本地文件路径
+        :param name: 文件名称
+        :return: None
+        """
+        await self.__bot__.call_api("upload_private_file", user_id=user_id, file=file, name=name)
+
+    # async def get_cookies(self, domain: str = None) -> str:
+    #     """
+    #     获取 Cookies
+    #     :param domain: 需要获取 cookies 的域名
+    #     :return: Cookies
+    #     """
+    #     return await self.__bot__.call_api("get_cookies", domain=domain)
+
+    async def check_url_safely(self, url: str) -> int:
+        """
+        检查链接安全性
+        :param url: 需要检查的链接
+        :return: 安全等级, 1: 安全 2: 未知 3: 危险
+        """
+        return await self.__bot__.call_api("check_url_safely", url=url)
