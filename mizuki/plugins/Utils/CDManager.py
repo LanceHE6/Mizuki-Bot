@@ -56,3 +56,10 @@ class CDManager:
         if await self.is_in_cd(uid):
             return self.__cd_map[int(uid)].remaining_time()
         return 0
+
+    async def get_cooling_num(self) -> int:
+        """
+        获取在CD中的个数
+        :return: 个数
+        """
+        return len(self.__cd_map)
