@@ -16,16 +16,23 @@ from ..Utils.MBot import MBot
 
 setu_re = on_regex("^来(?P<num>.*?)(张|份)(?P<kw>.*?)(的|)(涩图|setu|色图|图)$")
 
-cd_manager = CDManager(60)
+user_cd_manager = CDManager(60)  # 用户冷却管理器
+group_cd_manager = CDManager(60)  # 群冷却管理器
 
 # noinspection PyDefaultArgument
 @setu_re.handle()
 async def _(bot: Bot, event: GroupMessageEvent, data: Dict = RegexDict()):
     uid = event.get_user_id()
+    gid = event.group_id
     mbot = MBot(bot)
-    if await cd_manager.is_in_cd(uid):
-        remain_time = await cd_manager.get_remaining_time(uid)
-        await setu_re.finish(f"冷却中,剩余 {remain_time} s", at_sender=True)
+    if await user_cd_manager.get_cooling_num() == 3:
+        await group_cd_manager.add_user(gid)
+    if await group_cd_manager.is_in_cd(gid):
+        remain_time = await group_cd_manager.get_remaining_time(uid)
+        await setu_re.finish(f"群冷却中,剩余 {remain_time} s", at_sender=True)
+    if await user_cd_manager.is_in_cd(uid):
+        remain_time = await user_cd_manager.get_remaining_time(uid)
+        await setu_re.finish(f"用户冷却中,剩余 {remain_time} s", at_sender=True)
     if data["num"] == "" or data["num"] is None:
         get_num = 1
     elif not str(data["num"]).isdigit():
@@ -43,7 +50,7 @@ async def _(bot: Bot, event: GroupMessageEvent, data: Dict = RegexDict()):
         for setu in setu_list:
             print(await setu.get_url())
             reply += MessageSegment.image(await setu.get_url()) + f"{await setu.get_title()}"
-        await cd_manager.add_user(uid)
+        await user_cd_manager.add_user(uid)
         await setu_re.finish(reply)
     else:
         reply = []
@@ -59,5 +66,5 @@ async def _(bot: Bot, event: GroupMessageEvent, data: Dict = RegexDict()):
                 }
             }
             reply.append(meta_node)
-        await cd_manager.add_user(uid)
+        await user_cd_manager.add_user(uid)
         await mbot.send_group_forward_msg(group_id=event.group_id, messages=reply)
