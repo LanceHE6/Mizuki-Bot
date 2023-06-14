@@ -459,7 +459,8 @@ class PlayingManager:
                     self.player_skill_count += int(skill.rate3) * len(self.all_enemies_list)
                     message += f"\n回复{int(skill.rate3)} * {len(self.all_enemies_list)}技力点！"
 
-                for op in self.all_enemies_list:
+                obj_list = self.all_enemies_list if sid in [15, 22, 30, 39, 45, 49] else self.all_ops_list
+                for op in obj_list:
                     damage_amount = await op.hurt(sub, atk_type, damage)
                     objs_list.append(op)
                     objs_name += f" {op.name}"
