@@ -6,7 +6,6 @@
 
 import requests
 
-from nonebot.log import logger
 from nonebot import get_driver
 
 
@@ -16,6 +15,7 @@ class Session:
         "Content-Type": "application/json",
         "Authorization": f"Bearer {get_driver().config.api_key}"
     }
+    _initial_message: list = []
 
     def __init__(self):
         """
@@ -26,11 +26,16 @@ class Session:
         if get_driver().config.enable_proxy:
             self._API_ENDPOINT = f"{get_driver().config.proxy}/v1/chat/completions"
 
-        self._message: list = []
+        self._message: list = [
+            {
+                "role": "system",
+                "content": get_driver().config.personality
+            }
+        ]
         self._data: dict = {
             "model": "gpt-3.5-turbo",
             "messages": self._message,
-            "max_tokens": 2048
+            "max_tokens": 3072
         }
 
     async def get_response(self) -> str:
@@ -74,4 +79,4 @@ class Session:
         清空message列表
         :return:
         """
-        self._message = []
+        self._message = self._initial_message
