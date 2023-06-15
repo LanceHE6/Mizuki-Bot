@@ -93,6 +93,7 @@ class OPAttribute:
     speed_plus = 'speed_plus'
     atk_type = 'atk_type'
     skills = 'skills'
+    effect_list = 'effect_list'
 
 
 class SkillAttribute:
@@ -131,7 +132,7 @@ async def get_op_attribute(oid: str or int, attribute: str, is_enemy: bool = Fal
       """
     if attribute not in ["name", "health", "health_plus", "atk", "atk_plus", "def", "def_plus", "crit_r", "crit_r_plus",
                          "crit_d", "crit_d_plus", "speed", "speed_plus", "atk_type", "skills", "res", "res_plus",
-                         "profession", "stars"]:
+                         "profession", "stars", "effect_list"]:
         raise OPAttributeNotFoundError(attribute)
     with open(operators_data if not is_enemy else enemies_data, 'r', encoding='utf-8') as data:
         ops_data = json.load(data)
