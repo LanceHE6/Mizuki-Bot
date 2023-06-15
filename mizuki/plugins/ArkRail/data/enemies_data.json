@@ -18,13 +18,14 @@
     "speed": 80,
     "speed_plus": 0.2,
     "atk_type": 0,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "2": {
     "name": "猎狗",
     "stars": 1,
     "profession": "感染生物",
-    "health": 820,
+    "health": 640,
     "health_plus": 15,
     "atk": 190,
     "atk_plus": 3,
@@ -39,14 +40,15 @@
     "speed": 100,
     "speed_plus": 0.2,
     "atk_type": 0,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "3": {
     "name": "士兵",
     "stars": 1,
     "profession": "近卫-中坚",
-    "health": 1450,
-    "health_plus": 20,
+    "health": 1200,
+    "health_plus": 12,
     "atk": 200,
     "atk_plus": 3,
     "def": 100,
@@ -60,14 +62,15 @@
     "speed": 90,
     "speed_plus": 0.2,
     "atk_type": 0,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "4": {
     "name": "弩手",
     "stars": 1,
     "profession": "狙击-中坚",
-    "health": 1200,
-    "health_plus": 20,
+    "health": 1000,
+    "health_plus": 10,
     "atk": 240,
     "atk_plus": 3,
     "def": 100,
@@ -81,14 +84,15 @@
     "speed": 95,
     "speed_plus": 0.2,
     "atk_type": 0,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "5": {
     "name": "术师",
     "stars": 1,
     "profession": "术士-中坚",
-    "health": 1200,
-    "health_plus": 20,
+    "health": 1000,
+    "health_plus": 10,
     "atk": 200,
     "atk_plus": 3,
     "def": 50,
@@ -102,14 +106,15 @@
     "speed": 85,
     "speed_plus": 0.1,
     "atk_type": 1,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "6": {
     "name": "机动盾兵",
     "stars": 1,
     "profession": "重装-中坚",
-    "health": 1500,
-    "health_plus": 25,
+    "health": 1200,
+    "health_plus": 20,
     "atk": 200,
     "atk_plus": 2,
     "def": 250,
@@ -123,14 +128,15 @@
     "speed": 90,
     "speed_plus": 0.1,
     "atk_type": 8,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "7": {
     "name": "拾荒者",
     "stars": 2,
     "profession": "近卫-攻坚",
-    "health": 2500,
-    "health_plus": 30,
+    "health": 2000,
+    "health_plus": 20,
     "atk": 500,
     "atk_plus": 3,
     "def": 50,
@@ -144,18 +150,19 @@
     "speed": 85,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "8": {
     "name": "重装防御者",
     "stars": 3,
     "profession": "重装-中坚",
-    "health": 3000,
-    "health_plus": 40,
+    "health": 2400,
+    "health_plus": 25,
     "atk": 500,
     "atk_plus": 2,
     "def": 600,
-    "def_plus": 4,
+    "def_plus": 3,
     "res": 0,
     "res_plus": 0,
     "crit_r": 0,
@@ -165,14 +172,15 @@
     "speed": 80,
     "speed_plus": 0.1,
     "atk_type": 8,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "9": {
     "name": "高阶术师",
     "stars": 3,
     "profession": "术士-群攻",
-    "health": 2600,
-    "health_plus": 25,
+    "health": 2000,
+    "health_plus": 20,
     "atk": 400,
     "atk_plus": 2,
     "def": 120,
@@ -186,14 +194,15 @@
     "speed": 85,
     "speed_plus": 0.1,
     "atk_type": 1,
-    "skills": [1]
+    "skills": [1],
+    "effect_list": []
   },
   "10": {
     "name": "弑君者",
     "stars": 5,
     "profession": "特种-处决",
-    "health": 3000,
-    "health_plus": 30,
+    "health": 2500,
+    "health_plus": 25,
     "atk": 400,
     "atk_plus": 3,
     "def": 150,
@@ -207,14 +216,15 @@
     "speed": 110,
     "speed_plus": 0.2,
     "atk_type": 0,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "11": {
     "name": "W",
     "stars": 5,
     "profession": "狙击-炮手",
-    "health": 3000,
-    "health_plus": 30,
+    "health": 2500,
+    "health_plus": 25,
     "atk": 450,
     "atk_plus": 2,
     "def": 100,
@@ -228,14 +238,15 @@
     "speed": 80,
     "speed_plus": 0.1,
     "atk_type": 2,
-    "skills": [2]
+    "skills": [2],
+    "effect_list": []
   },
   "12": {
     "name": "双持剑士",
     "stars": 2,
     "profession": "近卫-中坚",
-    "health": 2000,
-    "health_plus": 20,
+    "health": 1600,
+    "health_plus": 15,
     "atk": 350,
     "atk_plus": 2,
     "def": 100,
@@ -249,14 +260,15 @@
     "speed": 90,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "13": {
     "name": "伐木机",
     "stars": 3,
     "profession": "近卫-攻坚",
-    "health": 3000,
-    "health_plus": 30,
+    "health": 2400,
+    "health_plus": 25,
     "atk": 650,
     "atk_plus": 3,
     "def": 80,
@@ -270,17 +282,18 @@
     "speed": 70,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "14": {
     "name": "碎骨",
     "stars": 5,
     "profession": "近卫-攻坚",
-    "health": 3500,
-    "health_plus": 30,
+    "health": 3000,
+    "health_plus": 25,
     "atk": 1000,
     "atk_plus": 5,
-    "def": 150,
+    "def": 200,
     "def_plus": 1,
     "res": 30,
     "res_plus": 0.1,
@@ -291,13 +304,14 @@
     "speed": 80,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [3]
+    "skills": [3],
+    "effect_list": []
   },
   "15": {
     "name": "潜伏者",
     "stars": 2,
     "profession": "特种-处决",
-    "health": 1800,
+    "health": 1600,
     "health_plus": 15,
     "atk": 400,
     "atk_plus": 2,
@@ -312,7 +326,8 @@
     "speed": 100,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [4, 11]
+    "skills": [4, 11],
+    "effect_list": []
   },
   "16": {
     "name": "幻影弩手",
@@ -333,14 +348,15 @@
     "speed": 100,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [4, 11]
+    "skills": [4, 11],
+    "effect_list": []
   },
   "17": {
     "name": "屠夫",
     "stars": 3,
     "profession": "近卫-攻坚",
-    "health": 3400,
-    "health_plus": 35,
+    "health": 2750,
+    "health_plus": 30,
     "atk": 750,
     "atk_plus": 3,
     "def": 240,
@@ -354,13 +370,14 @@
     "speed": 70,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "18": {
     "name": "萨卡兹百夫长",
-    "stars": 4,
+    "stars": 5,
     "profession": "术士-群攻",
-    "health": 3000,
+    "health": 2800,
     "health_plus": 25,
     "atk": 550,
     "atk_plus": 2,
@@ -375,7 +392,8 @@
     "speed": 70,
     "speed_plus": 0.1,
     "atk_type": 1,
-    "skills": [1]
+    "skills": [1],
+    "effect_list": []
   },
   "19": {
     "name": "幻影术师",
@@ -396,14 +414,15 @@
     "speed": 90,
     "speed_plus": 0.1,
     "atk_type": 1,
-    "skills": [4, 11]
+    "skills": [4, 11],
+    "effect_list": []
   },
   "20": {
     "name": "炮手",
     "stars": 2,
     "profession": "狙击-炮手",
-    "health": 1800,
-    "health_plus": 20,
+    "health": 1500,
+    "health_plus": 15,
     "atk": 400,
     "atk_plus": 2,
     "def": 150,
@@ -417,14 +436,15 @@
     "speed": 70,
     "speed_plus": 0.1,
     "atk_type": 2,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "21": {
     "name": "萨卡兹大剑手",
     "stars": 3,
     "profession": "近卫-中坚",
-    "health": 2500,
-    "health_plus": 25,
+    "health": 2000,
+    "health_plus": 20,
     "atk": 550,
     "atk_plus": 3,
     "def": 200,
@@ -438,14 +458,15 @@
     "speed": 80,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "22": {
     "name": "萨卡兹狙击手",
     "stars": 3,
     "profession": "狙击-中坚",
-    "health": 2200,
-    "health_plus": 20,
+    "health": 1800,
+    "health_plus": 18,
     "atk": 500,
     "atk_plus": 2,
     "def": 200,
@@ -459,17 +480,18 @@
     "speed": 90,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "23": {
     "name": "轻甲卫兵",
     "stars": 2,
     "profession": "重装-中坚",
-    "health": 2000,
-    "health_plus": 20,
+    "health": 1600,
+    "health_plus": 15,
     "atk": 300,
     "atk_plus": 2,
-    "def": 500,
+    "def": 450,
     "def_plus": 2,
     "res": 20,
     "res_plus": 0.1,
@@ -480,14 +502,15 @@
     "speed": 90,
     "speed_plus": 0.1,
     "atk_type": 8,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "24": {
     "name": "法术近卫",
     "stars": 2,
     "profession": "近卫-术战",
-    "health": 2400,
-    "health_plus": 25,
+    "health": 1800,
+    "health_plus": 20,
     "atk": 400,
     "atk_plus": 2,
     "def": 200,
@@ -501,14 +524,15 @@
     "speed": 90,
     "speed_plus": 0.1,
     "atk_type": 1,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "25": {
     "name": "高能源石虫",
     "stars": 2,
     "profession": "感染生物",
     "health": 1400,
-    "health_plus": 10,
+    "health_plus": 12,
     "atk": 240,
     "atk_plus": 2,
     "def": 0,
@@ -522,14 +546,15 @@
     "speed": 70,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [5]
+    "skills": [5],
+    "effect_list": []
   },
   "26": {
     "name": "萨卡兹术师",
     "stars": 4,
     "profession": "术士-中坚",
-    "health": 2500,
-    "health_plus": 25,
+    "health": 2000,
+    "health_plus": 20,
     "atk": 500,
     "atk_plus": 2,
     "def": 200,
@@ -543,17 +568,18 @@
     "speed": 80,
     "speed_plus": 0.1,
     "atk_type": 1,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "27": {
     "name": "霜星",
     "stars": 5,
     "profession": "术士-中坚",
-    "health": 4000,
+    "health": 3400,
     "health_plus": 30,
     "atk": 420,
     "atk_plus": 2,
-    "def": 250,
+    "def": 200,
     "def_plus": 1,
     "res": 40,
     "res_plus": 0.2,
@@ -564,14 +590,15 @@
     "speed": 90,
     "speed_plus": 0.1,
     "atk_type": 1,
-    "skills": [7, 8]
+    "skills": [8, 7],
+    "effect_list": []
   },
   "28": {
     "name": "破阵者",
     "stars": 2,
     "profession": "特种-处决",
-    "health": 2500,
-    "health_plus": 25,
+    "health": 1800,
+    "health_plus": 18,
     "atk": 450,
     "atk_plus": 2,
     "def": 50,
@@ -585,15 +612,16 @@
     "speed": 110,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [4]
+    "skills": [4],
+    "effect_list": []
   },
   "29": {
     "name": "特战术师",
     "stars": 3,
     "profession": "术士-中坚",
-    "health": 3000,
-    "health_plus": 25,
-    "atk": 450,
+    "health": 2200,
+    "health_plus": 20,
+    "atk": 480,
     "atk_plus": 2,
     "def": 300,
     "def_plus": 1,
@@ -606,14 +634,15 @@
     "speed": 90,
     "speed_plus": 0.1,
     "atk_type": 1,
-    "skills": [1]
+    "skills": [1],
+    "effect_list": []
   },
   "30": {
     "name": "宿主士兵",
     "stars": 2,
     "profession": "近卫-中坚",
-    "health": 2800,
-    "health_plus": 25,
+    "health": 1800,
+    "health_plus": 18,
     "atk": 550,
     "atk_plus": 2,
     "def": 200,
@@ -627,14 +656,25 @@
     "speed": 90,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [9]
+    "skills": [],
+    "effect_list": [
+      {
+        "e_id": "passive1",
+        "e_t": 14,
+        "e_p": "-1",
+        "e_d": "0.02",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
+      }
+    ]
   },
   "31": {
     "name": "宿主拾荒者",
     "stars": 3,
     "profession": "近卫-攻坚",
-    "health": 3000,
-    "health_plus": 35,
+    "health": 2400,
+    "health_plus": 20,
     "atk": 650,
     "atk_plus": 3,
     "def": 130,
@@ -648,18 +688,29 @@
     "speed": 85,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [9]
+    "skills": [],
+    "effect_list": [
+      {
+        "e_id": "passive1",
+        "e_t": 14,
+        "e_p": "-1",
+        "e_d": "0.02",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
+      }
+    ]
   },
   "32": {
     "name": "粉碎攻坚手",
     "stars": 4,
     "profession": "近卫-攻坚",
-    "health": 3500,
-    "health_plus": 35,
-    "atk": 900,
-    "atk_plus": 3,
-    "def": 800,
-    "def_plus": 4,
+    "health": 2400,
+    "health_plus": 20,
+    "atk": 800,
+    "atk_plus": 2,
+    "def": 650,
+    "def_plus": 2,
     "res": 0,
     "res_plus": 0,
     "crit_r": 0,
@@ -669,18 +720,19 @@
     "speed": 70,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [10]
+    "skills": [10],
+    "effect_list": []
   },
   "33": {
     "name": "梅菲斯特",
     "stars": 5,
     "profession": "医疗-群愈",
-    "health": 4000,
-    "health_plus": 40,
-    "atk": 400,
-    "atk_plus": 2,
-    "def": 200,
-    "def_plus": 2,
+    "health": 3000,
+    "health_plus": 25,
+    "atk": 200,
+    "atk_plus": 1,
+    "def": 180,
+    "def_plus": 1,
     "res": 60,
     "res_plus": 0.1,
     "crit_r": 0,
@@ -690,17 +742,18 @@
     "speed": 90,
     "speed_plus": 0.1,
     "atk_type": 5,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   },
   "34": {
     "name": "浮士德",
     "stars": 5,
     "profession": "狙击-重狙",
-    "health": 4500,
-    "health_plus": 40,
-    "atk": 900,
+    "health": 3200,
+    "health_plus": 25,
+    "atk": 800,
     "atk_plus": 3,
-    "def": 350,
+    "def": 250,
     "def_plus": 1,
     "res": 35,
     "res_plus": 0.1,
@@ -711,13 +764,24 @@
     "speed": 100,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [11, 12]
+    "skills": [11, 12],
+    "effect_list": [
+      {
+        "e_id": "passive1",
+        "e_t": 21,
+        "e_p": "2",
+        "e_d": "0",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
+      }
+    ]
   },
   "100": {
     "name": "R-11突击动力装甲",
     "stars": 7,
     "profession": "狙击-炮手",
-    "health": 67500000,
+    "health": 37500000,
     "health_plus": 0,
     "atk": 4200,
     "atk_plus": 0,
@@ -732,6 +796,7 @@
     "speed": 60,
     "speed_plus": 0.1,
     "atk_type": 2,
-    "skills": []
+    "skills": [],
+    "effect_list": []
   }
 }
