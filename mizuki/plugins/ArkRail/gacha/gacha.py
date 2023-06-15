@@ -6,12 +6,15 @@
 
 import os
 from colorama import Fore
+
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 from nonebot.log import logger
+
 from ...Currency.utils import change_user_sj_num, sj_is_enough
 from .utils import gacha, draw_img_ten, draw_img_single
 from ...Utils.PluginInfo import PluginInfo
+from ...Utils.CDManager import CDManager
 
 """
 概率：
@@ -39,10 +42,15 @@ __plugin_info__ = PluginInfo(
     }
 )
 
+user_cd_manager = CDManager(10)
+
 # 单抽
 @single.handle()
 async def _(event: GroupMessageEvent):
     uid = event.get_user_id()
+    if await user_cd_manager.is_in_cd(uid):
+        remain_time = await user_cd_manager.get_remaining_time(uid)
+        await single.finish(f"抽卡冷却中！\n剩余CD:{remain_time}s")
     if not await sj_is_enough(uid, num=600):
         await single.finish(MessageSegment.at(uid) + "你的合成玉余额不足600")
 
@@ -58,7 +66,7 @@ async def _(event: GroupMessageEvent):
 
     await single.send(MessageSegment.at(uid) + MessageSegment.image(file=gacha_img))
     await change_user_sj_num(uid, -600)
-    # await add_user_pool_num(uid, 1)  # 记录抽数
+    await user_cd_manager.add_user(uid)
     os.remove(gacha_img)
     await single.finish()
 
@@ -67,6 +75,9 @@ async def _(event: GroupMessageEvent):
 @ten.handle()
 async def _(event: GroupMessageEvent):
     uid = event.get_user_id()
+    if await user_cd_manager.is_in_cd(uid):
+        remain_time = await user_cd_manager.get_remaining_time(uid)
+        await ten.finish(f"抽卡冷却中！\n剩余CD:{remain_time}s")
     if not await sj_is_enough(uid, num=6000):
         await ten.finish(MessageSegment.at(uid) + "你的合成玉余额不足6000")
 
@@ -81,6 +92,6 @@ async def _(event: GroupMessageEvent):
         await ten.finish(MessageSegment.at(uid) + "请先发送/干员初始化你的数据")
     await ten.send(MessageSegment.at(uid) + MessageSegment.image(file=gacha_img))
     await change_user_sj_num(uid, -6000)
-
+    await user_cd_manager.add_user(uid)
     os.remove(gacha_img)
     await ten.finish()

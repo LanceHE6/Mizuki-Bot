@@ -172,7 +172,7 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
     # 文字样式（微软雅黑），可以自定义ttf格式文字样式
     font = ImageFont.truetype('simhei', 22)
     draw.text((950, 990), f"{uid}", font=font)
-    draw.text((940, 1010), f'{time.strftime("%m-%d %H:%M:%S", time.localtime())}', font=font)
+    draw.text((935, 1010), f'{time.strftime("%m-%d %H:%M:%S", time.localtime())}', font=font)
     draw.text((955, 1030), "Create By", font=font, fill=(0, 162, 255))
     draw.text((950, 1050), "Mizuki-Bot", font=font, fill=(0, 162, 255))
 

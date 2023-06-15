@@ -76,10 +76,7 @@ class Lolicon:
             ext = img_data["ext"]
             ai_type = img_data["aiType"]
             upload_date = img_data["uploadDate"]
-            url: str = img_data["urls"]["original"]
-            # 格式转变成png 貌似jpg发不出去
-            if url.endswith(".jpg"):
-                url = url.replace(".jpg", ".png")
+            url = img_data["urls"]["original"]
             setu_image = SetuImage(
                 r18,
                 pid,

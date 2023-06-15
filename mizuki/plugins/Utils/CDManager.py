@@ -11,8 +11,13 @@ class CDManager:
     """
     一个CD管理类 用户与Timer的映射
     """
-    def __init__(self):
+    def __init__(self, timeout: int):
+        """
+        构建一个CD管理器
+        :param timeout: CD时长
+        """
         self.__cd_map: dict = {}
+        self.__timeout: int = timeout
 
     async def add_user(self, uid: int or str):
         """
@@ -20,7 +25,7 @@ class CDManager:
         :param uid: uid
         :return: None
         """
-        timer = Timer(60)
+        timer = Timer(self.__timeout)
         self.__cd_map[int(uid)] = timer
         asyncio.create_task(timer.start(self.remove_user, uid=uid))
 
@@ -51,3 +56,10 @@ class CDManager:
         if await self.is_in_cd(uid):
             return self.__cd_map[int(uid)].remaining_time()
         return 0
+
+    async def get_cooling_num(self) -> int:
+        """
+        获取在CD中的个数
+        :return: 个数
+        """
+        return len(self.__cd_map)
