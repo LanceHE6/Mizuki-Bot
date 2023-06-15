@@ -13,12 +13,13 @@ from pathlib import Path
 res_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
 
 
-async def draw_player_fight_image(pm: PlayingManager, message_list):
+async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
     """
     绘制战斗图像的方法(我方干员行动)
 
     :param pm: 战斗数据
     :param message_list: 消息(显示在图像下方)
+    :param uid: 用户id
     """
     player_skill_count = pm.player_skill_count  # 我方初始技力点
     enemy_skill_count = pm.enemy_skill_count
@@ -27,14 +28,15 @@ async def draw_player_fight_image(pm: PlayingManager, message_list):
     all_enemies_list = pm.all_enemies_list
 
     bg_img = Image.open(res_path / "atk_places/1_f.png")  # 背景
-    bg_img_size = bg_img.size
-    if message_list is not None:
+    bg_img_size = bg_img.size  # 背景原尺寸
+    message_str = ""  # 消息内容
+    if message_list is not None:  # 获取消息内容列表并处理成字符串
         message_str = "\n".join(message_list)
         row = message_str.count("\n")
-        bg_size = (bg_img_size[0], bg_img_size[1] + 32 * (row + 1))
+        bg_size = (bg_img_size[0], bg_img_size[1] + 32 * (row + 1))  # 背景尺寸根据消息内容的多少动态变化
     else:
         bg_size = bg_img_size
-    image = Image.new("RGBA", bg_size, (127, 199, 255, 255))
+    image = Image.new("RGBA", bg_size, (127, 199, 255, 255))  # 背景颜色
     draw = ImageDraw.ImageDraw(image)
     image.paste(bg_img)
 
@@ -264,5 +266,8 @@ async def draw_player_fight_image(pm: PlayingManager, message_list):
         font = ImageFont.truetype("simhei", 28)
         draw.text((8, 764), f"{message_str}", font=font, fill=(0, 0, 0))
 
-    image.show()
+    save_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / f'{uid}_play_info.png'
+    image.save(save_path)
+    # image.show()
 
+    return save_path
