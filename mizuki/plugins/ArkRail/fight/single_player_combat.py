@@ -83,7 +83,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         :param handle: 用于发送消息
         """
         is_over: bool = False
-        if len(messages) > 1 and messages[len(messages) - 1] in ["作战失败", "作战成功"]:  # 删除战斗信息
+        if len(messages) > 1 and (("作战失败" in messages) or ("作战成功" in messages)):  # 删除战斗信息
             if messages[len(messages) - 1] == "作战成功":  # 获取奖励
                 consume = await get_map_attribute(mid, MapAttribute.consume)
                 if not await user_agar(uid, consume):
