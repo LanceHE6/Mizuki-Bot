@@ -133,11 +133,11 @@
   },
   "7": {
     "name": "冰环",
-    "brief_d": "对所有敌人造成一定法术伤害并使其速度降低，持续一段时间(该技能无法暴击)",
+    "brief_d": "对所有敌人造成一定法术伤害并使其寒冷，持续一段时间(该技能无法暴击)",
     "detail": "对所有敌人造成相当于自身攻击力${r1_float}的法术伤害并使其速度降低${r2_float}，持续${r3_int}回合(该技能无法暴击)",
     "rate1": 1.2,
     "rate1_plus": 0,
-    "rate2": 0.4,
+    "rate2": 25,
     "rate2_plus": 0,
     "rate3": 1,
     "rate3_plus": 0,
@@ -148,13 +148,13 @@
     "persistence_plus": 0,
     "effect_list": [
       {
-        "e_id": "-7-2",
-        "e_t": 10,
+        "e_id": "-7-1",
+        "e_t": 26,
         "e_p": "${r3_int}",
-        "e_d": "-${r2_float}",
+        "e_d": "${r2_float}",
         "e_l": "0",
         "e_ml": "0",
-        "obj_type": 1
+        "obj_type": 0
       }
     ]
   },
@@ -222,7 +222,7 @@
     "rate2_plus": 0,
     "rate3": 0,
     "rate3_plus": 0,
-    "obj_type": 0,
+    "obj_type": 1,
     "consume": 15,
     "consume_plus": 0,
     "persistence": 0,
@@ -276,8 +276,159 @@
     "rate2_plus": 0,
     "rate3": 0,
     "rate3_plus": 0,
-    "obj_type": 0,
+    "obj_type": 1,
     "consume": 16,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0,
+    "effect_list": []
+  },
+  "13": {
+    "name": "寒冷打击",
+    "brief_d": "对一名敌人造成一定伤害(攻击处于冻结状态的敌人时伤害提高)，并使其寒冷，持续一段时间",
+    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的伤害(攻击处于冻结状态的敌人时伤害提高50%)，并使其寒冷，持续${r2_int}回合",
+    "rate1": 1.2,
+    "rate1_plus": 0,
+    "rate2": 2,
+    "rate2_plus": 0,
+    "rate3": 15,
+    "rate3_plus": 0,
+    "obj_type": 1,
+    "consume": 8,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "-13-1",
+        "e_t": 26,
+        "e_p": "${r2_int}",
+        "e_d": "-${r3_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
+  },
+  "14": {
+    "name": "寒霜冲击",
+    "brief_d": "对一群敌人造成一定伤害，并使其寒冷，持续一段时间",
+    "detail": "对一群敌人造成相当于自身攻击力${r1_float}的伤害，并使其寒冷，持续${r2_int}回合",
+    "rate1": 1.4,
+    "rate1_plus": 0,
+    "rate2": 2,
+    "rate2_plus": 0,
+    "rate3": 15,
+    "rate3_plus": 0,
+    "obj_type": 1,
+    "consume": 14,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "-14-1",
+        "e_t": 26,
+        "e_p": "${r2_int}",
+        "e_d": "-${r3_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
+  },
+  "15": {
+    "name": "战术命令",
+    "brief_d": "使我方所有干员攻击力和防御力提升，持续一段时间",
+    "detail": "使我方所有干员攻击力提升${r1_float}，防御力增加${r2_int}，持续${persistence}回合",
+    "rate1": 0.3,
+    "rate1_plus": 0,
+    "rate2": 150,
+    "rate2_plus": 0,
+    "rate3": 0,
+    "rate3_plus": 0,
+    "obj_type": 0,
+    "consume": 15,
+    "consume_plus": 0,
+    "persistence": 2,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "-15-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      },
+      {
+        "e_id": "-15-2",
+        "e_t": 5,
+        "e_p": "${persistence}",
+        "e_d": "${r2_int}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
+  },
+  "16": {
+    "name": "源石强化",
+    "brief_d": "使自身伤害类型变为法术单体，持续时间无限",
+    "detail": "使自身伤害类型变为法术单体，持续时间无限",
+    "rate1": 1,
+    "rate1_plus": 0,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "rate3": 0,
+    "rate3_plus": 0,
+    "obj_type": 0,
+    "consume": 5,
+    "consume_plus": 0,
+    "persistence": -1,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "-16-1",
+        "e_t": 13,
+        "e_p": "${persistence}",
+        "e_d": "${r1_int}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
+      }
+    ]
+  },
+  "17": {
+    "name": "掩护",
+    "brief_d": "尝试嘲讽所有敌人，持续一段时间",
+    "detail": "尝试嘲讽所有敌人(成功率为${r1_float})，持续${r2_int}回合",
+    "rate1": 0.7,
+    "rate1_plus": 0,
+    "rate2": 1,
+    "rate2_plus": 0,
+    "rate3": 0,
+    "rate3_plus": 0,
+    "obj_type": 0,
+    "consume": 12,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0,
+    "effect_list": []
+  },
+  "18": {
+    "name": "投枪",
+    "brief_d": "对一群敌方单位造成高额物理伤害(该技能无法暴击)",
+    "detail": "对一名敌方单位及其周围敌方单位造成相当于自身攻击力${r1_float}的物理伤害(该技能无法暴击)",
+    "rate1": 0.7,
+    "rate1_plus": 0,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "rate3": 0,
+    "rate3_plus": 0,
+    "obj_type": 0,
+    "consume": 18,
     "consume_plus": 0,
     "persistence": 0,
     "persistence_plus": 0,
