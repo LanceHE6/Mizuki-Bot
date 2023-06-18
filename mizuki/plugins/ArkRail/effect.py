@@ -42,6 +42,7 @@ class Effect:
         23: 眩晕(无法行动)
         24: 冻结(无法行动)
         25: 死战(持续时间结束后血量清空)
+        26: 寒冷(速度减少，效果持续期间如果再次获得此效果将会被冻结1回合，冻结期间再次受到寒冷效果则会延长冻结时间)
         """
         self.effect_id = effect_id
         self.effect_type = effect_type
@@ -105,6 +106,8 @@ class Effect:
             self.name = "冻结"
         elif e_t == 25:
             self.name = "死战"
+        elif e_t == 26:
+            self.name = "寒冷"
 
 
 async def new_effect_instance(effect_dict: dict):
