@@ -43,6 +43,26 @@ class Skill:
         self.persistence = persistence
         self.effect_list = effect_list
 
+        self.obj_type_str = ""
+        if obj_type == 0:
+            self.obj_type_str = "●自身"
+        elif obj_type == 1:
+            self.obj_type_str = "▲单体"
+        elif obj_type == 2:
+            self.obj_type_str = "▲双攻"
+        elif obj_type == 3:
+            self.obj_type_str = "▲全体"
+        elif obj_type == 4:
+            self.obj_type_str = "▼单体"
+        elif obj_type == 5:
+            self.obj_type_str = "▼双子"
+        elif obj_type == 6:
+            self.obj_type_str = "▼全体"
+        elif obj_type == 7:
+            self.obj_type_str = "◆双方"
+        else:
+            self.obj_type_str = f"○未知{obj_type}"
+
         self.count = 0  # 技能持续回合(持续性技能用)
 
 

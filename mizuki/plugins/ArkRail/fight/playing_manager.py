@@ -40,7 +40,7 @@ class PlayingManager:
             move_op = self.all_list[0]  # 刷新行动者
 
         # 敌方持续行动，直到行动者为我方干员为止
-        while move_op in self.all_enemies_list and not await self.is_round_over():
+        while ((move_op in self.all_enemies_list) or move_op.immobile) and (not await self.is_round_over()):
             # 如果干员无法行动
             if move_op.immobile:
                 messages += await self.turn(move_op, -1)  # 结束干员回合
@@ -50,10 +50,25 @@ class PlayingManager:
             # 如果未被嘲讽则随机选一个目标
             while True:
                 if move_op.atk_type_p in [0, 1, 2, 3, 6, 7, 8]:
+                    # 随机选一个序号
                     random_num: int = random.randint(0, len(self.all_ops_list) - 1)
-                    obj = self.all_ops_list[random_num] if not move_op.mocked else move_op.mocking_obj
+
+                    # 如果自身被嘲讽
+                    if move_op.mocked:
+
+                        # 如果嘲讽对象隐匿则嘲讽失效
+                        if not move_op.mocking_obj.hidden:
+                            obj = move_op.mocking_obj
+                        else:
+                            obj = self.all_ops_list[random_num]
+
+                    # 如果没被嘲讽的话则随便选一个干员
+                    else:
+                        obj = self.all_ops_list[random_num] if not move_op.mocked else move_op.mocking_obj
+
                     if not obj.hidden:  # [死循环隐患]如果所有干员都处于隐匿状态就糟咯awa
                         break
+
                 elif move_op.atk_type_p in [4, 5]:
                     random_num: int = random.randint(0, len(self.all_enemies_list) - 1)
                     obj = self.all_enemies_list[random_num]
@@ -70,11 +85,13 @@ class PlayingManager:
                     #  如果技能点足够且技能不在持续时间内
                     if self.enemy_skill_count >= skill.consume and skill.count == 0:
                         result_message = await self.turn(move_op, i + 1, obj)
+                        print(f"skill:{result_message}")
                         messages.append(result_message[0])
                         break
             # 否则进行普攻
             else:
                 result_message = await self.turn(move_op, 0, obj)
+                print(f"atk:{result_message}")
                 messages.append(result_message[0])
 
             # 判断作战是否结束
@@ -173,10 +190,10 @@ class PlayingManager:
                 atk_type_str = "真实"
             damage = await obj.hurt(sub, atk_type, damage)
             message = f"{sub.name}对{obj.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点{atk_type_str}伤害！"  # 返回的字符串
-            if sub.atk_type_p == 8 and random.randint(1, 100) < 50:  # 重装普攻有概率嘲讽敌方单位
-                message += f"\n{sub.name}嘲讽了{obj.name}！\n持续2回合！"
+            if sub.atk_type_p == 8 and random.randint(1, 100) < 80:  # 重装普攻大概率嘲讽敌方单位
+                message += f"\n{sub.name}嘲讽了{obj.name}！\n持续1回合！"
                 obj.mocking_obj = sub
-                await obj.append_effect(Effect("0-1", 18, 2, 0, 0, 0, 0))
+                await obj.append_effect(Effect("0-1", 18, 1, 0, 0, 0, 0))
                 await obj.upgrade_effect()
             if await obj.is_die():
                 message += f"\n{obj.name}被{sub.name}击倒了！"
@@ -221,7 +238,7 @@ class PlayingManager:
                     continue
                 objs_name += f" {op.name}"
                 health_amount = await op.hurt(sub, 5, sub.atk_p)
-                objs_health += f"{health_amount} "
+                objs_health += f" {health_amount}"
             message += f"{objs_name}，分别恢复他们{objs_health} 的生命值！"
 
         elif sub.atk_type_p == 9:  # 不攻击
@@ -277,7 +294,7 @@ class PlayingManager:
                 damage = await obj1.hurt(sub, sub.atk_type_p, damage)
                 objs_list.append(obj1)
                 message += f"\n暴击并对{obj1.name}造成了{damage}点{atk_type_str}伤害！"
-            elif sid in [-6, -8, 10]:
+            elif sid in [-6, -8, -10]:
                 atk_type_str = ""
                 if sub.atk_type_p in [0, 2, 8]:
                     atk_type_str = "物理"
@@ -374,13 +391,14 @@ class PlayingManager:
                 atk_type = sub.atk_type_p
                 atk_type_str = ""
                 damage_str: str = ""
-                if atk_type in [0, 2, 8]:
+                if atk_type in [0, 2, 8, 9]:
                     atk_type_str = "物理"
                 elif atk_type in [1, 3]:
                     atk_type_str = "法术"
                 elif atk_type in [6, 7]:
                     atk_type_str = "真实"
-                if atk_type in [0, 1, 6, 8]:
+
+                if atk_type in [0, 1, 6, 8, 9]:
                     for i in range(int(skill.rate1)):
                         is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
                         is_crit_sym: str = "★" if is_crit else ""
@@ -391,10 +409,12 @@ class PlayingManager:
                     damage_str = damage_str.rstrip("+")  # 去掉末尾的+号
                     objs_list.append(obj1)
                     message += f"\n对{obj1.name}造成了{damage_str}点物理伤害！"
+
                 elif atk_type in [2, 3, 7]:
                     for op in obj1.next_operators:
                         if not isinstance(op, Operator):
                             continue
+                        damage_str = ""
                         for i in range(int(skill.rate1)):
                             is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
                             is_crit_sym: str = "★" if is_crit else ""
@@ -432,7 +452,7 @@ class PlayingManager:
                 for op in self.all_ops_list:
                     objs_list.append(op)
                 message += f"\n进入无法行动状态，每回合回复{int(skill.rate1)}技力点并使我方所有干员每回合恢复生命值！"
-            elif sid in [15, 20, 22, 30, 39, 45, 49]:
+            elif sid in [15, 20, 22, 30, 39, 45, 50]:
                 rate = random.uniform(skill.rate1, skill.rate2)
                 is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
                 is_crit_str: str = "暴击并" if is_crit else ""
@@ -445,7 +465,7 @@ class PlayingManager:
                 elif sid in [22, 39]:
                     atk_type_str = "法术"
                     atk_type = 1
-                elif sid in [49]:
+                elif sid in [50]:
                     atk_type_str = "真实"
                     atk_type = 6
                 elif sid in [20]:
@@ -459,13 +479,13 @@ class PlayingManager:
                     self.player_skill_count += int(skill.rate3) * len(self.all_enemies_list)
                     message += f"\n回复{int(skill.rate3)} * {len(self.all_enemies_list)}技力点！"
 
-                obj_list = self.all_enemies_list if sid in [15, 22, 30, 39, 45, 49] else self.all_ops_list
+                obj_list = self.all_enemies_list if sid in [15, 22, 30, 39, 45, 50] else self.all_ops_list
                 for op in obj_list:
                     damage_amount = await op.hurt(sub, atk_type, damage)
                     objs_list.append(op)
                     objs_name += f" {op.name}"
                     objs_damage += f" {damage_amount}"
-                if sid in [15, 22, 30, 39, 45, 49]:
+                if sid in [15, 22, 30, 39, 45, 50]:
                     message += f"\n{is_crit_str}对{objs_name}\n分别造成了{objs_damage} 点{atk_type_str}伤害！"
                 else:
                     message += f"\n分别为{objs_name}\n恢复了{objs_damage} 点生命值！"
@@ -482,6 +502,7 @@ class PlayingManager:
                     if random.randint(1, 10000) < skill.rate1 * 10000:
                         op.mocking_obj = sub
                         await op.append_effect(Effect("19-2", 18, skill.persistence, 0, 0, 0, 0))
+                        await op.upgrade_effect()
                         mock_ops += f"{op.name} "
 
                 message += f"\n防御力提高{round(skill.rate2 * 100, 1)}%并尝试嘲讽所有敌人！"
@@ -503,7 +524,7 @@ class PlayingManager:
                 if atk_type == 0:
                     damage = await obj1.hurt(sub, atk_type, damage)
                     objs_list.append(obj1)
-                    obj1.silent = skill.rate2
+                    await obj1.upgrade_effect()
                     message += f"\n{is_crit_str}对{obj1.name}造成了{damage}点{atk_type_str}伤害！\n{obj1.name}被沉默了！"
                 else:
                     for op in obj1.next_operators:
@@ -511,11 +532,10 @@ class PlayingManager:
                             continue
                         damage_amount = await op.hurt(sub, atk_type, damage)
                         objs_list.append(op)
-                        op.silent = skill.rate2
+                        await op.upgrade_effect()
                         objs_name += f" {op.name}"
                         objs_damage += f" {damage_amount}"
                     message += f"\n{is_crit_str}对{objs_name}\n分别造成了{objs_damage} 点{atk_type_str}伤害！\n{objs_name} 被沉默了！"
-                    pass
             elif sid == 24:
                 persistence = 1
                 message += f"\n攻击类型变为群体法术，攻击力提高{round(skill.rate2 * 100, 1)}%！"
@@ -655,6 +675,7 @@ class PlayingManager:
                     if random.randint(1, 10000) < skill.rate1 * 10000:
                         op.mocking_obj = sub
                         await op.append_effect(Effect("47-3", 18, skill.persistence, 0, 0, 0, 0))
+                        await op.upgrade_effect()
                         mock_ops += f"{op.name} "
 
                 message += f"\n进入忍耐状态，防御力提高{round(skill.rate2 * 100, 1)}%并尝试嘲讽所有敌人！"
@@ -669,7 +690,7 @@ class PlayingManager:
                     objs_name += f" {op.name}"
                     objs_damage += f" {damage_amount1}+{damage_amount2}"
                 message += f"\n对{objs_name}\n分别造成了{objs_damage} 点伤害！"
-            elif sid == 50:
+            elif sid == 49:
                 persistence = 0
                 message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%，速度增加{round(skill.rate2, 2)}！"
             elif sid == 51:
@@ -796,7 +817,7 @@ class PlayingManager:
         # 如果干员被击倒(这通常是因为流血buff导致的，当然也有可能是死战buff)
         if await sub.is_die():
             message += f"\n{sub.name}被击倒了！"
-            await self.op_die(op)  # 调用干员倒地函数
+            await self.op_die(sub)  # 调用干员倒地函数
 
         # 干员速度设为0(我以后可能会改成跟星铁那样的行动条)
         sub.speed = 0

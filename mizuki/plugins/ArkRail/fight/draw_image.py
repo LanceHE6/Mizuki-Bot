@@ -13,12 +13,13 @@ from pathlib import Path
 res_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
 
 
-async def draw_player_fight_image(pm: PlayingManager, message_list):
+async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
     """
     绘制战斗图像的方法(我方干员行动)
 
     :param pm: 战斗数据
     :param message_list: 消息(显示在图像下方)
+    :param uid: 用户id
     """
     player_skill_count = pm.player_skill_count  # 我方初始技力点
     enemy_skill_count = pm.enemy_skill_count
@@ -27,9 +28,15 @@ async def draw_player_fight_image(pm: PlayingManager, message_list):
     all_enemies_list = pm.all_enemies_list
 
     bg_img = Image.open(res_path / "atk_places/1_f.png")  # 背景
-    bg_img_size = bg_img.size
-    bg_size = (bg_img_size[0], bg_img_size[1] + 240)
-    image = Image.new("RGBA", bg_size, (127, 199, 255, 255))
+    bg_img_size = bg_img.size  # 背景原尺寸
+    message_str = ""  # 消息内容
+    if message_list is not None:  # 获取消息内容列表并处理成字符串
+        message_str = "\n".join(message_list)
+        row = message_str.count("\n")
+        bg_size = (bg_img_size[0], bg_img_size[1] + 32 * (row + 1))  # 背景尺寸根据消息内容的多少动态变化
+    else:
+        bg_size = bg_img_size
+    image = Image.new("RGBA", bg_size, (127, 199, 255, 255))  # 背景颜色
     draw = ImageDraw.ImageDraw(image)
     image.paste(bg_img)
 
@@ -84,7 +91,7 @@ async def draw_player_fight_image(pm: PlayingManager, message_list):
         now_health = enemy.health
         max_health = enemy.max_health_p
         width = int(max_width * (max_health - now_health) / max_health)
-        if width > 0:
+        if x + max_width - width < max_width + x:
             draw.rectangle((x + max_width - width, y, max_width + x, y + height), fill=(0, 0, 0, 100))
 
         alpha = 255  # 透明度
@@ -164,7 +171,7 @@ async def draw_player_fight_image(pm: PlayingManager, message_list):
         now_health = op.health
         max_health = op.max_health_p
         width = int(max_width * (max_health - now_health) / max_health)
-        if width > 0:
+        if max_width + 26 + i * 224 - width < 26 + i * 224 + max_width - 3:
             draw.rectangle((max_width + 26 + i * 224 - width, 696, 26 + i * 224 + max_width - 3, 708), fill="#252525")
         # 显示血量
         font = ImageFont.truetype("simhei", 14)
@@ -216,10 +223,30 @@ async def draw_player_fight_image(pm: PlayingManager, message_list):
     i = 0
     for skill in skills:  # 应改为当前干员skills 循环
         bg_img = Image.open(res_path / "atk_type/atk_bg.png").resize((150, 150))
+        description_img = Image.open(res_path / "atk_type/atk_type_bg.png").resize((104, 24))
         sid = skill.sid
         skill_img = Image.open(res_path / f"skills/{sid}_b.png").resize((100, 100))
         image.paste(bg_img, (1275 - i * 166, 596), mask=bg_img)
         image.paste(skill_img, (1300 - i * 166, 620), mask=skill_img)
+        image.paste(description_img, (1298 - i * 166, 718), mask=description_img)
+
+        is_enough = "player" if pm.player_skill_count >= skill.consume else "enemy"
+        consume_img = Image.open(res_path / f"atk_info/{is_enough}_skill_count.png").resize((10, 12))
+        image.paste(consume_img, (1387 - i * 166, 724), mask=consume_img)
+
+        if skill.obj_type in [1, 2, 3]:
+            d_color = (245, 100, 100)
+        elif skill.obj_type in [0, 4, 5, 6]:
+            d_color = (0, 160, 255)
+        else:
+            d_color = (175, 100, 245)
+
+        font = ImageFont.truetype("simhei", 16)
+        draw.text((1310 - i * 166, 723), f"{skill.obj_type_str}", font=font, fill=d_color)
+
+        font = ImageFont.truetype("simhei", 14)
+        draw.text((1385 - i * 166, 736), f"{int(skill.consume)}", font=font, anchor="rs")
+
         i += 1
 
     player_skill_count_img = Image.open(res_path / "atk_info/player_skill_count.png")
@@ -236,9 +263,11 @@ async def draw_player_fight_image(pm: PlayingManager, message_list):
 
     # 战斗信息
     if message_list is not None:
-        message_str = "\n".join(message_list)
-        font = ImageFont.truetype("simhei", 24)
-        draw.text((8, 766), f"{message_str}", font=font, fill=(0, 0, 0))
+        font = ImageFont.truetype("simhei", 28)
+        draw.text((8, 764), f"{message_str}", font=font, fill=(0, 0, 0))
 
-    image.show()
+    save_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / f'{uid}_play_info.png'
+    image.save(save_path)
+    # image.show()
 
+    return save_path

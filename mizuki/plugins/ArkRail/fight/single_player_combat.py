@@ -127,7 +127,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     # 先进行一次判断，如果是敌人先手则敌方先行动
     message = await pm.is_enemy_turn()
     await send_message_and_is_over(message, play)
-    await send_status_image(pm, message)  # 绘制战斗数据图片
+    await send_status_image(pm, play, uid, message)  # 绘制战斗数据图片
 
     # 后面就是命令定义了
 
@@ -201,7 +201,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await send_message_and_is_over(message2, operate_atk)
 
         # 再次等到我方干员回合再绘制战斗状态图
-        await send_status_image(pm, message_atk)
+        await send_status_image(pm, play, uid, message_atk)
 
         # 方法结束
         await operate_atk.finish()
@@ -364,7 +364,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await send_message_and_is_over(message2, operate_skill)
 
         # 绘制战斗数据
-        await send_status_image(pm, message_skill)
+        await send_status_image(pm, play, uid, message_skill)
 
         # 方法结束
         await operate_skill.finish()
@@ -402,13 +402,16 @@ async def delete_handle(obj: Type[Matcher]):
     del obj
 
 
-async def send_status_image(pm: PlayingManager, message_list=None):
+async def send_status_image(pm: PlayingManager, handle, uid, message_list=None):
     """
     发送所有参战人员状态图片的函数
 
     :param pm: PlayingManage对象，包含了这场战斗的所有数据
+    :param handle: 响应器，用于发送图片
+    :param uid: 用户id
     :param message_list: 消息列表
     """
-    await draw_player_fight_image(pm, message_list)  # 绘制战斗图片
+    img_path = await draw_player_fight_image(pm, message_list, uid)
+    # await handle.send(MessageSegment.image(img_path))
     for op in pm.all_list:  # 清空伤害列表
         op.damage_list.clear()
