@@ -75,7 +75,7 @@ class PlayingManager:
                     break
 
             # 条件达成则使用技能
-            if len(move_op.skills_list) and random.randint(1, 100) <= 15 + (8 * move_op.stars) and \
+            if len(move_op.skills_list) and random.randint(1, 100) <= 15 + (12 * move_op.stars) and \
                     self.enemy_skill_count >= move_op.skills_list[0].consume and not move_op.silent:
 
                 # 倒序遍历技能列表(一般后面的技能更厉害)
@@ -95,7 +95,7 @@ class PlayingManager:
                 messages.append(result_message[0])
 
             # 判断作战是否结束
-            if result_message[len(result_message) - 1] in ["作战失败", "作战成功"]:
+            if ("作战失败" in result_message) or ("作战成功" in result_message):
                 messages.append(result_message[len(result_message) - 1])
                 return messages
 
@@ -263,19 +263,24 @@ class PlayingManager:
         sid = skill.sid  # 技能id
         persistence: int = 0  # 是否为持续性技能
         if sid < 0:  # 小于0的为敌人技能
-            if sid in [-1, -2, -3, -5]:
-                damage = int(sub.atk_p * skill.rate1)
+            if sid in [-1, -2, -3, -5, -14, -18]:
                 atk_type = 0
                 atk_type_str = ""
-                if sid in [-2, -3, -5]:
+                if sid in [-2, -3, -5, -18]:
                     atk_type = 2
                     atk_type_str = "物理"
-                elif sid in [-3]:
+                elif sid in [-3, -14]:
                     atk_type = 3
                     atk_type_str = "法术"
                 for op in obj1.next_operators:
                     if not isinstance(op, Operator):
                         continue
+                    damage = int(sub.atk_p * skill.rate1)
+                    if sid == -13:
+                        for e in obj1.effect_list:  # 对被冰冻目标伤害提高50%
+                            if e.effect_type == 24:
+                                damage = int(damage * 1.5)
+                                break
                     damage_amount = await op.hurt(sub, atk_type, damage, skill.rate2)
 
                     objs_list.append(op)
@@ -317,7 +322,7 @@ class PlayingManager:
                     objs_list.append(op)
                     objs_name += f" {op.name}"
                     objs_damage += f" {damage_amount}"
-                message += f"\n对{objs_name}\n分别造成了{objs_damage} 点法术伤害并使其速度降低{round(skill.rate2 * 100), 1}%，持续1回合！"
+                message += f"\n对{objs_name}\n分别造成了{objs_damage} 点法术伤害并使其寒冷，持续1回合！"
             elif sid == -9:
                 persistence = 1
                 message += f"\n每回合恢复{round(skill.rate1 * 100, 2)}%最大生命值，持续{skill.persistence}回合！"
@@ -325,7 +330,7 @@ class PlayingManager:
                 persistence = 1
                 sub.hidden = skill.persistence + 1
                 message += f"\n进入隐匿状态，持续{skill.persistence}回合！"
-            elif sid == -12:
+            elif sid in [-12, -13]:
                 atk_type_str = ""
                 if sub.atk_type_p in [0, 2, 8]:
                     atk_type_str = "物理"
@@ -334,9 +339,31 @@ class PlayingManager:
                 elif sub.atk_type_p in [6, 7]:
                     atk_type_str = "真实"
                 damage = int(sub.atk_p * skill.rate1)
+                if sid == -13:
+                    for e in obj1.effect_list:  # 对被冰冻目标伤害提高50%
+                        if e.effect_type == 24:
+                            damage = int(damage * 1.5)
+                            break
                 damage = await obj1.hurt(sub, sub.atk_type_p, damage)
                 objs_list.append(obj1)
                 message += f"\n对{obj1.name}造成了{damage}点{atk_type_str}伤害！"
+            elif sid == -15:
+                for op in self.all_enemies_list:
+                    objs_list.append(op)
+                message += f"\n使所有敌人攻击力和防御力提升！"
+            elif sid == -16:
+                objs_list.append(sub)
+                message += f"\n使自身伤害类型变为单体法术！"
+            elif sid == -17:
+                mock_ops = ""
+                for op in self.all_ops_list:
+                    if random.randint(1, 10000) < skill.rate1 * 10000:
+                        op.mocking_obj = sub
+                        await op.append_effect(Effect("-17-2", 18, int(skill.rate2), 0, 0, 0, 0))
+                        await op.upgrade_effect()
+                        mock_ops += f"{op.name} "
+
+                message += f"\n{mock_ops}被嘲讽了！"
 
         else:
             if sid == 1:
