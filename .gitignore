@@ -146,3 +146,5 @@ dmypy.json
 /mizuki/plugins/ArkRail/test.py
 /mizuki/plugins/LoliconSetu/setu/
 /accounts/
+/.env
+/.idea
