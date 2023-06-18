@@ -1,8 +1,16 @@
-# <center>Mizuki-Bot</center>
+# <center>🌙Mizuki-Bot</center>
+
+<p align="center">
+
+![Static Badge](https://img.shields.io/badge/Licence-MIT-blue)
+![Static Badge](https://img.shields.io/badge/Python-%3E%3D3.8-orange)
+![Static Badge](https://img.shields.io/badge/%E6%A1%86%E6%9E%B6-nonebot2-green)
+
+</p>
 
 
 
-<div style="align:center">
+<div align="center">
 <img src="./icon.png" alt="icon" style="zoom:20%;">
 </div>
 
@@ -33,7 +41,7 @@
 
 ## <span id="jump1">简介</span>
 
-Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的明日方舟主题的娱乐QQ机器人
+✨Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的明日方舟主题的娱乐QQ机器人✨
 
 [Nonebot官网](https://v2.nonebot.dev/)
 
@@ -114,10 +122,11 @@ COMMAND_START=["/"]  # 配置命令起始字符
 AUTO_CHECK_RES=false  # 启动自动检查图片资源
 
 #ChatGPT相关
-API_KEY=  # api key sk-xxxxxx
+API_KEY=""  # api key sk-xxxxxx
 ENABLE_PROXY=false  # 是否启用代理
-PROXY=  # 代理地址 https://example.com
+PROXY=""  # 代理地址 https://example.com
 TIMEOUT=600  # 定时清理用户会话 xx秒
+PERSONALITY=""  # ChatGPT 人格描述
 ```
 
 ### <span id="jump4-3">安装项目依赖
