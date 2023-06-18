@@ -1199,6 +1199,422 @@
     },
     "consume": 40
   },
+  "6-1": {
+    "enemies": {
+      "1":{
+        "eid": 30,
+        "level": 30
+      },
+      "2":{
+        "eid": 35,
+        "level": 10
+      },
+      "3":{
+        "eid": 31,
+        "level": 20
+      },
+      "4":{
+        "eid": 29,
+        "level": 20
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 14800
+    },
+    "consume": 45
+  },
+  "6-2": {
+    "enemies": {
+      "1":{
+        "eid": 30,
+        "level": 30
+      },
+      "2":{
+        "eid": 36,
+        "level": 10
+      },
+      "3":{
+        "eid": 30,
+        "level": 30
+      },
+      "4":{
+        "eid": 29,
+        "level": 20
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 15000
+    },
+    "consume": 45
+  },
+  "6-3": {
+    "enemies": {
+      "1":{
+        "eid": 30,
+        "level": 30
+      },
+      "2":{
+        "eid": 36,
+        "level": 10
+      },
+      "3":{
+        "eid": 35,
+        "level": 10
+      },
+      "4":{
+        "eid": 31,
+        "level": 20
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 15200
+    },
+    "consume": 45
+  },
+  "6-4": {
+    "enemies": {
+      "1":{
+        "eid": 36,
+        "level": 20
+      },
+      "2":{
+        "eid": 34,
+        "level": 50
+      },
+      "3":{
+        "eid": 36,
+        "level": 20
+      },
+      "4":{
+        "eid": 31,
+        "level": 30
+      }
+    },
+    "reward": {
+      "name": "浮士德",
+      "amount": 1
+    },
+    "consume": 0
+  },
+  "6-5": {
+    "enemies": {
+      "1":{
+        "eid": 37,
+        "level": 20
+      },
+      "2":{
+        "eid": 40,
+        "level": 15
+      },
+      "3":{
+        "eid": 38,
+        "level": 20
+      },
+      "4":{
+        "eid": 39,
+        "level": 20
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 15250
+    },
+    "consume": 45
+  },
+  "6-6": {
+    "enemies": {
+      "1":{
+        "eid": 38,
+        "level": 20
+      },
+      "2":{
+        "eid": 41,
+        "level": 10
+      },
+      "3":{
+        "eid": 40,
+        "level": 15
+      },
+      "4":{
+        "eid": 40,
+        "level": 15
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 15400
+    },
+    "consume": 45
+  },
+  "6-7": {
+    "enemies": {
+      "1":{
+        "eid": 8,
+        "level": 40
+      },
+      "2":{
+        "eid": 42,
+        "level": 1
+      },
+      "3":{
+        "eid": 41,
+        "level": 10
+      },
+      "4":{
+        "eid": 40,
+        "level": 15
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 16000
+    },
+    "consume": 45
+  },
+  "6-7突袭": {
+    "enemies": {
+      "1":{
+        "eid": 8,
+        "level": 55
+      },
+      "2":{
+        "eid": 42,
+        "level": 20
+      },
+      "3":{
+        "eid": 41,
+        "level": 25
+      },
+      "4":{
+        "eid": 40,
+        "level": 30
+      }
+    },
+    "reward": {
+      "name": "合成玉",
+      "amount": 800
+    },
+    "consume": 45
+  },
+  "6-17": {
+    "enemies": {
+      "1":{
+        "eid": 42,
+        "level": 100
+      }
+    },
+    "reward": {
+      "name": "霜星",
+      "amount": 1
+    },
+    "consume": 0
+  },
+  "7-1": {
+    "enemies": {
+      "1":{
+        "eid": 31,
+        "level": 35
+      },
+      "2":{
+        "eid": 36,
+        "level": 20
+      },
+      "3":{
+        "eid": 36,
+        "level": 20
+      },
+      "4":{
+        "eid": 31,
+        "level": 35
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 16050
+    },
+    "consume": 45
+  },
+  "7-2": {
+    "enemies": {
+      "1":{
+        "eid": 44,
+        "level": 35
+      },
+      "2":{
+        "eid": 45,
+        "level": 35
+      },
+      "3":{
+        "eid": 44,
+        "level": 35
+      },
+      "4":{
+        "eid": 45,
+        "level": 35
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 16100
+    },
+    "consume": 45
+  },
+  "7-3": {
+    "enemies": {
+      "1":{
+        "eid": 44,
+        "level": 35
+      },
+      "2":{
+        "eid": 45,
+        "level": 35
+      },
+      "3":{
+        "eid": 46,
+        "level": 35
+      },
+      "4":{
+        "eid": 45,
+        "level": 35
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 16125
+    },
+    "consume": 45
+  },
+  "7-4": {
+    "enemies": {
+      "1":{
+        "eid": 44,
+        "level": 35
+      },
+      "2":{
+        "eid": 47,
+        "level": 25
+      },
+      "3":{
+        "eid": 46,
+        "level": 35
+      },
+      "4":{
+        "eid": 45,
+        "level": 35
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 16125
+    },
+    "consume": 45
+  },
+  "7-5": {
+    "enemies": {
+      "1":{
+        "eid": 45,
+        "level": 35
+      },
+      "2":{
+        "eid": 48,
+        "level": 25
+      },
+      "3":{
+        "eid": 47,
+        "level": 25
+      },
+      "4":{
+        "eid": 46,
+        "level": 35
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 18200
+    },
+    "consume": 50
+  },
+  "7-6": {
+    "enemies": {
+      "1":{
+        "eid": 49,
+        "level": 35
+      },
+      "2":{
+        "eid": 48,
+        "level": 25
+      },
+      "3":{
+        "eid": 49,
+        "level": 25
+      },
+      "4":{
+        "eid": 46,
+        "level": 35
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 18200
+    },
+    "consume": 50
+  },
+  "7-7": {
+    "enemies": {
+      "1":{
+        "eid": 48,
+        "level": 25
+      },
+      "2":{
+        "eid": 50,
+        "level": 1
+      },
+      "3":{
+        "eid": 47,
+        "level": 25
+      },
+      "4":{
+        "eid": 49,
+        "level": 35
+      }
+    },
+    "reward": {
+      "name": "龙门币",
+      "amount": 19000
+    },
+    "consume": 50
+  },
+  "7-7突袭": {
+    "enemies": {
+      "1":{
+        "eid": 48,
+        "level": 40
+      },
+      "2":{
+        "eid": 50,
+        "level": 15
+      },
+      "3":{
+        "eid": 47,
+        "level": 40
+      },
+      "4":{
+        "eid": 49,
+        "level": 50
+      }
+    },
+    "reward": {
+      "name": "合成玉",
+      "amount": 900
+    },
+    "consume": 50
+  },
+
+
+
   "尖灭作战": {
     "enemies": {
       "1":{
