@@ -96,12 +96,12 @@ class Operator:
         res_add_f: 法抗百分比加成
         crit_r_add_f: 暴击率百分比加成
         crit_d_add_f: 暴击伤害百分比加成
-        speed_f: 速度百分比加成
         
         health_add_d: 最大生命值数值加成
         atk_add_d: 攻击力数值加成
         def_add_d: 防御力数值加成
         res_add_d: 法抗数值加成
+        speed_f: 速度数值加成
         
         特殊状态(数值表示持续回合，大于0时生效，效果生效时每回合减1)
         immobile: 无法行动(无法普攻和使用技能，跳过该干员回合)
@@ -185,6 +185,9 @@ class Operator:
                     e.effect_level -= 1
                     if e.effect_level <= 0:
                         self.effect_list.remove(e)
+                    self.def_add_f -= e_d
+                    self.defence_p = self.defence * (1 + self.def_add_f) + self.def_add_d
+                    self.defence_p = 0 if self.defence_p < 0 else self.defence_p
 
         elif atk_type in [4, 5]:
             self.health += result
@@ -295,7 +298,7 @@ class Operator:
                 self.crit_r_add_d += e_d
             elif e_t == 9:
                 self.crit_d_add_d += e_d
-            elif e_t == 10:
+            elif e_t in [10, 26]:
                 self.speed_add_d += e_d
             elif e_t == 11:
                 self.atk_add_f += (e_d * e.effect_level)
@@ -334,7 +337,9 @@ class Operator:
         self.crit_d_p = self.crit_d + self.crit_d_add_d
         self.crit_d_p = 0 if self.crit_d_p < 0 else self.crit_d_p
         self.max_speed_p = self.max_speed + self.speed_add_d
-        self.max_speed_p = 10 if self.max_speed_p < 10 else self.max_speed_p
+        self.max_speed_p = 10 if self.max_speed_p < 10 else self.max_speed_p  # 保底速度
+        if self.speed > self.max_speed_p:
+            self.speed = self.max_speed_p
 
     def init_effect(self):
         """
@@ -365,7 +370,7 @@ class Operator:
                 self.crit_r_add_d += e_d
             elif e_t == 9:
                 self.crit_d_add_d += e_d
-            elif e_t == 10:
+            elif e_t in [10, 26]:
                 self.speed_add_d += e_d
             elif e_t == 11:
                 self.atk_add_f += (e_d * e.effect_level)
@@ -426,6 +431,16 @@ class Operator:
             for i in range(len(self.effect_list)):
                 if self.effect_list[i].effect_type == 18:  # 嘲讽效果值同时存在一个
                     self.effect_list[i] = e
+                    return
+
+        elif e.effect_type == 26:
+            for i in range(len(self.effect_list)):
+                if self.effect_list[i].effect_type == 24:  # 冻结效果延长持续时间
+                    self.effect_list[i].persistence += 1
+                    return
+                elif self.effect_list[i].effect_type == 26:  # 寒冷效果叠加变为冻结
+                    await self.append_effect(Effect(e.effect_id, 24, 1, 0, 0, 0, 0))
+                    self.effect_list.remove(self.effect_list[i])
                     return
 
         # 其他效果
