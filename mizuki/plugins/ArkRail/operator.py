@@ -185,7 +185,7 @@ class Operator:
                     e.effect_level -= 1
                     if e.effect_level <= 0:
                         self.effect_list.remove(e)
-                    self.def_add_f -= e_d
+                    self.def_add_f -= e.effect_degree
                     self.defence_p = self.defence * (1 + self.def_add_f) + self.def_add_d
                     self.defence_p = 0 if self.defence_p < 0 else self.defence_p
 
