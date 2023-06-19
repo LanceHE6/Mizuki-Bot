@@ -12,7 +12,7 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEve
 
 from .playing_manager import PlayingManager, new_instance
 from ...Utils.PluginInfo import PluginInfo
-from ..DB import is_map_exist, get_map_attribute, MapAttribute, user_agar
+from ..DB import is_map_exist, get_map_attribute, MapAttribute, user_agar, get_user_level_progress
 from ...Currency.utils import change_user_lmc_num, change_user_sj_num
 from .draw_image import draw_player_fight_image
 
@@ -121,6 +121,21 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await play.finish(MessageSegment.at(uid) + f"没有{mid}这张地图！")
     if await is_playing(uid):
         await play.finish("你还有正在进行的战斗哦！")
+
+    # 判断用户关卡进度
+    map_level_progress_list = mid.split("-")
+    if len(map_level_progress_list) > 1:
+        user_level_progress_str = await get_user_level_progress(uid)
+        user_level_progress_list = user_level_progress_str.split("-")
+        user_chapter = int(user_level_progress_list[0])  # 章节
+        user_progress = int(user_level_progress_list[1])  # 进度
+        map_chapter = int(map_level_progress_list[0])
+        map_progress = int(map_level_progress_list[1])
+
+        if user_chapter * 100 + user_progress + 1 >= map_chapter * 100 + map_progress:
+            pass
+        else:
+            await play.finish(f"您的关卡进度为{user_level_progress_str}，还不能挑战{mid}这张地图哦！")
 
     pm: PlayingManager = await new_instance(uid, mid)  # 战斗数据
     playing_user.append(uid)  # 将用户id放进战斗中的用户id列表
