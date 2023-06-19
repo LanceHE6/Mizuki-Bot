@@ -398,7 +398,7 @@ class PlayingManager:
                         if not isinstance(op, Operator):
                             continue
                         damage_amount = await op.hurt(sub, atk_type, damage)
-                        total_damage += damage
+                        total_damage += damage_amount
                         objs_list.append(op)
                         objs_name += f" {op.name}"
                         objs_damage += f" {damage_amount}"
