@@ -1,29 +1,22 @@
 # <center>🌙Mizuki-Bot</center>
 
-<p align="center">
-
-![Static Badge](https://img.shields.io/badge/Licence-MIT-blue)
-![Static Badge](https://img.shields.io/badge/Python-%3E%3D3.8-orange)
-![Static Badge](https://img.shields.io/badge/%E6%A1%86%E6%9E%B6-nonebot2-green)
-
-</p>
-
 
 
 <div align="center">
 <img src="./icon.png" alt="icon" style="zoom:20%;">
 </div>
-
-
-
-
+<div align="center">
 （图侵删）
+</div>
+<div align="center">
 
+![Static Badge](https://img.shields.io/badge/Licence-MIT-blue)
+![Static Badge](https://img.shields.io/badge/Python-%3E%3D3.8-orange)
+![Static Badge](https://img.shields.io/badge/%E6%A1%86%E6%9E%B6-nonebot2-green)
+
+</div>
 
 ------
-
-
-
 
 - [<center>Mizuki-Bot</center>](#-center-mizuki-bot--center-)
   * [简介](#span-idjump1-简介-span)
