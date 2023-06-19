@@ -16,7 +16,7 @@ database = database_path / 'Mizuki_DB.db'
 
 def check_database():
     logger.info(Fore.BLUE + "[DB]检查数据库...")
-    if not os.path.exists(database):
+    if not os.path.exists(database_path):
         os.mkdir(database_path)
     try:
         connection = sqlite3.Connection(database)
@@ -67,7 +67,9 @@ class MDataBase:
                     "Create Table ArkRail_User(uid integer primary key Not Null,"
                     "                          level integer default 1 check ( level between 1 and 120),"
                     "                          operators_all text,"
-                    "                          operators_playing text);")
+                    "                          operators_playing text,"
+                    "                          level_progress text"
+                    ");")
                 self.connection.commit()
                 logger.info(Fore.RED + "[ArkRail]ArkRail_User表创建成功")
 
