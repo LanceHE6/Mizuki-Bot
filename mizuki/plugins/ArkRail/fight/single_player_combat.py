@@ -125,9 +125,9 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     pm: PlayingManager = await new_instance(uid, mid)  # 战斗数据
     playing_user.append(uid)  # 将用户id放进战斗中的用户id列表
 
-    operate_atk = on_command("atk", aliases={"attack", "普通攻击", "普攻", "攻击"}, rule=is_doctor, block=True, priority=1)
-    operate_skill = on_command("skill", aliases={"技能", "使用技能"}, rule=is_doctor, block=True, priority=1)
-    operate_run = on_command("run", aliases={"逃跑", "润", "溜了"}, rule=is_doctor, block=True, priority=1)
+    operate_atk = on_command("atk", aliases={"attack", "普通攻击", "普攻", "攻击", "a"}, rule=is_doctor, block=True, priority=1)
+    operate_skill = on_command("skill", aliases={"技能", "使用技能", "s"}, rule=is_doctor, block=True, priority=1)
+    operate_run = on_command("run", aliases={"逃跑", "润", "寄"}, rule=is_doctor, block=True, priority=1)
 
     # 先进行一次判断，如果是敌人先手则敌方先行动
     message = await pm.is_enemy_turn()
@@ -272,7 +272,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
             # 如果参数大于两个 且 ((技能对敌 且 敌人序号参数正确) 或 (技能对友 且 友方序号参数正确))
             if len(parm_list) >= 2 and \
                     ((skill.obj_type == 1 and 0 <= parm_list[1] < len(pm.all_enemies_list)) or
-                     (skill.obj_type == 4 and 0 <= parm_list[1] < len(pm.ops_list))):
+                     (skill.obj_type == 4 and 0 <= parm_list[1] < len(pm.all_ops_list))):
 
                 # 获取目标
                 obj1 = pm.all_enemies_list[parm_list[1]] if skill.obj_type == 1 else pm.all_ops_list[parm_list[1]]

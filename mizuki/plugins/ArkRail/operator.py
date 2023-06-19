@@ -234,7 +234,7 @@ class Operator:
             if e.effect_type == 14:
                 await self.hurt(None, 4, int(self.max_health_p * e.effect_degree))
             elif e.effect_type == 17:
-                await self.hurt(None, 6, int(self.health * e.effect_degree))
+                await self.hurt(None, 6, int(self.health * (-1 * e.effect_degree)))
 
             e.persistence -= 1
 

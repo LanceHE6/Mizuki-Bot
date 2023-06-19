@@ -27,6 +27,9 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
     all_ops_list = pm.all_ops_list
     all_enemies_list = pm.all_enemies_list
 
+    if all_list[0] not in all_ops_list:
+        return
+
     bg_img = Image.open(res_path / "atk_places/1_f.png")  # 背景
     bg_img_size = bg_img.size  # 背景原尺寸
     message_str = ""  # 消息内容
