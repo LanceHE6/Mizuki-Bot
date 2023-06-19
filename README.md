@@ -1,31 +1,23 @@
-# <center>🌙Mizuki-Bot</center>
+<div align="center">
+<img src="./icon.png" alt="icon" style="width: 250px;height: 250px">
+</div>
 
-<p align="center">
+<div align="center" style="font-size: 14px">
+（图侵删）
+</div>
+
+# <div align="center">🌙Mizuki-Bot</div>
+
+<div align="center">
 
 ![Static Badge](https://img.shields.io/badge/Licence-MIT-blue)
 ![Static Badge](https://img.shields.io/badge/Python-%3E%3D3.8-orange)
 ![Static Badge](https://img.shields.io/badge/%E6%A1%86%E6%9E%B6-nonebot2-green)
 
-</p>
-
-
-
-<div align="center">
-<img src="./icon.png" alt="icon" style="zoom:20%;">
 </div>
 
-
-
-
-（图侵删）
-
-
 ------
-
-
-
-
-- [<center>Mizuki-Bot</center>](#-center-mizuki-bot--center-)
+## 目录
   * [简介](#span-idjump1-简介-span)
   * [项目结构](#span-idjump2-项目结构-span)
   * [功能](#span-idjump3-功能-span)
@@ -68,32 +60,21 @@
 |  //插件数据目录
 ```
 
-
-
 ## <span id="jump3">功能</span>
-
+```
 √ 聊天
-
 √ 日常签到
-
-   方舟铁道主题玩法
-
-  ​		√ 抽卡
-
-​		   养成
-
-​		   战斗
-
+√ 货币系统
+  方舟铁道主题玩法
+    √ 抽卡
+    √ 养成
+      战斗
   农场主题玩法
-
-
-
-  √help菜单
+√ help菜单
 
 ......
-
-
-
+更多功能开发中
+```
 ## <span id="jump4">部署</span>
 
 *请确保你的python环境版本>=3.8*
@@ -106,9 +87,7 @@
 
 ### <span id="jump4-2">修改bot配置文件
 
-打开.env文件并修改相应配置
-
-
+编辑.env文件并修改相应配置
 ```
 HOST=127.0.0.1  # 主机地址
 PORT=13570 # 监听端口号
@@ -135,7 +114,7 @@ PERSONALITY=""  # ChatGPT 人格描述
 
 `pip install -r -requirements.txt`
 
-### <span id="jump4-4">下载配置go-cqhttp
+### <span id="jump4-4">下载配置go-cqhttp（如使用插件中的go-cqhttp可忽略此项）
 
 1.在[Releases ](https://github.com/Mrs4s/go-cqhttp/releases)页面下载对应版本并解压
 
@@ -143,7 +122,7 @@ PERSONALITY=""  # ChatGPT 人格描述
 
 3.编辑config.yml文件
 
-​	注意修改最后的反向WS设置
+注意修改最后的反向WS设置
 
 	`  - ws-reverse:
 	  # 反向WS Universal 地址
@@ -167,8 +146,6 @@ PERSONALITY=""  # ChatGPT 人格描述
 不出意外的话bot就能与go-cqhttp正常连接
 
 ------
-
-
 
 ## <span id="jump5">更新日志</span>
 

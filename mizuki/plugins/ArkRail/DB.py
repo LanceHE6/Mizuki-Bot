@@ -247,7 +247,7 @@ async def is_in_table(uid: int) -> bool:
             }
         }
         # 初始化用户数据和抽卡数据和体力数据
-        await MDB.db_execute(f'insert into ArkRail_User values({uid}, 1, "{ops}", "{ops}");')
+        await MDB.db_execute(f'insert into ArkRail_User values({uid}, 1, "{ops}", "{ops}", "0-0");')
 
         await MDB.db_execute(f'Insert Into ArkRail_GachaUser values ({uid},0,0,"[]","[]","[]","[]");')
 
@@ -541,3 +541,13 @@ async def agar_is_enough(uid: int or str, num: int) -> bool:
         return False
     else:
         return True
+
+async def get_user_level_progress(uid: int or str) -> str:
+    """
+    获取用户的关卡进度
+    :param uid: uid
+    :return: 1-1 str
+    """
+    uid = int(uid)
+    level = (await MDB.db_query_single(f"Select level_progress From ArkRail_User Where uid={uid};"))[0]
+    return str(level)
