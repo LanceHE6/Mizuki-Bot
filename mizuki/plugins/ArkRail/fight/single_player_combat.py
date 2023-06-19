@@ -84,19 +84,24 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         """
         is_over: bool = False
         if len(messages) > 1 and (("作战失败" in messages) or ("作战成功" in messages)):  # 删除战斗信息
-            if messages[len(messages) - 1] == "作战成功":  # 获取奖励
+            if "作战成功" in messages:  # 获取奖励
                 consume = await get_map_attribute(mid, MapAttribute.consume)
-                if not await user_agar(uid, consume):
+                if await user_agar(uid, consume):
                     reward = await get_map_attribute(mid, MapAttribute.reward)
                     #  reward[0]: str 奖励名称  reward[1]: int 奖励数量
                     if reward[0] == "龙门币":
                         await change_user_lmc_num(uid, reward[1])
                     elif reward[0] == "合成玉":
                         await change_user_sj_num(uid, reward[1])
+                    else:
+                        pass  # 关卡奖励干员
+                    result = f"消耗{consume}琼脂，获取到{reward[1]}{reward[0]}！"
                 else:
-                    await handle.send("您的琼脂不足，无法获取关卡奖励！")
+                    result = "您的琼脂不足，无法获取关卡奖励！"
+            else:
+                result = "请提高干员的实力再来挑战吧！"
             is_over = True
-            await handle.send(messages[len(messages) - 1])
+            await handle.send(f"{messages[len(messages) - 1]}！{result}")
         if is_over:
             await finish_playing()
 
@@ -385,11 +390,6 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await delete_handle(operate_run)
         await delete_handle(operate_atk)
         await delete_handle(operate_skill)
-
-        async def del_pm():
-            del pm
-
-        await del_pm()
 
 
 async def delete_handle(obj: Type[Matcher]):
