@@ -1168,7 +1168,7 @@
   },
   "50": {
     "name": "爱国者-行军",
-    "stars": 6,
+    "stars": 7,
     "profession": "重装-中坚",
     "health": 2800,
     "health_plus": 25,
@@ -1218,7 +1218,7 @@
   },
   "51": {
     "name": "爱国者-毁灭",
-    "stars": 6,
+    "stars": 7,
     "profession": "近卫-攻坚",
     "health": 2500,
     "health_plus": 25,
