@@ -1,12 +1,12 @@
-# <div align="center">🌙Mizuki-Bot</div>
-
 <div align="center">
 <img src="./icon.png" alt="icon" style="zoom:20%;">
 </div>
 
-<div align="center">
+<div align="center" style="font-size: 14px">
 （图侵删）
 </div>
+
+## <div align="center">🌙Mizuki-Bot</div>
 
 <div align="center">
 
