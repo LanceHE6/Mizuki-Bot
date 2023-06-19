@@ -6,7 +6,7 @@
 （图侵删）
 </div>
 
-## <div align="center">🌙Mizuki-Bot</div>
+# <div align="center">🌙Mizuki-Bot</div>
 
 <div align="center">
 
