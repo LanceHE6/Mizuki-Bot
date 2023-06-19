@@ -7,6 +7,83 @@
 from nonebot.adapters.onebot.v11 import Bot
 
 class MBot:
+    """
+    通过go-cqhttp api 实现的Bot功能拓展类
+
+    func:
+
+    get_online_clients
+    获取当前账号在线客户端列表
+
+    delete_friend
+    删除好友
+
+    get_forward_msg
+    获取转发消息内容
+
+    send_group_forward_msg
+    发送群转发消息
+
+    send_private_forward_msg
+    发送私聊转发消息
+
+    get_group_msg_history
+    获取群历史消息
+
+    get_group_system_msg
+    获取群系统消息
+
+    get_essence_msg_list
+    获取群精华消息列表
+
+    get_group_at_all_remain
+    获取群 @全体成员 剩余次数
+
+    set_essence_msg
+    设置精华消息
+
+    delete_essence_msg
+    删除精华消息
+
+    send_group_sign
+    发送群打卡
+
+    send_group_notice
+    发送群公告
+
+    get_group_notice
+    获取群公告
+
+    upload_group_file
+    上传群文件
+
+    delete_group_file
+    删除群文件
+
+    create_group_file_folder
+    创建群文件夹
+
+    delete_group_folder
+    删除群文件夹
+
+    get_group_file_system_info
+    获取群文件系统信息
+
+    get_group_root_files
+    获取群文件根目录列表
+
+    get_group_files_by_folder
+    获取群子目录文件列表
+
+    get_group_file_url
+    获取群文件资源链接
+
+    upload_private_file
+    上传私聊文件
+
+    check_url_safely
+    检查链接安全性
+    """
 
     def __init__(self, bot: Bot):
         self.__bot__ = bot
