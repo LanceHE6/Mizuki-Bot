@@ -1416,19 +1416,19 @@
     "enemies": {
       "1":{
         "eid": 31,
-        "level": 35
+        "level": 25
       },
       "2":{
         "eid": 36,
-        "level": 20
+        "level": 15
       },
       "3":{
         "eid": 36,
-        "level": 20
+        "level": 15
       },
       "4":{
         "eid": 31,
-        "level": 35
+        "level": 25
       }
     },
     "reward": {
@@ -1441,19 +1441,19 @@
     "enemies": {
       "1":{
         "eid": 44,
-        "level": 35
+        "level": 25
       },
       "2":{
         "eid": 45,
-        "level": 35
+        "level": 25
       },
       "3":{
         "eid": 44,
-        "level": 35
+        "level": 25
       },
       "4":{
         "eid": 45,
-        "level": 35
+        "level": 25
       }
     },
     "reward": {
@@ -1466,19 +1466,19 @@
     "enemies": {
       "1":{
         "eid": 44,
-        "level": 35
+        "level": 25
       },
       "2":{
         "eid": 45,
-        "level": 35
+        "level": 25
       },
       "3":{
         "eid": 46,
-        "level": 35
+        "level": 25
       },
       "4":{
         "eid": 45,
-        "level": 35
+        "level": 25
       }
     },
     "reward": {
@@ -1491,19 +1491,19 @@
     "enemies": {
       "1":{
         "eid": 44,
-        "level": 35
+        "level": 25
       },
       "2":{
         "eid": 47,
-        "level": 25
+        "level": 20
       },
       "3":{
         "eid": 46,
-        "level": 35
+        "level": 25
       },
       "4":{
         "eid": 45,
-        "level": 35
+        "level": 25
       }
     },
     "reward": {
@@ -1516,19 +1516,19 @@
     "enemies": {
       "1":{
         "eid": 45,
-        "level": 35
+        "level": 25
       },
       "2":{
         "eid": 48,
-        "level": 25
+        "level": 20
       },
       "3":{
         "eid": 47,
-        "level": 25
+        "level": 20
       },
       "4":{
         "eid": 46,
-        "level": 35
+        "level": 25
       }
     },
     "reward": {
@@ -1541,19 +1541,19 @@
     "enemies": {
       "1":{
         "eid": 49,
-        "level": 35
+        "level": 25
       },
       "2":{
         "eid": 48,
-        "level": 25
+        "level": 20
       },
       "3":{
         "eid": 49,
-        "level": 25
+        "level": 20
       },
       "4":{
         "eid": 46,
-        "level": 35
+        "level": 25
       }
     },
     "reward": {
@@ -1565,7 +1565,7 @@
   "7-7": {
     "enemies": {
       "1":{
-        "eid": 48,
+        "eid": 45,
         "level": 25
       },
       "2":{
@@ -1574,11 +1574,11 @@
       },
       "3":{
         "eid": 47,
-        "level": 25
+        "level": 20
       },
       "4":{
         "eid": 49,
-        "level": 35
+        "level": 25
       }
     },
     "reward": {
@@ -1590,7 +1590,7 @@
   "7-7突袭": {
     "enemies": {
       "1":{
-        "eid": 48,
+        "eid": 45,
         "level": 40
       },
       "2":{
@@ -1599,11 +1599,11 @@
       },
       "3":{
         "eid": 47,
-        "level": 40
+        "level": 35
       },
       "4":{
         "eid": 49,
-        "level": 50
+        "level": 40
       }
     },
     "reward": {
