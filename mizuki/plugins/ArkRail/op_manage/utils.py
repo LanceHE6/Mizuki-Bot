@@ -20,10 +20,11 @@ async def get_cost_op(start_level: int, end_level: int) -> int:
                           12991, 13162, 13333, 13504, 13675, 13846, 14017, 14188, 14358, 14529, 14700, 14871, 15042,
                           15213, 15601]
     total_cost = 0
-    for i in range(start_level-1, end_level-1):
+    for i in range(start_level - 1, end_level - 1):
         total_cost += lmc_cost_per_level[i]
 
     return total_cost
+
 
 async def get_cost_skill(start_level: int, end_level: int) -> int:
     """
@@ -32,12 +33,13 @@ async def get_cost_skill(start_level: int, end_level: int) -> int:
     :param end_level: 目标等级
     :return: 总共消耗货币数
     """
-    lmc_cost_per_level = [5000, 10000 ,18000, 28000, 40000, 55000, 70000]
+    lmc_cost_per_level = [5000, 10000, 18000, 28000, 40000, 55000, 70000]
     total_cost = 0
-    for i in range(start_level, end_level+1):
+    for i in range(start_level, end_level + 1):
         total_cost += lmc_cost_per_level[i]
 
     return total_cost
+
 
 async def str_to_list(string: str) -> list:
     """
@@ -51,13 +53,12 @@ async def str_to_list(string: str) -> list:
         if char != ' ':
             word += char
         else:
-            #去除前后多余空格
+            # 去除前后多余空格
             if word == '':
                 continue
             the_list.append(word)
             word = ''
-    #处理最后一个单词
-    if word != '' :
+    # 处理最后一个单词
+    if word != '':
         the_list.append(word)
     return the_list
-

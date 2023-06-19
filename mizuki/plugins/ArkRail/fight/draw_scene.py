@@ -5,4 +5,3 @@
 # @Software:PyCharm
 from PIL import Image, ImageDraw, ImageFont
 from pathlib import Path
-

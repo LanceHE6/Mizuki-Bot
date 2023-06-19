@@ -28,6 +28,7 @@ __plugin_info__ = PluginInfo(
     }
 )
 
+
 @update_res_comm.handle()
 async def update_res():
     release_data = await check_release()

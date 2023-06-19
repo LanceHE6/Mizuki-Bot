@@ -12,7 +12,6 @@ from ..DB import get_user_agar_num, get_agar_full_time
 
 show_agar_comm = on_command("琼脂", aliases={"体力"}, block=True, priority=3)
 
-
 __plugin_info__ = PluginInfo(
     plugin_name="ArkRail_show_agar_info",
     name="琼脂值查询",
@@ -23,7 +22,8 @@ __plugin_info__ = PluginInfo(
         "version": "0.1.0",
         "priority": 3
     }
-    )
+)
+
 
 @show_agar_comm.handle()
 async def _(event: GroupMessageEvent):
@@ -36,6 +36,7 @@ async def _(event: GroupMessageEvent):
     else:
         reply += f"预计回满时间:{await minute_to_standard_str(full_time)}"
     await show_agar_comm.finish(reply, at_sender=True)
+
 
 async def minute_to_standard_str(minute: int) -> str:
     """

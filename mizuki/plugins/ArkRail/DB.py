@@ -56,6 +56,7 @@ enemy_skills_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'enemy_
 
 class OPAttributeNotFoundError(Exception):
     """干员属性异常类"""
+
     def __init__(self, error_attribute):
         self.error_attribute = error_attribute
 
@@ -65,6 +66,7 @@ class OPAttributeNotFoundError(Exception):
 
 class SkillAttributeNotFoundError(Exception):
     """技能属性异常类"""
+
     def __init__(self, error_attribute):
         self.error_attribute = error_attribute
 
@@ -148,7 +150,8 @@ async def get_skill_attribute(sid: str or int, attribute: str, is_enemy: bool = 
     :param is_enemy: 是否为敌人技能 default false
     :return: 属性信息
     """
-    if attribute not in ["name", "brief_d", "detail", "rate1", "rate1_plus", "rate2", "rate2_plus", "rate3", "rate3_plus",
+    if attribute not in ["name", "brief_d", "detail", "rate1", "rate1_plus", "rate2", "rate2_plus", "rate3",
+                         "rate3_plus",
                          "obj_type", "consume", "consume_plus", "persistence", "persistence_plus", "effect_list"]:
         raise SkillAttributeNotFoundError(attribute)
     with open(skills_data if not is_enemy else enemy_skills_data, 'r', encoding='utf-8') as data:
@@ -335,7 +338,8 @@ async def add_op_to_user(uid: int or str, oid: int or str):
     }
     await MDB.db_execute(f'Update ArkRail_User set operators_all="{owned_ops_list}" Where uid="{uid}";')
 
-async def change_user_op_level(uid: int or str, oid :int, target_level: int):
+
+async def change_user_op_level(uid: int or str, oid: int, target_level: int):
     """
     更改用户干员等级
     :param uid: qq
@@ -353,10 +357,12 @@ async def change_user_op_level(uid: int or str, oid :int, target_level: int):
         if user_playing_ops_list[op_no]["oid"] == oid:
             user_playing_ops_list[op_no]["level"] = target_level
             # 同步更新出战干员的等级
-            await MDB.db_execute(f'Update ArkRail_User set operators_playing="{user_playing_ops_list}" Where uid="{uid}";')
+            await MDB.db_execute(
+                f'Update ArkRail_User set operators_playing="{user_playing_ops_list}" Where uid="{uid}";')
     await MDB.db_execute(f'Update ArkRail_User set operators_all="{user_ops_list}" Where uid="{uid}";')
 
-async def change_user_op_skill_level(uid: int or str, oid :int, skill_number:int, target_level: int):
+
+async def change_user_op_skill_level(uid: int or str, oid: int, skill_number: int, target_level: int):
     """
     更改用户干员技能等级
     :param uid: qq
@@ -378,6 +384,7 @@ async def change_user_op_skill_level(uid: int or str, oid :int, skill_number:int
             await MDB.db_execute(
                 f'Update ArkRail_User set operators_playing="{user_playing_ops_list}" Where uid="{uid}";')
     await MDB.db_execute(f'Update ArkRail_User set operators_all="{user_ops_list}" Where uid="{uid}";')
+
 
 async def change_user_playing_ops(uid: int or str, playing_oid_list: list):
     """
@@ -465,10 +472,12 @@ async def reset_user_cur_pool_num(uid: int or str):
     sql_sequence = f'Update ArkRail_GachaUser Set cur_pool_num=0 Where uid="{uid}";'
     await MDB.db_execute(sql_sequence)
 
-async def get_user_ops_num_of_gacha(uid: int or str, stars: int =5 or 6) -> int:
+
+async def get_user_ops_num_of_gacha(uid: int or str, stars: int = 5 or 6) -> int:
     """获取用户抽卡获得的5星或6星干员总数"""
     ops_list = await get_user_all_pool_ops(uid, stars)
     return len(ops_list)
+
 
 async def agar_natural_recover():
     """
@@ -484,11 +493,13 @@ async def agar_natural_recover():
                 # 体力未满时设置tag
                 await MDB.db_execute(f"Update ArkRail_AgarUser Set is_full=0,full_time={need_time} Where uid={uid};")
 
-            await MDB.db_execute(f"Update ArkRail_AgarUser Set agar_num=agar_num+1, full_time=full_time-6 Where uid={uid};")  # 体力加一
+            await MDB.db_execute(
+                f"Update ArkRail_AgarUser Set agar_num=agar_num+1, full_time=full_time-6 Where uid={uid};")  # 体力加一
         else:
             if user_info[3] == 0:
                 # 体力回满时设置tag
                 await MDB.db_execute(f"Update ArkRail_AgarUser Set is_full=1,full_time=0 Where uid={uid};")
+
 
 async def get_user_agar_num(uid: str or int) -> int:
     """
@@ -499,6 +510,7 @@ async def get_user_agar_num(uid: str or int) -> int:
     uid = int(uid)
     num = await MDB.db_query_single(f"Select agar_num From ArkRail_AgarUser Where uid={uid}")
     return int(num[0])
+
 
 async def user_agar(uid: int or str, num: int) -> int:
     """
@@ -512,6 +524,7 @@ async def user_agar(uid: int or str, num: int) -> int:
         return 0
     await MDB.db_execute(f"Update ArkRail_AgarUser Set agar_num=argar_num-{num} Where uid={uid}")
     return 1
+
 
 async def get_agar_full_time(uid: int or str) -> int:
     """
@@ -528,6 +541,7 @@ async def get_agar_full_time(uid: int or str) -> int:
         need_time = 0
     return need_time
 
+
 async def agar_is_enough(uid: int or str, num: int) -> bool:
     """
     判断用户琼脂是否足够
@@ -541,6 +555,7 @@ async def agar_is_enough(uid: int or str, num: int) -> bool:
         return False
     else:
         return True
+
 
 async def get_user_level_progress(uid: int or str) -> str:
     """

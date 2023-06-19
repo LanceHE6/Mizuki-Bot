@@ -26,7 +26,7 @@ from ..DB import (
     add_op_to_user_db,
     get_user_ops_num_of_gacha,
     get_user_all_pool_num
-    )
+)
 
 src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
 gacha_record_src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'gacha' / 'res'
@@ -45,10 +45,10 @@ async def gacha(uid, ten_type: bool = False) -> list:
         flag = random.randint(0, 1001)
         now_pool_num = await get_user_cur_pool_num(uid)
         if now_pool_num > 50:
-            prob_imp = (now_pool_num-PoolConfig.prob_improvement)*20
+            prob_imp = (now_pool_num - PoolConfig.prob_improvement) * 20
         else:
             prob_imp = 0
-        if flag <= 20+prob_imp:
+        if flag <= 20 + prob_imp:
             """6*"""
             _6s_ops_list = await get_ops_list_by_stars(6)
             for up in PoolConfig.up_6s:
@@ -61,7 +61,7 @@ async def gacha(uid, ten_type: bool = False) -> list:
                     oid_list.append(random.choice(PoolConfig.up_6s))
                 else:
                     oid_list.append(random.choice(_6s_ops_list))
-            await reset_user_cur_pool_num(uid)#重置保底数
+            await reset_user_cur_pool_num(uid)  # 重置保底数
         elif 20 + prob_imp < flag <= 100 + prob_imp:
             """5*"""
             _5s_ops_list = await get_ops_list_by_stars(5)
@@ -76,7 +76,7 @@ async def gacha(uid, ten_type: bool = False) -> list:
                 else:
                     oid_list.append(random.choice(_5s_ops_list))
 
-        elif 100 + prob_imp< flag <= 600+ prob_imp:
+        elif 100 + prob_imp < flag <= 600 + prob_imp:
             """4*"""
             oid_list.append(random.choice(await get_ops_list_by_stars(4)))
         else:
@@ -142,7 +142,7 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
 
     draw = ImageDraw.Draw(image)
     oid = oid_list[0]
-    op_img_path =await get_op_img(int(oid), is_big=1)
+    op_img_path = await get_op_img(int(oid), is_big=1)
     op_img = Image.open(op_img_path)
     new_img = Image.open(new_img_path)
     profession = await get_op_attribute(oid, OPAttribute.profession)
@@ -152,12 +152,13 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
     stars_img = Image.open(stars_img_path / f'{stars}_big.png')
 
     image.paste(op_img, (80, 10), mask=op_img)  # 干员
-    #os.remove(op_img_path)  # 删除临时干员图片文件
+    # os.remove(op_img_path)  # 删除临时干员图片文件
     image.paste(stars_img, (160, 550), mask=stars_img)  # 星级
     image.paste(pro_img, (320, 750))  # 职业标志
 
     font = ImageFont.truetype('simsun', 100)
-    draw.text((110, 790), f"{''.join(list(profession)[0:2])}", font=font, fill=(0, 0, 0), stroke_fill=(0, 0, 0), stroke_width=2)  # 职业文字
+    draw.text((110, 790), f"{''.join(list(profession)[0:2])}", font=font, fill=(0, 0, 0), stroke_fill=(0, 0, 0),
+              stroke_width=2)  # 职业文字
     font = ImageFont.truetype('simsun', 120)
     draw.text((460, 765), name, font=font, stroke_fill='gray', stroke_width=1)  # 干员名字
     if stars == 5 or stars == 6:
@@ -180,6 +181,7 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
     image.save(Path() / 'mizuki' / 'plugins' / 'ArkRail' / f'gacha_{now_time}.png')
     # image.show()
     return Path() / 'mizuki' / 'plugins' / 'ArkRail' / f'gacha_{now_time}.png'
+
 
 async def get_user_info(uid: int or str) -> list:
     """
@@ -215,6 +217,7 @@ async def get_user_info(uid: int or str) -> list:
 
     return [nick_name, src_path / "user_avatar.png"]
 
+
 async def circle_corner(img: Image, radii: int) -> Image:
     """
     将图片圆角化
@@ -229,7 +232,7 @@ async def circle_corner(img: Image, radii: int) -> Image:
     img = img.convert("RGBA")
     w, h = img.size
 
-    #创建一个alpha层，存放四个圆角，使用透明度切除圆角外的图片
+    # 创建一个alpha层，存放四个圆角，使用透明度切除圆角外的图片
     alpha = Image.new('L', img.size, 255)
     alpha.paste(circle.crop((0, 0, radii, radii)), (0, 0))  # 左上角
     alpha.paste(circle.crop((radii, 0, radii * 2, radii)),
@@ -245,6 +248,7 @@ async def circle_corner(img: Image, radii: int) -> Image:
     draw.rounded_rectangle(img.getbbox(), outline="black", width=3, radius=radii)
     return img
 
+
 async def transverse_text_center_locate(text: str, img_width: int or float, font_size: int):
     """
     定位字符串在图片中间的x坐标
@@ -255,11 +259,12 @@ async def transverse_text_center_locate(text: str, img_width: int or float, font
     """
     count = 0
     for char in text:
-        if len(char) == 2:#判断中文
+        if len(char) == 2:  # 判断中文
             count += 2
         else:
             count += 1
-    return img_width/2-count/2*font_size/2
+    return img_width / 2 - count / 2 * font_size / 2
+
 
 async def draw_gacha_record(uid: int or str) -> Path:
     """
@@ -272,7 +277,7 @@ async def draw_gacha_record(uid: int or str) -> Path:
     img = Image.new("RGBA", bg_img.size)
     img.paste(bg_img, (0, 0))
     draw = ImageDraw.Draw(img)
-    user_info =await get_user_info(uid)
+    user_info = await get_user_info(uid)
     nick_name = user_info[0]
     avatar_path = user_info[1]
     avatar = await circle_corner(Image.open(avatar_path).resize((200, 200)), 100)
@@ -290,8 +295,8 @@ async def draw_gacha_record(uid: int or str) -> Path:
     total_num = await get_user_all_pool_num(uid)
     s5_num = await get_user_ops_num_of_gacha(uid, 5)
     s6_num = await get_user_ops_num_of_gacha(uid, 6)
-    s5_radio = round(s5_num/total_num*100, 2)
-    s6_radio = round(s6_num / total_num*100, 2)
+    s5_radio = round(s5_num / total_num * 100, 2)
+    s6_radio = round(s6_num / total_num * 100, 2)
     cur_num = await get_user_cur_pool_num(uid)
     draw.text((850, 500), f"{total_num}", font=font, fill='white')
     draw.text((850, 590), f"{s5_num}", font=font, fill=(254, 254, 58))

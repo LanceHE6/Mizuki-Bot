@@ -23,6 +23,7 @@ from nonebot import get_driver
 img_resources_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
 res_version_data = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res_manage' / 'res_version_data.json'
 
+
 async def check_release():
     """
     检查仓库release，获取asset信息

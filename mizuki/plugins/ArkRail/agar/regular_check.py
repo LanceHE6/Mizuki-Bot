@@ -8,6 +8,7 @@ from nonebot_plugin_apscheduler import scheduler
 from ..DB import agar_natural_recover
 from nonebot.log import logger
 
+
 @scheduler.scheduled_job("cron", minute="*/6")
 async def recover():
     logger.info("[ArkRail_agar]开始检查琼脂")

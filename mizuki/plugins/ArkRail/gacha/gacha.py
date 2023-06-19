@@ -44,6 +44,7 @@ __plugin_info__ = PluginInfo(
 
 user_cd_manager = CDManager(10)
 
+
 # 单抽
 @single.handle()
 async def _(event: GroupMessageEvent):
