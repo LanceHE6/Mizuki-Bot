@@ -63,6 +63,9 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
             point = (1330, 282)
             size = (260, 260)
 
+        if enemy.stars >= 7:
+            size = (int(size[0] * 1.5), int(size[1] * 1.5))
+
         # 绘制敌人模型
         enemy_model_img = Image.open(res_path / f"enemies/{eid}.png").resize(size)
         image.paste(enemy_model_img, point, mask=enemy_model_img)
@@ -149,7 +152,8 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
         movement_bg_img = Image.open(res_path / "atk_info/movement_bg.png")
         image.paste(movement_bg_img, (27, 5 + i * 89), mask=movement_bg_img)
         avatar_path = "op_heads" if obj in all_ops_list else "enemies"
-        op_avatar = Image.open(res_path / avatar_path / f"{oid}.png").resize((90, 90))
+        head_size = (90, 90) if obj.stars < 7 else (135, 135)
+        op_avatar = Image.open(res_path / avatar_path / f"{oid}.png").resize(head_size)
         image.paste(op_avatar, (32, 5 + i * 89), mask=op_avatar)
         # 速度
         speed = obj.speed
