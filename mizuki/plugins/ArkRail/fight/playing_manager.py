@@ -620,7 +620,7 @@ class PlayingManager:
                 persistence = 1
                 objs_list.append(sub)
                 objs_list.append(obj1)
-                message += f"\n使自己和{obj1.name}攻击力提高{round(skill.rate2, 2)}但每回合流失{round(skill.rate1, 3)}最大生命值！"
+                message += f"\n使自己和{obj1.name}攻击力提高{round(skill.rate2, 2) * 100}%但每回合流失{round(skill.rate1, 3) * 100}%最大生命值！"
             elif sid == 35:
                 persistence = 1
                 message += f"\n自身速度增加{round(skill.rate1, 2)}！"
