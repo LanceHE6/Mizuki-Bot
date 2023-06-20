@@ -6,13 +6,12 @@
 
 import os
 import time
-import requests
-import json
 from pathlib import Path
 from PIL import Image, ImageFont, ImageDraw
 from ...Currency.utils import change_user_lmc_num
 from ..gacha.pool_config import PoolConfig
 from ..utils import get_op_img
+from ...Utils.QQ import QQ
 import random
 from ..DB import (
     add_user_pool_num,
@@ -124,7 +123,7 @@ async def draw_img_ten(oid_list: list, uid: int or str) -> Path:
     # 文字样式（微软雅黑），可以自定义ttf格式文字样式
     font = ImageFont.truetype('simhei', 22)
     draw.text((2200, 730), f"{uid}", font=font)
-    draw.text((2190, 750), f'{time.strftime("%m-%d %H:%M:%S", time.localtime())}', font=font)
+    draw.text((2170, 750), f'{time.strftime("%m-%d %H:%M:%S", time.localtime())}', font=font)
     draw.text((2205, 770), "Create By", font=font, fill=(0, 162, 255))
     draw.text((2200, 790), "Mizuki-Bot", font=font, fill=(0, 162, 255))
 
@@ -173,7 +172,7 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
     # 文字样式（微软雅黑），可以自定义ttf格式文字样式
     font = ImageFont.truetype('simhei', 22)
     draw.text((950, 990), f"{uid}", font=font)
-    draw.text((935, 1010), f'{time.strftime("%m-%d %H:%M:%S", time.localtime())}', font=font)
+    draw.text((915, 1010), f'{time.strftime("%m-%d %H:%M:%S", time.localtime())}', font=font)
     draw.text((955, 1030), "Create By", font=font, fill=(0, 162, 255))
     draw.text((950, 1050), "Mizuki-Bot", font=font, fill=(0, 162, 255))
 
@@ -181,41 +180,6 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
     image.save(Path() / 'mizuki' / 'plugins' / 'ArkRail' / f'gacha_{now_time}.png')
     # image.show()
     return Path() / 'mizuki' / 'plugins' / 'ArkRail' / f'gacha_{now_time}.png'
-
-
-async def get_user_info(uid: int or str) -> list:
-    """
-    通过网络api获取用户的qq昵称以及头像
-    :param uid: qq号
-    :return: 包含用户昵称和头像本地地址的列表[nick_name, avatar_path]
-    """
-    headers = {
-        "User-Agent": "Mozilla / 5.0(Windows NT 10.0 Win64; x64)"
-    }
-
-    # # 获取用户qq头像地址及昵称    ——糖豆子api（暂时不能用）
-    # qq_info_api = f"http://api.tangdouz.com/qq.php?qq={uid}"
-    # qq_info = json.loads(requests.get(url=qq_info_api, headers=headers).content)
-    # if qq_info["code"] != 1:
-    #     await my_account.finish("获取用户信息失败，请稍后再试")
-    # nick_name = qq_info["name"]
-    # img_data = requests.get(qq_info["imgurl"]).content
-    # with open(src_path/"user_avatar.png", 'wb') as data:
-    #     data.write(img_data)
-    #     data.close()
-
-    # 获取用户qq头像地址及昵称备用api
-    qq_info_api = f"https://api.usuuu.com/qq/{uid}"
-    qq_info = json.loads(requests.get(url=qq_info_api, headers=headers).content)
-    if qq_info["code"] != "200":
-        return []
-    nick_name = qq_info["data"]["name"]
-    img_data = requests.get(qq_info["data"]["avatar"]).content
-    with open(src_path / "user_avatar.png", 'wb') as data:
-        data.write(img_data)
-        data.close()
-
-    return [nick_name, src_path / "user_avatar.png"]
 
 
 async def circle_corner(img: Image, radii: int) -> Image:
@@ -266,20 +230,21 @@ async def transverse_text_center_locate(text: str, img_width: int or float, font
     return img_width / 2 - count / 2 * font_size / 2
 
 
-async def draw_gacha_record(uid: int or str) -> Path:
+async def draw_gacha_record(uid: int or str, nick_name: str) -> Path:
     """
     绘制抽卡记录分析
+    :param nick_name: 用户昵称
     :param uid: qq
     :return 图片本地地址
     """
+    qq = QQ(int(uid))
     bg_img = Image.open(f"{gacha_record_src_path}/bg.png")
 
     img = Image.new("RGBA", bg_img.size)
     img.paste(bg_img, (0, 0))
     draw = ImageDraw.Draw(img)
-    user_info = await get_user_info(uid)
-    nick_name = user_info[0]
-    avatar_path = user_info[1]
+    avatar_path = await qq.get_avatar()
+
     avatar = await circle_corner(Image.open(avatar_path).resize((200, 200)), 100)
     img.paste(avatar, (688, 100), mask=avatar)
     font = ImageFont.truetype("simhei", 80)
