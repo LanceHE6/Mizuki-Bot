@@ -16,10 +16,12 @@ from .operator import Operator, new_instance
 from .utils import get_op_img, get_op_model, line_break
 from ..Utils.PluginInfo import PluginInfo
 
-attribute_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_info'
+op_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_images'
+info_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_info'
 stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'stars'
 profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profession'
 skill_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'skills'
+res_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
 
 op_info = on_command("出战", aliases={"出战干员"}, block=True, priority=2)
 op_info_all = on_command("ops", aliases={"所有角色", "所有干员", "info all", "我的干员", "干员"}, block=True, priority=2)
@@ -97,15 +99,61 @@ async def _(event: GroupMessageEvent):
     if not await is_in_table(uid):
         await op_info_all.send(MessageSegment.at(uid) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
     all_ops = await get_user_all_ops(uid)
-    reply = MessageSegment.at(uid) + "您拥有的所有干员："
 
+    img = Image.new("RGBA", (1080, (int(len(all_ops) / 8) + 1) * 240 + 50), (255, 255, 255, 255))
+    draw = ImageDraw.Draw(img)
+    i = 1
+    basic_y = 50
     for op in all_ops:
         oid = all_ops[op]["oid"]
         level = all_ops[op]["level"]
         name = await get_op_attribute(oid, OPAttribute.name)
-        reply += f"\n{name}  等级：{level}"
+        profession = ''.join(list(await get_op_attribute(oid, OPAttribute.profession))[0:2])
+        stars = await get_op_attribute(oid, OPAttribute.stars)
 
-    await op_info_all.finish(reply)
+        op_img = Image.open(op_img_path / f"{oid}.png").resize((100, 200))
+        x = (i - 1) * 120 + 70
+        img.paste(op_img, (x, basic_y))
+        # 名字
+        font = ImageFont.truetype("simhei", 20)
+        name_bg = Image.new("RGB", (len(name) * 21, 22), (0, 0, 0))
+        img.paste(name_bg, (x+5, basic_y + 175))
+        draw.text((x+5, basic_y + 175), name, fill="white", font=font)
+
+        # 等级
+        level_img = Image.open(info_img_path / "level.png").resize((50, 50))
+        img.paste(level_img, (x + 25, basic_y + 120), mask=level_img)
+        font = ImageFont.truetype("simhei", 36)
+        if len(str(level)) == 2:
+            draw.text((x + 32, basic_y + 128), str(level), font=font, fill="black")
+        else:
+            draw.text((x + 42, basic_y + 128), str(level), font=font, fill="black")
+
+        # 职业
+        profession_img = Image.open(profession_img_path / f"{profession}_big.png"). resize((25, 25))
+        img.paste(profession_img, (x + 5, basic_y + 5))
+
+        # 星级
+        stars_img = Image.open(stars_img_path / f"{stars}.png").resize((77, 21))
+        if stars == 3:
+            img.paste(stars_img, (x + 18, basic_y + 5), mask=stars_img)
+        if stars == 4:
+            img.paste(stars_img, (x + 20, basic_y + 5), mask=stars_img)
+        if stars == 5:
+            img.paste(stars_img, (x + 22, basic_y + 5), mask=stars_img)
+        if stars == 6:
+            img.paste(stars_img, (x + 25, basic_y + 5), mask=stars_img)
+
+        if i % 8 == 0:
+            basic_y += 240
+            i = 0
+        i += 1
+
+    save_path = res_path / f"{uid}_ops.png"
+    img.save(save_path)
+    await op_info_all.send(MessageSegment.image(save_path), at_sender=True)
+    os.remove(save_path)
+    await op_info_all.finish()
 
 
 @op_detail.handle()
@@ -170,23 +218,23 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
 
 async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) -> Path:
-    bg_img = Image.open(f"{attribute_img_path}/bg.png")
+    bg_img = Image.open(f"{info_img_path}/bg.png")
     op_img_path = await get_op_img(oid, is_big=1)
     op_img = Image.open(op_img_path)
-    max_health_img = Image.open(f"{attribute_img_path}/max_health.png")
-    atk_img = Image.open(f"{attribute_img_path}/atk.png")
-    def_img = Image.open(f"{attribute_img_path}/def.png")
-    crit_d_img = Image.open(f"{attribute_img_path}/crit_d.png")
-    crit_r_img = Image.open(f"{attribute_img_path}/crit_r.png")
-    res_img = Image.open(f"{attribute_img_path}/res.png")
-    speed_img = Image.open(f"{attribute_img_path}/speed.png")
+    max_health_img = Image.open(f"{info_img_path}/max_health.png")
+    atk_img = Image.open(f"{info_img_path}/atk.png")
+    def_img = Image.open(f"{info_img_path}/def.png")
+    crit_d_img = Image.open(f"{info_img_path}/crit_d.png")
+    crit_r_img = Image.open(f"{info_img_path}/crit_r.png")
+    res_img = Image.open(f"{info_img_path}/res.png")
+    speed_img = Image.open(f"{info_img_path}/speed.png")
 
     img = Image.new("RGBA", bg_img.size, (255, 255, 255, 0))  # 新建画板
     draw = ImageDraw.Draw(img)
 
     img.paste(bg_img, (0, 0))
     img.paste(op_img, (1450, 100), mask=op_img)
-    level_img = Image.open(f"{attribute_img_path}/level.png")
+    level_img = Image.open(f"{info_img_path}/level.png")
     img.paste(level_img, (50, 200), mask=level_img)
     # 七种属性图标
     img.paste(max_health_img, (50, 520))
@@ -235,7 +283,7 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
     draw.text((240, 1090), f"{feature}", font=font, fill='white', stroke_fill='black', stroke_width=1)
 
     # 技能详情
-    box = Image.open(f"{attribute_img_path}/box.png")
+    box = Image.open(f"{info_img_path}/box.png")
     img.paste(box, (650, 200), mask=box)
 
     draw.text((800, 220), "技能", font=font, fill='white', stroke_fill='black', stroke_width=1)
