@@ -139,11 +139,11 @@ async def check_image_res():
     检查图片资源
     :return:
     """
-    if not get_driver().config.auto_check_res:
-        return
     logger.info('[ArkRail]开始检查图片资源')
     if os.path.exists(img_resources_path) and os.path.exists(res_version_data):
         logger.info('[ArkRail]图片资源已存在')
+        if not get_driver().config.auto_check_res:
+            return
         with open(res_version_data, 'r', encoding='utf-8') as data:
             local_data = json.load(data)
             data.close()
