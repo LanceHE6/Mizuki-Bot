@@ -7,7 +7,7 @@
 import os
 from colorama import Fore
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import MessageSegment, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import MessageSegment, GroupMessageEvent, Bot
 from nonebot.log import logger
 from pathlib import Path
 from .utils import draw_gacha_record
@@ -30,11 +30,13 @@ __plugin_info__ = PluginInfo(
 )
 
 @gacha_record.handle()
-async def _(event: GroupMessageEvent):
+async def _(bot: Bot, event: GroupMessageEvent):
     uid = event.get_user_id()
+    user_info = await bot.get_stranger_info(user_id=int(uid))
+    nickname = user_info["nickname"]
     logger.info(f"[gacha_recode]开始绘制用户{uid}的抽卡记录")
     try:
-        img_path = await draw_gacha_record(uid)
+        img_path = await draw_gacha_record(uid, nickname)
         logger.info(f"[gacha_recode]用户{uid}的抽卡记录绘制成功")
     except IndexError:
         img_path = None
