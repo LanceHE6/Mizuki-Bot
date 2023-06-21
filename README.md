@@ -3,7 +3,6 @@
 </div>
 
 <div align="center" style="font-size: 14px">
-（图侵删）
 </div>
 
 # <div align="center">🌙Mizuki-Bot</div>
