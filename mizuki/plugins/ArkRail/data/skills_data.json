@@ -1538,7 +1538,7 @@
     "detail": "清除自身所有效果，然后连续寻找当前生命值最少的敌人进行${r1_int}次攻击力为${r2_float}的法术斩击，然后伤害类型变为单体真实，持续${persistence}回合",
     "rate1": 8,
     "rate1_plus": 0.25,
-    "rate2": 1.4,
+    "rate2": 1.2,
     "rate2_plus": 0.02,
     "rate3": 6,
     "rate3_plus": 0,
