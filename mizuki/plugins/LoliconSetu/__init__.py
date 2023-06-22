@@ -16,9 +16,23 @@ from typing import Dict
 from .Lolicon import Lolicon
 from ..Utils.CDManager import CDManager
 from ..Utils.MBot import MBot
+from ..Utils.PluginInfo import PluginInfo
 
 setu_re = on_regex("^来(?P<num>.*?)(张|份)(?P<kw>.*?)(的|)(涩图|setu|色图|图)$")
 setu_re_guild = on_regex("^来(张|份)(?P<kw>.*?)(的|)(涩图|setu|色图|图)$")
+
+__plugin_info__ = PluginInfo(
+    plugin_name="LoliconSetu",
+    name="二次元图片",
+    description="发送二次元图片",
+    usage="来张[关键字]的图 ——都懂",
+    extra={
+        "author": "Hycer_Lance",
+        "version": "0.2.0",
+        "priority": 2,
+        "guild_adapted": True
+    }
+)
 
 user_cd_manager = CDManager(60)  # 用户冷却管理器
 group_cd_manager = CDManager(60)  # 群冷却管理器
