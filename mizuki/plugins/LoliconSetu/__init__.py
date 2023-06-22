@@ -23,6 +23,7 @@ setu_re_guild = on_regex("^来(张|份)(?P<kw>.*?)(的|)(涩图|setu|色图|图)
 user_cd_manager = CDManager(60)  # 用户冷却管理器
 group_cd_manager = CDManager(60)  # 群冷却管理器
 
+
 # noinspection PyDefaultArgument
 @setu_re.handle()
 async def _(bot: Bot, event: GroupMessageEvent, data: Dict = RegexDict()):
