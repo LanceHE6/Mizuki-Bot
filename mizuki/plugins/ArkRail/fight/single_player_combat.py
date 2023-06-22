@@ -11,7 +11,7 @@ from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
 
 from .playing_manager import PlayingManager, new_instance
-from ...Utils.PluginInfo import PluginInfo
+from ...Help.PluginInfo import PluginInfo
 from ..DB import is_map_exist, get_map_attribute, MapAttribute, user_agar, get_user_level_progress
 from ...Currency.utils import change_user_lmc_num, change_user_sj_num
 from .draw_image import draw_player_fight_image

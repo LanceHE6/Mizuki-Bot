@@ -9,7 +9,7 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEve
 from nonebot.params import CommandArg, Arg
 from nonebot.typing import T_State
 
-from ...Utils.PluginInfo import PluginInfo
+from ...Help.PluginInfo import PluginInfo
 from ..DB import get_oid_by_name, get_user_all_ops, is_op_owned, change_user_op_level, get_op_attribute, OPAttribute
 from ...Currency.utils import get_user_lmc_num, change_user_lmc_num
 from .utils import get_cost_op

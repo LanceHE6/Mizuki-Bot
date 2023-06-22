@@ -16,7 +16,7 @@ from typing import Dict
 from .Lolicon import Lolicon
 from ..Utils.CDManager import CDManager
 from ..Utils.MBot import MBot
-from ..Utils.PluginInfo import PluginInfo
+from ..Help.PluginInfo import PluginInfo
 
 setu_re = on_regex("^来(?P<num>.*?)(张|份)(?P<kw>.*?)(的|)(涩图|setu|色图|图)$")
 setu_re_guild = on_regex("^来(张|份)(?P<kw>.*?)(的|)(涩图|setu|色图|图)$")

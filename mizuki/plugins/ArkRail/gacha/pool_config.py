@@ -16,7 +16,7 @@ from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Message
 from PIL import Image, ImageDraw, ImageFont
 from ..utils import get_op_img
-from ...Utils.PluginInfo import PluginInfo
+from ...Help.PluginInfo import PluginInfo
 
 config = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'pool_config.json'
 

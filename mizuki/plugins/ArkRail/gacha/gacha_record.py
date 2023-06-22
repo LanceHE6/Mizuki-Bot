@@ -11,7 +11,7 @@ from nonebot.adapters.onebot.v11 import MessageSegment, GroupMessageEvent, Bot
 from nonebot.log import logger
 from pathlib import Path
 from .utils import draw_gacha_record
-from ...Utils.PluginInfo import PluginInfo
+from ...Help.PluginInfo import PluginInfo
 
 src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'gacha' / 'res'
 

@@ -14,7 +14,7 @@ from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_oid_by_
     MapAttribute, get_op_attribute, OPAttribute, is_op_owned
 from .operator import Operator, new_instance
 from .utils import get_op_img, get_op_model, line_break
-from ..Utils.PluginInfo import PluginInfo
+from ..Help.PluginInfo import PluginInfo
 
 op_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_images'
 info_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_info'

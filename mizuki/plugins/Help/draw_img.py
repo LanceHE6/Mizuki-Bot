@@ -5,7 +5,7 @@
 # @Software:PyCharm
 
 from PIL import Image, ImageDraw, ImageFont
-from ..Utils.PluginInfo import PluginsInfoList
+from ..Help.PluginInfo import PluginsInfoList
 from pathlib import Path
 from nonebot import get_driver
 
@@ -60,10 +60,13 @@ async def draw_help_img(guild_command: bool = False) -> Path:
                 content = command_start + plugin.usage
             if "permission" in plugin.extra.keys() and plugin.extra["permission"] == "SUPERUSER":
                 content += " (bot管理员)"
-            if not (guild_command and "guild_adapted" in plugin.extra.keys() and plugin.extra["guild_adapted"]):
-                continue
-            draw.text((x, base_y + i * (font_size + 6)), f"{content}", font=font, fill='white')
-            i += 1
+            if not guild_command:
+                draw.text((x, base_y + i * (font_size + 6)), f"{content}", font=font, fill='white')
+                i += 1
+            else:
+                if "guild_adapted" in plugin.extra.keys() and plugin.extra["guild_adapted"]:
+                    draw.text((x, base_y + i * (font_size + 6)), f"{content}", font=font, fill='white')
+                    i += 1
         if base_y + i * (font_size + 6) > 1080:  # 左边排满了往右边排
             x = 850
             i = 0

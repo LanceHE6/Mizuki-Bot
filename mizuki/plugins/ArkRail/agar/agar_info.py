@@ -7,7 +7,7 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 
-from ...Utils.PluginInfo import PluginInfo
+from ...Help.PluginInfo import PluginInfo
 from ..DB import get_user_agar_num, get_agar_full_time
 
 show_agar_comm = on_command("琼脂", aliases={"体力"}, block=True, priority=3)

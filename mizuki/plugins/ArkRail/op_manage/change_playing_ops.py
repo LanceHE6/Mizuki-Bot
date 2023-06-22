@@ -5,11 +5,10 @@
 # @Software:PyCharm
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
-from nonebot.params import CommandArg, Arg
-from nonebot.typing import T_State
+from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
+from nonebot.params import Arg
 
-from ...Utils.PluginInfo import PluginInfo
+from ...Help.PluginInfo import PluginInfo
 from ..DB import get_oid_by_name, is_op_owned, change_user_playing_ops, get_op_attribute, OPAttribute
 from .utils import str_to_list
 

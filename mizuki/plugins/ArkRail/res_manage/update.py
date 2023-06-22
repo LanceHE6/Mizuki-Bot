@@ -3,12 +3,11 @@
 # @Author:Hycer_Lance
 # @Time:2023/6/9 15:41
 # @Software:PyCharm
-import shutil
 
 from nonebot import on_command
 from nonebot.permission import SUPERUSER
 
-from ...Utils.PluginInfo import PluginInfo
+from ...Help.PluginInfo import PluginInfo
 from .utils import *
 
 update_res_comm = on_command("update_res", aliases={'更新资源'}, block=True, priority=1, permission=SUPERUSER)
