@@ -44,8 +44,6 @@
 ├─.env //配置文件
 ├─.gitignore
 ├─bot.py //bot启动文件
-├─docker-compose.yml
-├─Dockerfile
 ├─pyproject.toml
 ├─README.md
 ├─mizuki
