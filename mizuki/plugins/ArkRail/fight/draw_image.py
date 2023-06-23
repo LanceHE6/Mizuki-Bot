@@ -4,6 +4,7 @@
 # @Time:2023/6/4 21:54
 # @Software:PyCharm
 import json
+from nonebot import get_driver
 
 from PIL import Image, ImageFont, ImageDraw
 
@@ -11,6 +12,7 @@ from .playing_manager import PlayingManager, new_instance
 from pathlib import Path
 
 res_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
+command_start = str(list(get_driver().config.command_start)[0])  # 获取指令开头
 
 
 async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
@@ -229,6 +231,7 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
     # skills
     i = 0
     for skill in skills:  # 应改为当前干员skills 循环
+        obj_type = skill.obj_type
         bg_img = Image.open(res_path / "atk_type/atk_bg.png").resize((150, 150))
         description_img = Image.open(res_path / "atk_type/atk_type_bg.png").resize((104, 24))
         sid = skill.sid
@@ -241,9 +244,9 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
         consume_img = Image.open(res_path / f"atk_info/{is_enough}_skill_count.png").resize((10, 12))
         image.paste(consume_img, (1387 - i * 166, 724), mask=consume_img)
 
-        if skill.obj_type in [1, 2, 3]:
+        if obj_type in [1, 2, 3]:
             d_color = (245, 100, 100)
-        elif skill.obj_type in [0, 4, 5, 6]:
+        elif obj_type in [0, 4, 5, 6]:
             d_color = (0, 160, 255)
         else:
             d_color = (175, 100, 245)
@@ -253,6 +256,22 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
 
         font = ImageFont.truetype("simhei", 14)
         draw.text((1385 - i * 166, 736), f"{int(skill.consume)}", font=font, anchor="rs")
+
+        if obj_type == 1:
+            obj_type_command = " <Enemy>"
+        elif obj_type == 2:
+            obj_type_command = " <Enemy1> <Enemy2>"
+        elif obj_type == 4:
+            obj_type_command = " <Operator>"
+        elif obj_type == 5:
+            obj_type_command = " <Operator1> <Operator2>"
+        elif obj_type == 7:
+            obj_type_command = " <Enemy> <Operator>"
+        else:
+            obj_type_command = ""
+
+        font = ImageFont.truetype("simhei", 18)
+        draw.text((1347 - i * 166, 757), f"{command_start}s {i+1}{obj_type_command}", font=font, fill=(255, 0, 0), anchor="ms")
 
         i += 1
 
@@ -267,6 +286,17 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
     # 攻击图标
     atk_img = Image.open(res_path / f"atk_type/atk_bg_{atk_type}.png").resize((180, 180))
     image.paste(atk_img, (1464, 520), mask=atk_img)
+
+    # 攻击指令
+    if atk_type in [0, 1, 2, 3, 6, 7, 8]:
+        atk_type_command = "<Enemy>"
+    elif atk_type in [4, 5]:
+        atk_type_command = "<Operator>"
+    else:
+        atk_type_command = ""
+
+    font = ImageFont.truetype("simhei", 20)
+    draw.text((1550, 715), f"{command_start}a {atk_type_command}", font=font, fill=(255, 0, 0), anchor="ms")
 
     # 战斗信息
     if message_list is not None:
