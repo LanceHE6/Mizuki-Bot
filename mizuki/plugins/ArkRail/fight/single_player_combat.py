@@ -12,7 +12,7 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEve
 
 from .playing_manager import PlayingManager, new_instance
 from ...Utils.PluginInfo import PluginInfo
-from ..DB import is_map_exist, get_map_attribute, MapAttribute, user_agar, get_user_level_progress
+from ..DB import is_map_exist, get_map_attribute, MapAttribute, user_agar, get_user_level_progress, set_user_level_progress
 from ...Currency.utils import change_user_lmc_num, change_user_sj_num
 from .draw_image import draw_player_fight_image
 
@@ -95,9 +95,14 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                         await change_user_sj_num(uid, reward[1])
                     else:
                         pass  # 关卡奖励干员
-                    result = f"消耗{consume}琼脂，获取到{reward[1]}{reward[0]}！"
+                    result = f"消耗{consume}琼脂，获取{reward[1]}{reward[0]}！"
                 else:
                     result = "您的琼脂不足，无法获取关卡奖励！"
+
+                # 判断用户关卡进度
+                if len(map_level_progress_list) == 2:
+                    if user_progress == map_progress:
+                        await set_user_level_progress(uid, mid)  # 更新用户进度
             else:
                 result = "请提高干员的实力再来挑战吧！"
             is_over = True
@@ -127,12 +132,18 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     if len(map_level_progress_list) > 1:
         user_level_progress_str = await get_user_level_progress(uid)
         user_level_progress_list = user_level_progress_str.split("-")
-        user_chapter = int(user_level_progress_list[0])  # 章节
-        user_progress = int(user_level_progress_list[1])  # 进度
-        map_chapter = int(map_level_progress_list[0])
-        map_progress = int(map_level_progress_list[1])
+        user_chapter = int(user_level_progress_list[0])  # 玩家章节
+        user_level = int(user_level_progress_list[1])  # 玩家关卡
+        map_chapter = int(map_level_progress_list[0])  # 地图章节
+        map_level = int(map_level_progress_list[1])  # 地图关卡
 
-        if user_chapter * 100 + user_progress + 1 >= map_chapter * 100 + map_progress:
+        user_progress = user_chapter * 7 + user_level + 1  # 玩家进度
+        map_progress = map_chapter * 7 + map_level  # 地图进度
+
+        if len(map_level_progress_list) > 2:  # 突袭关卡
+            map_progress += 1
+
+        if user_progress >= map_progress:
             pass
         else:
             await play.finish(f"您的关卡进度为{user_level_progress_str}，还不能挑战{mid}这张地图哦！")
