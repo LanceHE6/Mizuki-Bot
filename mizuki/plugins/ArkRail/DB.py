@@ -564,8 +564,8 @@ async def get_user_level_progress(uid: int or str) -> str:
     :return: 1-1 str
     """
     uid = int(uid)
-    level = (await MDB.db_query_single(f"Select level_progress From ArkRail_User Where uid={uid};"))[0]
-    return str(level)
+    level = await MDB.db_query_single(f"Select level_progress From ArkRail_User Where uid={uid};")
+    return str(level[0])
 
 
 async def set_user_level_progress(uid: int or str, mid: str) -> int:
@@ -575,7 +575,7 @@ async def set_user_level_progress(uid: int or str, mid: str) -> int:
     :param mid: 地图id
     :return: 1更新成功
     """
-
+    uid = int(uid)
     await MDB.db_execute(f'Update ArkRail_User Set level_progress="{mid}" Where uid={uid};')
     return 1
 
