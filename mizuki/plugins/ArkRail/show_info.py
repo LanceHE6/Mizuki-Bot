@@ -115,19 +115,23 @@ async def _(event: GroupMessageEvent):
         x = (i - 1) * 120 + 70
         img.paste(op_img, (x, basic_y))
         # 名字
-        font = ImageFont.truetype("simhei", 20)
-        name_bg = Image.new("RGB", (len(name) * 21, 22), (0, 0, 0))
-        img.paste(name_bg, (x+5, basic_y + 175))
-        draw.text((x+5, basic_y + 175), name, fill="white", font=font)
+        if len(name) > 4:
+            font = ImageFont.truetype("simhei", 16)
+            name_bg = Image.new("RGB", (len(name) * 16, 18), (0, 0, 0))
+        else:
+            font = ImageFont.truetype("simhei", 20)
+            name_bg = Image.new("RGB", (len(name) * 21, 22), (0, 0, 0))
+        img.paste(name_bg, (x + 5, basic_y + 175))
+        draw.text((x + 5, basic_y + 175), name, fill="white", font=font)
 
         # 等级
         level_img = Image.open(info_img_path / "level.png").resize((50, 50))
         img.paste(level_img, (x + 25, basic_y + 120), mask=level_img)
         font = ImageFont.truetype("simhei", 36)
         if len(str(level)) == 2:
-            draw.text((x + 32, basic_y + 128), str(level), font=font, fill="black")
+            draw.text((x + 32, basic_y + 128), str(level), font=font, fill="white", stroke_fill="black", stroke_width=2)
         else:
-            draw.text((x + 42, basic_y + 128), str(level), font=font, fill="black")
+            draw.text((x + 42, basic_y + 128), str(level), font=font, fill="white", stroke_fill="black", stroke_width=2)
 
         # 职业
         profession_img = Image.open(profession_img_path / f"{profession}_big.png"). resize((25, 25))
@@ -312,5 +316,5 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
         i += 1
     save_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / f'{uid}_info.png'
     img.save(save_path)
-    img.show()
+    # img.show()
     return save_path
