@@ -12,7 +12,7 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEve
 
 from .playing_manager import PlayingManager, new_instance
 from ...Help.PluginInfo import PluginInfo
-from ..DB import is_map_exist, get_map_attribute, MapAttribute, user_agar, get_user_level_progress
+from ..DB import is_map_exist, get_map_attribute, MapAttribute, user_agar, get_user_level_progress, set_user_level_progress
 from ...Currency.utils import change_user_lmc_num, change_user_sj_num
 from .draw_image import draw_player_fight_image
 
@@ -31,28 +31,6 @@ __plugin_info__ = [
         name="单人作战",
         description="进行单人作战",
         usage="play <关卡编号> ——进行单人作战",
-        extra={
-            "author": "Silence",
-            "version": "0.1.0",
-            "priority": 1
-        }
-    ),
-    PluginInfo(
-        plugin_name="ArkRail_play_atk",
-        name="普攻",
-        description="对敌人进行普通攻击",
-        usage="atk [目标序号] ——(作战中)进行普攻",
-        extra={
-            "author": "Silence",
-            "version": "0.1.0",
-            "priority": 1
-        }
-    ),
-    PluginInfo(
-        plugin_name="ArkRail_play_skill",
-        name="使用技能",
-        description="使用干员的技能",
-        usage="skill <技能序号> [目标序号1] [目标序号2] ——(作战中)使用技能",
         extra={
             "author": "Silence",
             "version": "0.1.0",
@@ -101,6 +79,10 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
             else:
                 result = "请提高干员的实力再来挑战吧！"
             is_over = True
+
+            if len(map_level_progress_list) == 2:
+                if user_progress == map_progress:
+                    await set_user_level_progress(uid, mid)
             await handle.send(f"{messages[len(messages) - 1]}！{result}")
         if is_over:
             await finish_playing()
