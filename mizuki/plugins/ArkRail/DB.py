@@ -522,7 +522,7 @@ async def user_agar(uid: int or str, num: int) -> int:
     user_num = await get_user_agar_num(uid)
     if user_num < num:
         return 0
-    await MDB.db_execute(f"Update ArkRail_AgarUser Set agar_num=argar_num-{num} Where uid={uid}")
+    await MDB.db_execute(f"Update ArkRail_AgarUser Set agar_num=argar_num-{num} Where uid={uid};")
     return 1
 
 
@@ -566,3 +566,16 @@ async def get_user_level_progress(uid: int or str) -> str:
     uid = int(uid)
     level = (await MDB.db_query_single(f"Select level_progress From ArkRail_User Where uid={uid};"))[0]
     return str(level)
+
+
+async def set_user_level_progress(uid: int or str, mid: str) -> int:
+    """
+    更新用户进度
+    :param uid: 用户id
+    :param mid: 地图id
+    :return: 1更新成功
+    """
+
+    await MDB.db_execute(f'Update ArkRail_User Set level_progress="{mid}" Where uid={uid};')
+    return 1
+
