@@ -203,7 +203,11 @@ async def get_user_all_ops(uid: str or int) -> dict:
     """
     sql_sequence = f"Select operators_all from ArkRail_User where uid={uid};"
     ops = await MDB.db_query_single(sql_sequence)
-    return eval(ops[0])
+    ops = eval(ops[0])
+    # 根据等级排序
+    sort_key = lambda x: x[1]['level']
+    sorted_ops = dict(sorted(ops.items(), key=sort_key, reverse=True))
+    return sorted_ops
 
 
 async def get_user_playing_ops(uid: str or int) -> dict:
@@ -578,4 +582,3 @@ async def set_user_level_progress(uid: int or str, mid: str) -> int:
     uid = int(uid)
     await MDB.db_execute(f'Update ArkRail_User Set level_progress="{mid}" Where uid={uid};')
     return 1
-
