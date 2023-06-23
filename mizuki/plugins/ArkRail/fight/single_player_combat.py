@@ -38,28 +38,6 @@ __plugin_info__ = [
         }
     ),
     PluginInfo(
-        plugin_name="ArkRail_play_atk",
-        name="普攻",
-        description="对敌人进行普通攻击",
-        usage="atk [目标序号] ——(作战中)进行普攻",
-        extra={
-            "author": "Silence",
-            "version": "0.1.0",
-            "priority": 1
-        }
-    ),
-    PluginInfo(
-        plugin_name="ArkRail_play_skill",
-        name="使用技能",
-        description="使用干员的技能",
-        usage="skill <技能序号> [目标序号1] [目标序号2] ——(作战中)使用技能",
-        extra={
-            "author": "Silence",
-            "version": "0.1.0",
-            "priority": 1
-        }
-    ),
-    PluginInfo(
         plugin_name="ArkRail_play_run",
         name="逃跑",
         description="逃跑",
