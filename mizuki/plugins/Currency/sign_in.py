@@ -14,7 +14,7 @@ from nonebot import on_command, on_keyword
 from nonebot.rule import to_me
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 
-from ..Utils.PluginInfo import PluginInfo
+from ..Help.PluginInfo import PluginInfo
 from ...database.utils import MDB
 from .utils import change_user_lmc_num
 

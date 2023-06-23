@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 from pathlib import Path
 
 from .utils import is_user_in_table, get_user_lmc_num, get_user_sj_num
-from ..Utils.PluginInfo import PluginInfo
+from ..Help.PluginInfo import PluginInfo
 from ..Utils.QQ import QQ
 
 src_path = Path() / 'mizuki' / 'plugins' / 'Currency' / 'res'

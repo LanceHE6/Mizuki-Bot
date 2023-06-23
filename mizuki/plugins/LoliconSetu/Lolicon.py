@@ -7,13 +7,28 @@
 import json
 import os
 
+import PIL
 import requests
 import time
 
+from PIL import Image
 from pathlib import Path
 from .SetuImage import SetuImage
 
 setu_path = Path() / os.path.abspath(os.path.dirname(__file__)) / 'setu'
+
+
+async def get_image_memory_size(path):
+    """
+    获取图片大小
+    :param path: 图片地址
+    :return: 大小（MB)
+    """
+    with Image.open(path) as img:
+        size_in_bytes = img.size[0] * img.size[1] * 3  # 3 bytes per pixel (RGB)
+        size_in_mb = size_in_bytes / (1024 * 1024)
+        return size_in_mb
+
 
 class Lolicon:
     __LOLICON_API: str = "https://api.lolicon.app/setu/v2"
@@ -99,6 +114,8 @@ class Lolicon:
         下载图片并返回本地地址
         :return: 包含Path对象的列表， 若为str则发生请求错误
         """
+        if not os.path.exists(setu_path):
+            os.mkdir(setu_path)
         setu_path_list: list[Path] = []
         if len(self.__setu_list) == 0:
             self.__setu_list = await self.get_image()
@@ -111,5 +128,32 @@ class Lolicon:
             with open(setu_image_path, "wb") as data:
                 data.write(setu_data)
                 data.close()
+            try:
+                setu_img = Image.open(setu_image_path)
+            except PIL.UnidentifiedImageError:
+                # 图片下载失败，为损坏的文件，跳过
+                continue
+                # 图片大于3MB会压缩
+            if int(await get_image_memory_size(setu_image_path)) > 3:
+                width, height = setu_img.size
+                # 根据指定的图片大小和原始图片的大小，计算压缩比例，并调整图片尺寸。
+                # 计算压缩比例
+                target_size = 1024 * 1024  # 目标图片大小为1MB
+                file_size = os.path.getsize(setu_image_path)
+                compression_ratio = (target_size / file_size) ** 0.5
+
+                # 调整图片尺寸
+                new_width = int(width * compression_ratio)
+                new_height = int(height * compression_ratio)
+                im = setu_img.resize((new_width, new_height))
+                # 根据指定的图片大小和原始图片的大小，计算压缩质量，并调整图片质量。
+                # 计算压缩质量
+                quality = int(100 / compression_ratio)
+
+                # 调整图片质量 只有jpg格式的图片才能支持压缩
+                setu_compressed_path = setu_path / f"{now_time}_compressed.jpg"
+                im.save(setu_compressed_path, quality=quality)
+                setu_path_list.append(setu_compressed_path)
+                os.remove(setu_image_path)
             setu_path_list.append(setu_image_path)
         return setu_path_list

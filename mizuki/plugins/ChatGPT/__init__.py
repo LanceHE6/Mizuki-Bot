@@ -7,7 +7,7 @@
 from nonebot import on_message, on_command
 from nonebot.rule import *
 from nonebot.adapters.onebot.v11 import MessageEvent
-from ..Utils.PluginInfo import PluginInfo
+from ..Help.PluginInfo import PluginInfo
 
 from .SessionManager import Session, SessionManager
 

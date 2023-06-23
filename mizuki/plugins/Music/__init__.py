@@ -12,7 +12,7 @@ from nonebot.adapters.onebot.v11 import Message
 from nonebot.params import CommandArg, Arg
 from nonebot.typing import T_State
 
-from ..Utils.PluginInfo import PluginInfo
+from ..Help.PluginInfo import PluginInfo
 
 order_music = on_command("music", aliases={"点歌"}, block=True, priority=4)
 

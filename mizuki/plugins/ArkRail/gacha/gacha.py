@@ -13,7 +13,7 @@ from nonebot.log import logger
 
 from ...Currency.utils import change_user_sj_num, sj_is_enough
 from .utils import gacha, draw_img_ten, draw_img_single
-from ...Utils.PluginInfo import PluginInfo
+from ...Help.PluginInfo import PluginInfo
 from ...Utils.CDManager import CDManager
 
 """
