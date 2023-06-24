@@ -260,7 +260,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
             await operate_skill.finish("该技能不存在！")
 
         # 判断玩家当前技力点是否足够
-        if skill.consume > pm.player_skill_count:
+        if int(skill.consume) > pm.player_skill_count:
             await operate_skill.finish("您的技力点不足以释放这个技能！")
 
         # 判断技能是否在持续时间内

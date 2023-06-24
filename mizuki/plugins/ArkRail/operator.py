@@ -397,9 +397,11 @@ class Operator:
             self.mocking_obj = None
 
         self.max_health_p = self.max_health * (1 + self.health_add_f) + self.health_add_d
-        self.max_health_p = 0 if self.max_health_p < 0 else self.max_health_p
+        self.max_health_p = 1 if self.max_health_p < 1 else self.max_health_p
+        if self.health > self.max_health_p:
+            self.health = self.max_health_p
         self.atk_p = self.atk * (1 + self.atk_add_f) + self.atk_add_d
-        self.atk_p = 0 if self.atk_p < 0 else self.atk_p
+        self.atk_p = 1 if self.atk_p < 1 else self.atk_p
         self.defence_p = self.defence * (1 + self.def_add_f) + self.def_add_d
         self.defence_p = 0 if self.defence_p < 0 else self.defence_p
         self.res_p = self.res * (1 + self.res_add_f) + self.res_add_d

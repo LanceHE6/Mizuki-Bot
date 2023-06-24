@@ -84,7 +84,7 @@ class PlayingManager:
                     skill = move_op.skills_list[i]  # 获取技能对象
 
                     #  如果技能点足够且技能不在持续时间内
-                    if self.enemy_skill_count >= skill.consume and skill.count == 0:
+                    if self.enemy_skill_count >= int(skill.consume) and skill.count == 0:
                         result_message = await self.turn(move_op, i + 1, obj)
                         print(f"skill:{result_message}")
                         messages.append(result_message[0])
