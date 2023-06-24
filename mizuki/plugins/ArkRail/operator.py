@@ -450,7 +450,15 @@ class Operator:
                     self.effect_list[i].persistence = e.persistence
                     return
 
-        self.effect_list.append(e)
+        self.effect_list.append(e)  # 添加效果
+
+        if e.effect_type in [2, 6]:  # 最大生命值加成类效果附带回血效果
+            if e.effect_type == 6 and e.effect_degree > 0:
+                health_amount = e.effect_degree
+            else:  # e.effect_type == 2 and e.effect_degree > 0:
+                health_amount = self.max_health_p * e.effect_degree
+            await self.upgrade_effect()
+            await self.hurt(self, 4, int(health_amount))
 
     async def obj_cpy(self, des):
         self.oid = des.oid
