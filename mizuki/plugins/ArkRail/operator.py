@@ -397,9 +397,11 @@ class Operator:
             self.mocking_obj = None
 
         self.max_health_p = self.max_health * (1 + self.health_add_f) + self.health_add_d
-        self.max_health_p = 0 if self.max_health_p < 0 else self.max_health_p
+        self.max_health_p = 1 if self.max_health_p < 1 else self.max_health_p
+        if self.health > self.max_health_p:
+            self.health = self.max_health_p
         self.atk_p = self.atk * (1 + self.atk_add_f) + self.atk_add_d
-        self.atk_p = 0 if self.atk_p < 0 else self.atk_p
+        self.atk_p = 1 if self.atk_p < 1 else self.atk_p
         self.defence_p = self.defence * (1 + self.def_add_f) + self.def_add_d
         self.defence_p = 0 if self.defence_p < 0 else self.defence_p
         self.res_p = self.res * (1 + self.res_add_f) + self.res_add_d
@@ -450,7 +452,15 @@ class Operator:
                     self.effect_list[i].persistence = e.persistence
                     return
 
-        self.effect_list.append(e)
+        self.effect_list.append(e)  # 添加效果
+
+        if e.effect_type in [2, 6]:  # 最大生命值加成类效果附带回血效果
+            if e.effect_type == 6 and e.effect_degree > 0:
+                health_amount = e.effect_degree
+            else:  # e.effect_type == 2 and e.effect_degree > 0:
+                health_amount = self.max_health_p * e.effect_degree
+            await self.upgrade_effect()
+            await self.hurt(self, 4, int(health_amount))
 
     async def obj_cpy(self, des):
         self.oid = des.oid

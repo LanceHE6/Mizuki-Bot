@@ -10,7 +10,7 @@ from nonebot.internal.matcher import Matcher
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
 
-from .playing_manager import PlayingManager, new_instance
+from .playing_manager import PlayingManager, new_instance, is_all_hidden
 from ...Help.PluginInfo import PluginInfo
 from ..DB import is_map_exist, get_map_attribute, MapAttribute, user_agar, get_user_level_progress, set_user_level_progress
 from ...Currency.utils import change_user_lmc_num, change_user_sj_num
@@ -76,13 +76,14 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                     result = f"消耗{consume}琼脂，获取到{reward[1]}{reward[0]}！"
                 else:
                     result = "您的琼脂不足，无法获取关卡奖励！"
+
+                # 更新用户关卡进度
+                if len(map_level_progress_list) == 2:
+                    if user_progress + 1 == map_progress:
+                        await set_user_level_progress(uid, mid)
             else:
                 result = "请提高干员的实力再来挑战吧！"
             is_over = True
-
-            if len(map_level_progress_list) == 2:
-                if user_progress == map_progress:
-                    await set_user_level_progress(uid, mid)
             await handle.send(f"{messages[len(messages) - 1]}！{result}")
         if is_over:
             await finish_playing()
@@ -110,11 +111,13 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         user_level_progress_str = await get_user_level_progress(uid)
         user_level_progress_list = user_level_progress_str.split("-")
         user_chapter = int(user_level_progress_list[0])  # 章节
-        user_progress = int(user_level_progress_list[1])  # 进度
+        user_level = int(user_level_progress_list[1])  # 关卡
         map_chapter = int(map_level_progress_list[0])
-        map_progress = int(map_level_progress_list[1])
+        map_level = int(map_level_progress_list[1])
+        user_progress = user_chapter * 7 + user_level
+        map_progress = map_chapter * 7 + map_level
 
-        if user_chapter * 100 + user_progress + 1 >= map_chapter * 100 + map_progress:
+        if user_progress + 1 >= map_progress:
             pass
         else:
             await play.finish(f"您的关卡进度为{user_level_progress_str}，还不能挑战{mid}这张地图哦！")
@@ -172,11 +175,12 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
                 # 如果干员被嘲讽的话，就只能以嘲讽对象为攻击目标
                 if op.mocked and op.mocking_obj != obj:
-                    await operate_atk.finish(
-                        f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                    if not op.mocking_obj.hidden:
+                        await operate_atk.finish(
+                            f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
 
                 # 不能以隐匿状态下的敌人为目标
-                elif obj.hidden:
+                elif obj.hidden and not await is_all_hidden(pm.all_enemies_list):
                     await operate_atk.finish(f"{obj.name}处于隐匿状态，无法被选中！")
 
                 # 进行普攻
@@ -256,7 +260,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
             await operate_skill.finish("该技能不存在！")
 
         # 判断玩家当前技力点是否足够
-        if skill.consume > pm.player_skill_count:
+        if int(skill.consume) > pm.player_skill_count:
             await operate_skill.finish("您的技力点不足以释放这个技能！")
 
         # 判断技能是否在持续时间内
@@ -276,11 +280,12 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
                 # 如果是对敌技能且干员被嘲讽则只能以被嘲讽者为目标
                 if skill.obj_type == 1 and op.mocked and op.mocking_obj != obj1:
-                    await operate_atk.finish(
-                        f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                    if not op.mocking_obj.hidden:
+                        await operate_atk.finish(
+                            f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
 
                 # 不能以隐匿状态下的敌人为目标
-                elif obj1.hidden:
+                elif obj1.hidden and not await is_all_hidden(pm.all_enemies_list):
                     await operate_atk.finish(f"{obj1.name}处于隐匿状态，无法被选中！")
 
                 # 干员释放技能
@@ -309,15 +314,17 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
                 # 如果为对敌技能则嘲讽对象必须为目标之一
                 if skill.obj_type == 3 and op.mocked and op.mocking_obj != obj1 and op.mocking_obj != obj2:
-                    await operate_atk.finish(f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\nta必须为攻击目标之一！")
+                    if not op.mocking_obj.hidden:
+                        await operate_atk.finish(f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\nta必须为攻击目标之一！")
 
-                # 不能以隐匿状态下的敌人为目标
-                elif obj1.hidden:
-                    await operate_atk.finish(f"{obj1.name}处于隐匿状态，无法被选中！")
+                elif not await is_all_hidden(pm.all_enemies_list):
+                    # 不能以隐匿状态下的敌人为目标
+                    if obj1.hidden:
+                        await operate_atk.finish(f"{obj1.name}处于隐匿状态，无法被选中！")
 
-                # 不能以隐匿状态下的敌人为目标
-                elif obj2.hidden:
-                    await operate_atk.finish(f"{obj2.name}处于隐匿状态，无法被选中！")
+                    # 不能以隐匿状态下的敌人为目标
+                    elif obj2.hidden:
+                        await operate_atk.finish(f"{obj2.name}处于隐匿状态，无法被选中！")
 
                 # 干员释放技能
                 message_skill = await pm.turn(op, skill_num + 1, obj1, obj2)
@@ -340,10 +347,11 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
 
                 # 如果干员被嘲讽则只能以被嘲讽者为目标
                 if op.mocked and op.mocking_obj != obj1:
-                    await operate_atk.finish(f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                    if not op.mocking_obj.hidden:
+                        await operate_atk.finish(f"你被{pm.all_enemies_list.index(op.mocking_obj) + 1}.{op.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
 
                 # 不能以隐匿状态下的敌人为目标
-                elif obj1.hidden:
+                elif obj1.hidden and not await is_all_hidden(pm.all_enemies_list):
                     await operate_atk.finish(f"{obj1.name}处于隐匿状态，无法被选中！")
 
                 # 干员释放技能

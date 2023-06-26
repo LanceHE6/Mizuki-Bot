@@ -17,12 +17,12 @@ class PlayingManager:
         self.all_ops_list: list[Operator] = player_ops_list  # 玩家干员列表
         self.all_enemies_list: list[Operator] = map_enemies_list  # 敌方干员列表
         # 所有干员列表，用于计算干员出手顺序，初始化时顺便做一下冒泡排序
-        self.all_list: list[Operator] = bubble_sort(player_ops_list + map_enemies_list)
+        self.all_list: list[Operator] = bubble_sort_na(player_ops_list + map_enemies_list)
         self.player_skill_count = 20  # 我方初始技力点
         self.enemy_skill_count = 10  # 敌方初始技力点
 
-        refresh_op_next_list(self.all_ops_list)
-        refresh_op_next_list(self.all_enemies_list)
+        refresh_op_next_list_na(self.all_ops_list)
+        refresh_op_next_list_na(self.all_enemies_list)
 
     async def is_enemy_turn(self) -> list[str]:
         """
@@ -41,6 +41,7 @@ class PlayingManager:
 
         # 敌方持续行动，直到行动者为我方干员为止
         while ((move_op in self.all_enemies_list) or move_op.immobile) and (not await self.is_round_over()):
+            print(f"move_op:{move_op.name} speed:{move_op.speed}")
             # 如果干员无法行动
             if move_op.immobile:
                 messages += await self.turn(move_op, -1)  # 结束干员回合
@@ -66,7 +67,7 @@ class PlayingManager:
                     else:
                         obj = self.all_ops_list[random_num] if not move_op.mocked else move_op.mocking_obj
 
-                    if not obj.hidden:  # [死循环隐患]如果所有干员都处于隐匿状态就糟咯awa
+                    if not obj.hidden or await is_all_hidden(self.all_ops_list):  # 如果所有干员都处于隐匿状态则隐匿失效
                         break
 
                 elif move_op.atk_type_p in [4, 5]:
@@ -83,7 +84,7 @@ class PlayingManager:
                     skill = move_op.skills_list[i]  # 获取技能对象
 
                     #  如果技能点足够且技能不在持续时间内
-                    if self.enemy_skill_count >= skill.consume and skill.count == 0:
+                    if self.enemy_skill_count >= int(skill.consume) and skill.count == 0:
                         result_message = await self.turn(move_op, i + 1, obj)
                         print(f"skill:{result_message}")
                         messages.append(result_message[0])
@@ -106,7 +107,7 @@ class PlayingManager:
             messages.append("当前轮已结束，进入下一轮！")
             for op in self.all_list:
                 op.speed = op.max_speed_p
-            self.all_list = bubble_sort(self.all_list)  # 根据速度做冒泡排序
+            self.all_list = await bubble_sort(self.all_list)  # 根据速度做冒泡排序
             messages += (await self.is_enemy_turn())
 
         return messages
@@ -119,7 +120,7 @@ class PlayingManager:
         """
         is_round_over: bool = True
         for op in self.all_list:
-            if op.speed != 0:
+            if op.speed > 0:
                 is_round_over = False
                 break
         return is_round_over
@@ -141,15 +142,15 @@ class PlayingManager:
                     messages.append(await self.attack(sub, obj1))
                     self.player_skill_count += int(5)  # 普攻回复5技力点
                 elif operate in [1, 2, 3]:
-                    messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
                     self.player_skill_count -= int(sub.skills_list[operate - 1].consume)  # 使用技能消耗技力点
+                    messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
             else:  # 敌方干员回合
                 if operate == 0:
                     messages.append(await self.attack(sub, obj1))
                     self.enemy_skill_count += int(5)  # 普攻回复5技力点
                 elif operate in [1, 2, 3]:
-                    messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
                     self.enemy_skill_count -= int(sub.skills_list[operate - 1].consume)  # 使用技能消耗技力点
+                    messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
         else:
             messages.append(f"{sub.name}无法行动...")
 
@@ -163,7 +164,7 @@ class PlayingManager:
             messages.append("作战失败")  # messages[1]装战斗结果信息
 
         # 对所有干员列表按照速度从大到小进行冒泡排序
-        self.all_list = bubble_sort(self.all_list)
+        self.all_list = await bubble_sort(self.all_list)
         return messages
 
     async def attack(self, sub: Operator, obj: Operator) -> str:
@@ -374,7 +375,7 @@ class PlayingManager:
                 message += f"\n攻击力提高{round(skill.rate2 * 100, 1)}%并变为法术伤害！"
             elif sid == 3:
                 health_amount = await sub.hurt(sub, 4, int(skill.rate1 * sub.max_health_p))
-                message += f"\n恢复{health_amount}%最大生命值！"
+                message += f"\n恢复{health_amount}生命值！"
             elif sid in [4, 13, 16]:
                 rate = random.uniform(skill.rate1, skill.rate2)
                 is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
@@ -461,8 +462,7 @@ class PlayingManager:
                 message += f"\n为{obj1.name}和{obj2.name}分别恢复了 {treat1} {treat2} 点生命值！"
             elif sid == 9:
                 persistence = 1
-                sub.atk_add_f += skill.rate1
-                message += f"\n每回合回复{int(skill.rate2)}技力点，攻击力提高{round(skill.rate1 * 100, 1)}%！"
+                message += f"\n每回合回复{int(skill.rate1)}技力点，攻击力提高{round(skill.rate2 * 100, 1)}%！"
             elif sid == 10:
                 message += f"\n下次普攻必定暴击且暴击伤害增加{round(skill.rate1 * 100, 1)}%！\n"
                 damage = int(sub.atk_p + (sub.atk_p * (sub.crit_d_p + skill.rate1)))
@@ -520,6 +520,7 @@ class PlayingManager:
                 health_amount = await obj1.hurt(sub, 4, int(sub.atk_p * skill.rate1))
                 message += f"\n恢复{obj1.name}{health_amount}点生命值！"
             elif sid == 18:
+                persistence = 1
                 message += f"\n攻击方式变为单体治疗，攻击力提高{round(skill.rate2 * 100, 1)}%！"
             elif sid == 19:
                 persistence = 1
@@ -620,7 +621,7 @@ class PlayingManager:
                 persistence = 1
                 objs_list.append(sub)
                 objs_list.append(obj1)
-                message += f"\n使自己和{obj1.name}攻击力提高{round(skill.rate2, 2) * 100}%但每回合流失{round(skill.rate1, 3) * 100}%最大生命值！"
+                message += f"\n使自己和{obj1.name}攻击力提高{round(skill.rate2, 2) * 100}%但每回合流失{round(skill.rate1, 3) * 100}%当前生命值！"
             elif sid == 35:
                 persistence = 1
                 message += f"\n自身速度增加{round(skill.rate1, 2)}！"
@@ -645,7 +646,7 @@ class PlayingManager:
                 health_amount = int(sub.atk_p * skill.rate2)
                 health_amount = await obj2.hurt(obj2, 4, health_amount)
                 objs_list.append(obj1)
-                message += f"\n{is_crit_str}对{obj1.name}造成了{damage}点物理伤害！并为{obj2.name}恢复{health_amount}点生命值！"
+                message += f"\n{is_crit_str}对{obj1.name}造成了{damage}点法术伤害！并为{obj2.name}恢复{health_amount}点生命值！"
             elif sid == 40:
                 if sub.atk_type_p == 1:
                     atk_type_str = "法术"
@@ -676,20 +677,20 @@ class PlayingManager:
                 damage = await obj1.hurt(sub, 1, damage)
                 objs_list.append(obj1)
                 self.player_skill_count += int(skill.rate2)
-                message += f"\n{is_crit_str}对{obj1.name}造成了{damage}点物理伤害！并回复{int(skill.rate2)}技力点！"
+                message += f"\n{is_crit_str}对{obj1.name}造成了{damage}点法术伤害！使其每回合流失{round(skill.rate3, 3) * 100}%当前生命值并回复{int(skill.rate2)}技力点！"
             elif sid == 44:
                 persistence = 1
                 sub.hidden = skill.persistence + 1
                 message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%，进入隐匿状态！"
             elif sid == 46:
                 persistence = 1
-                message += f"\n攻击力和防御力提高{round(skill.rate1 * 100, 1)}%！"
+                message += f"\n攻击力和防御力提高{round(skill.rate1 * 100, 1)}%，暴击率增加{round(skill.rate2 * 100, 2)}%！"
                 await sub.upgrade_effect()
                 damage_str = ""
                 for i in range(3):
-                    is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
+                    is_crit: bool = random.randint(1, 10000) <= (sub.crit_r_p + skill.rate2) * 10000  # 是否暴击
                     is_crit_sym: str = "★" if is_crit else ""
-                    damage = int(sub.atk_p * skill.rate1 + (sub.atk_p * is_crit * sub.crit_d_p))
+                    damage = int((sub.atk * (1 + sub.atk_add_f + skill.rate1) + sub.atk_add_d) + (sub.atk_p * is_crit * sub.crit_d_p))
                     damage = await obj1.hurt(sub, 1, damage)
                     damage_str += f"{damage}{is_crit_sym}+"
                 damage_str = damage_str.rstrip("+")  # 去掉末尾的+号
@@ -736,7 +737,7 @@ class PlayingManager:
                 message += f"\n防御力提高{round(skill.rate1 * 100, 1)}%，速度减少{round(skill.rate3, 2)}点，每回合恢复{round(skill.rate2 * 100, 2)}%最大生命值！"
             elif sid == 56:
                 persistence = 1
-                message += f"\n伤害类型变为群体物理，攻击力提高{round(skill.rate2 * 100, 1)}%，防御力降低{round(skill.rate1, 1)}%！"
+                message += f"\n伤害类型变为群体物理，攻击力提高{round(skill.rate2 * 100, 1)}%，防御力降低{round(skill.rate1 * 100, 1)}%！"
             elif sid == 57:
                 persistence = 0
                 sub.effect_list.clear()  # 清空效果列表
@@ -744,15 +745,18 @@ class PlayingManager:
                 for i in range(int(skill.rate1)):
                     atk_obj = self.all_enemies_list[0]
                     for op in self.all_enemies_list:
-                        if op.health < atk_obj.health:
+                        if atk_obj.health <= 0:  # 寻找血量大于0且血量最少的敌人
+                            atk_obj = op
+                            continue
+                        if atk_obj.health > op.health > 0:  # 寻找血量大于0且血量最少的敌人
                             atk_obj = op
                     is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
                     is_crit_str: str = "★" if is_crit else ""
                     damage = int(sub.atk_p * skill.rate2 + (sub.atk_p * is_crit * sub.crit_d_p))
-                    damage = await atk_obj.hurt(sub, 7, damage)
+                    damage = await atk_obj.hurt(sub, 1, damage)
                     objs_list.append(atk_obj)
                     message += f"\n对{atk_obj.name}造成{is_crit_str}{damage}"
-                message += f"\n点真实伤害！"
+                message += f"\n点法术伤害！"
 
         skill.count = skill.persistence + persistence
         sub_effect_list: list[Effect] = []
@@ -787,14 +791,14 @@ class PlayingManager:
         """
         if op in self.all_enemies_list:
             self.all_enemies_list.remove(op)
-            refresh_op_next_list(self.all_enemies_list)
+            await refresh_op_next_list(self.all_enemies_list)
             for o in self.all_ops_list:  # 解除嘲讽效果
                 if o.mocking_obj == op:
                     o.mocked = 0
                     o.mocking_obj = None
         else:
             self.all_ops_list.remove(op)
-            refresh_op_next_list(self.all_ops_list)
+            await refresh_op_next_list(self.all_ops_list)
             for o in self.all_enemies_list:  # 解除嘲讽效果
                 if o.mocking_obj == op:
                     o.mocked = 0
@@ -851,13 +855,47 @@ class PlayingManager:
         return message
 
 
+async def is_all_hidden(op_list: list[Operator]):
+    """
+    检测列表中的干员是否都处于隐匿状态
+
+    :param op_list: 干员列表
+    :return: 列表中的干员是否都处于隐匿状态
+    """
+    is_all_op_hidden: bool = True
+    for op in op_list:
+        if not op.hidden:
+            is_all_op_hidden = False
+            break
+    return is_all_op_hidden
+
+
 async def new_instance(uid: str or int, mid: str) -> PlayingManager:
     player_ops_list: list[Operator] = await get_operator_list(uid)
     map_enemies_list: list[Operator] = await get_enemies_list(mid)
     return PlayingManager(player_ops_list, map_enemies_list)
 
 
-def refresh_op_next_list(op_list: list[Operator]):
+async def refresh_op_next_list(op_list: list[Operator]):
+    """
+    刷新干员身边的干员列表
+
+    :param op_list: 要刷新的列表
+    """
+    for i in range(len(op_list)):
+        op_list[i].next_operators.clear()
+        if i - 1 >= 0:  # 左边的干员
+            op_list[i].next_operators.append(op_list[i - 1])
+        else:
+            op_list[i].next_operators.append(0)
+        op_list[i].next_operators.append(op_list[i])  # 自身
+        if i + 1 < len(op_list):  # 右边的干员
+            op_list[i].next_operators.append(op_list[i + 1])
+        else:
+            op_list[i].next_operators.append(0)
+
+
+def refresh_op_next_list_na(op_list: list[Operator]):
     """
     刷新干员身边的干员列表
 
@@ -877,7 +915,16 @@ def refresh_op_next_list(op_list: list[Operator]):
 
 
 # 冒泡排序函数
-def bubble_sort(arr: list[Operator]):
+async def bubble_sort(arr: list[Operator]):
+    n = len(arr)
+    for i in range(n):
+        for j in range(n - i - 1):
+            if arr[j].speed < arr[j + 1].speed:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+
+def bubble_sort_na(arr: list[Operator]):
     n = len(arr)
     for i in range(n):
         for j in range(n - i - 1):
