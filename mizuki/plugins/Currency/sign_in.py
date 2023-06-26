@@ -17,6 +17,8 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 from ..Help.PluginInfo import PluginInfo
 from ...database.utils import MDB
 from .utils import change_user_lmc_num
+from ..Utils.GroupAndGuildMessageEvent import GroupAndGuildMessageEvent, GuildMessageEvent
+from ..GuildBinding.utils import get_uid_by_guild_id
 
 """
 数据库签到表示例
@@ -35,7 +37,8 @@ __plugin_info__ = PluginInfo(
     extra={
         "author": "Hycer_Lance",
         "version": "0.1.0",
-        "priority": 2
+        "priority": 2,
+        "guild_adapted": True
     }
 )
 
@@ -43,8 +46,7 @@ async def time_to_strftime(stamp_time):
     return time.strftime("%Y-%m-%d", time.localtime(stamp_time))
 
 
-async def sign_func(event: GroupMessageEvent):
-    uid = int(event.get_user_id())
+async def sign_func(uid: int):
     uid_list = await MDB.find_tb_by_column("Currency_UserSignIn", "uid")
     now_time = int(time.time())
 
@@ -89,12 +91,26 @@ async def sign_func(event: GroupMessageEvent):
 
 
 @sign_in_by_message.handle()
-async def _(event: GroupMessageEvent):
-    reply = await sign_func(event)
+async def _(event: GroupAndGuildMessageEvent):
+    if isinstance(event, GuildMessageEvent):
+        gid = event.get_user_id()
+        uid = await get_uid_by_guild_id(gid)
+        if uid == 0:
+            await sign_in_by_message.finish("您还未绑定QQ号")
+    else:
+        uid = int(event.get_user_id())
+    reply = await sign_func(uid)
     await sign_in_by_message.finish(reply)
 
 
 @sign_in_by_command.handle()
-async def _(event: GroupMessageEvent):
-    reply = await sign_func(event)
+async def _(event: GroupAndGuildMessageEvent):
+    if isinstance(event, GuildMessageEvent):
+        gid = event.get_user_id()
+        uid = await get_uid_by_guild_id(gid)
+        if uid == 0:
+            await sign_in_by_message.finish("您还未绑定QQ号")
+    else:
+        uid = int(event.get_user_id())
+    reply = await sign_func(uid)
     await sign_in_by_command.finish(reply)
