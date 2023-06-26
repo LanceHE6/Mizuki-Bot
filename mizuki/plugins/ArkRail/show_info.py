@@ -4,7 +4,7 @@
 # @Time:2023/4/27 16:52
 # @Software:PyCharm
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 from nonebot.params import CommandArg
 from nonebot.log import logger
 import os
@@ -15,6 +15,9 @@ from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_oid_by_
 from .operator import Operator, new_instance
 from .utils import get_op_img, get_op_model, line_break
 from ..Help.PluginInfo import PluginInfo
+from ..Utils.GroupAndGuildMessageEvent import GroupAndGuildMessageEvent, GuildMessageEvent
+from ..Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment
+from ..GuildBinding.utils import get_uid_by_guild_id
 
 op_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_images'
 info_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_info'
@@ -36,7 +39,8 @@ __plugin_info__ = [PluginInfo(
     extra={
         "author": "Silence",
         "version": "0.1.0",
-        "priority": 2
+        "priority": 2,
+        "guild_adapted": True
     }
     ),
     PluginInfo(
@@ -76,18 +80,23 @@ __plugin_info__ = [PluginInfo(
 
 
 @op_info.handle()
-async def _(event: GroupMessageEvent):
-    uid = int(event.get_user_id())
+async def _(event: GroupAndGuildMessageEvent):
+    if isinstance(event, GuildMessageEvent):
+        uid = int(await get_uid_by_guild_id(event.get_user_id()))
+        if uid == 0:
+            await op_info.finish("您还没有在频道中绑定QQ账号！")
+    else:
+        uid = int(event.get_user_id())
     if not await is_in_table(uid):
-        await op_info.send(MessageSegment.at(uid) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
+        await op_info.send(GroupAndGuildMessageSegment.at(event) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
     playing_ops = await get_user_playing_ops(uid)
-    reply = MessageSegment.at(uid) + "您的出战干员为："
+    reply = GroupAndGuildMessageSegment.at(event) + "您的出战干员为："
     i = 1
     for op in playing_ops:
         oid = playing_ops[op]["oid"]
         level = playing_ops[op]["level"]
         name = await get_op_attribute(oid, OPAttribute.name)
-        reply += f"\n{i}. {name}  等级：{level}"
+        reply += f"\n{i}.{name}  等级：{level}"
         i += 1
 
     await op_info.finish(reply)
@@ -95,9 +104,14 @@ async def _(event: GroupMessageEvent):
 
 @op_info_all.handle()
 async def _(event: GroupMessageEvent):
-    uid = int(event.get_user_id())
+    if isinstance(event, GuildMessageEvent):
+        uid = int(await get_uid_by_guild_id(event.get_user_id()))
+        if uid == 0:
+            await op_info.finish("您还没有在频道中绑定QQ账号！")
+    else:
+        uid = int(event.get_user_id())
     if not await is_in_table(uid):
-        await op_info_all.send(MessageSegment.at(uid) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
+        await op_info_all.send(GroupAndGuildMessageSegment.at(event) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
     all_ops = await get_user_all_ops(uid)
 
     img = Image.new("RGBA", (1080, (int(len(all_ops) / 8) + 1) * 240 + 50), (255, 255, 255, 255))
@@ -155,7 +169,7 @@ async def _(event: GroupMessageEvent):
 
     save_path = res_path / f"{uid}_ops.png"
     img.save(save_path)
-    await op_info_all.send(MessageSegment.image(save_path), at_sender=True)
+    await op_info_all.send(GroupAndGuildMessageSegment.image(event, save_path), at_sender=True)
     os.remove(save_path)
     await op_info_all.finish()
 
@@ -164,12 +178,12 @@ async def _(event: GroupMessageEvent):
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     uid = int(event.get_user_id())
     if not await is_in_table(uid):
-        await op_info.send(MessageSegment.at(uid) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
+        await op_info.send(GroupAndGuildMessageSegment.at(event) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
 
     name = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
     oid = await get_oid_by_name(name)
     if oid == -1:
-        await op_detail.finish(MessageSegment.at(uid) + f"没有名为{name}的干员")
+        await op_detail.finish(GroupAndGuildMessageSegment.at(event) + f"没有名为{name}的干员")
 
     op: Operator
     if await is_op_owned(uid, oid):
@@ -196,7 +210,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     logger.info("[op_info]开始绘制干员信息图片")
     img_path = await draw_op_info_img(oid, level, op, uid)
     logger.info("[op_info]干员信息图片完成")
-    await op_info.send(MessageSegment.at(uid) + tip + MessageSegment.image(img_path))
+    await op_info.send(GroupAndGuildMessageSegment.at(event) + tip + GroupAndGuildMessageSegment.image(event, img_path))
     os.remove(img_path)
     await op_info.finish()
 
@@ -207,9 +221,9 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     mid = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
 
     if not await is_map_exist(mid):
-        await op_detail.finish(MessageSegment.at(uid) + f"没有{mid}这张地图！")
+        await op_detail.finish(GroupAndGuildMessageSegment.at(event) + f"没有{mid}这张地图！")
 
-    reply = MessageSegment.at(uid) + f"{mid}\n敌人数据"
+    reply = GroupAndGuildMessageSegment.at(event) + f"{mid}\n敌人数据"
     enemies_data_list = await get_map_attribute(mid, MapAttribute.enemies)
     reward_list = await get_map_attribute(mid, MapAttribute.reward)
     consume = await get_map_attribute(mid, MapAttribute.consume)
