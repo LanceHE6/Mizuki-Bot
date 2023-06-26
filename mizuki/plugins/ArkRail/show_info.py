@@ -3,6 +3,8 @@
 # @Author:Hycer_Lance
 # @Time:2023/4/27 16:52
 # @Software:PyCharm
+import asyncio
+
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 from nonebot.params import CommandArg
@@ -51,7 +53,8 @@ __plugin_info__ = [PluginInfo(
         extra={
             "author": "Silence",
             "version": "0.1.0",
-            "priority": 2
+            "priority": 2,
+            "guild_adapted": True
         }
     ),
     PluginInfo(
@@ -103,7 +106,7 @@ async def _(event: GroupAndGuildMessageEvent):
 
 
 @op_info_all.handle()
-async def _(event: GroupMessageEvent):
+async def _(event: GroupAndGuildMessageEvent):
     if isinstance(event, GuildMessageEvent):
         uid = int(await get_uid_by_guild_id(event.get_user_id()))
         if uid == 0:
@@ -111,7 +114,8 @@ async def _(event: GroupMessageEvent):
     else:
         uid = int(event.get_user_id())
     if not await is_in_table(uid):
-        await op_info_all.send(GroupAndGuildMessageSegment.at(event) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
+        await op_info_all.send(
+            GroupAndGuildMessageSegment.at(event) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
     all_ops = await get_user_all_ops(uid)
 
     img = Image.new("RGBA", (1080, (int(len(all_ops) / 8) + 1) * 240 + 50), (255, 255, 255, 255))

@@ -7,10 +7,9 @@
 from .PluginInfo import PluginInfo
 from .draw_img import draw_help_img
 from ..Utils.GroupAndGuildMessageEvent import GroupAndGuildMessageEvent, GuildMessageEvent
+from ..Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import MessageSegment
-from nonebot.adapters.qqguild import MessageSegment as GuildMessageSegment
 
 help_comm = on_command("help", aliases={"帮助", "帮助菜单", "指令"}, block=True, priority=2)
 
@@ -30,9 +29,5 @@ __plugin_info__ = PluginInfo(
 
 @help_comm.handle()
 async def _(event: GroupAndGuildMessageEvent):
-    if isinstance(event, GuildMessageEvent):
-        img_path = await draw_help_img(guild_command=True)
-        await help_comm.finish(GuildMessageSegment.file_image(img_path))
-    uid = event.get_user_id()
     img_path = await draw_help_img()
-    await help_comm.finish(MessageSegment.at(uid) + MessageSegment.image(img_path))
+    await help_comm.finish(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path))
