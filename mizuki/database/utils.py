@@ -37,6 +37,9 @@ class MDataBase:
         logger.info(Fore.BLUE + "[DB]检查数据表...")
 
         if not self.check_table("Currency_UserAccount"):
+            """
+            货币系统表
+            """
             logger.info(Fore.RED + "[Currency]用户账户数据表不存在 准备创建新数据表")
             try:
                 self.cur.execute(
@@ -49,6 +52,9 @@ class MDataBase:
                 logger.info(Fore.RED + f"[Currency]Currency_UserAccount表创建失败:{e}")
 
         if not self.check_table("Currency_UserSignIn"):
+            """
+            货币系统签到表
+            """
             logger.info(Fore.RED + "[Currency]用户签到数据表不存在 准备创建新数据表")
             try:
                 self.cur.execute(
@@ -61,6 +67,9 @@ class MDataBase:
                 logger.info(Fore.RED + f"[Currency]Currency_UserSignIn表创建失败:{e}")
 
         if not self.check_table("ArkRail_User"):
+            """
+            ArkRail用户数据表
+            """
             logger.info(Fore.RED + "[ArkRail]ArkRail_User表不存在 准备创建新数据表")
             try:
                 self.cur.execute(
@@ -78,6 +87,9 @@ class MDataBase:
                 logger.info(Fore.RED + f"[ArkRail]ArkRail_User表创建失败:{e}")
 
         if not self.check_table("ArkRail_GachaUser"):
+            """
+            ArkRail用户抽卡记录表
+            """
             logger.info(Fore.RED + "[ArkRail]ArkRail_GachaUser表不存在 准备创建新数据表")
             try:
                 self.cur.execute(
@@ -96,6 +108,9 @@ class MDataBase:
                 logger.info(Fore.RED + f"[ArkRail]ArkRail_GachaUser表创建失败:{e}")
 
         if not self.check_table("ArkRail_AgarUser"):
+            """
+            ArkRail用户体力系统表
+            """
             logger.info(Fore.RED + "[ArkRail]ArkRail_AgarUser表不存在 准备创建新数据表")
             try:
                 self.cur.execute(
@@ -110,6 +125,23 @@ class MDataBase:
             except sqlite3.DatabaseError as e:
                 self.connection.rollback()
                 logger.info(Fore.RED + f"[ArkRail]ArkRail_AgarUser表创建失败:{e}")
+
+        if not self.check_table("Guild_QQ_Binding"):
+            """
+            频道ID与QQ号绑定表
+            """
+            logger.info(Fore.RED + "[Guild_QQ_Binding]Guild_QQ_Binding表不存在 准备创建新数据表")
+            try:
+                self.cur.execute(
+                    "Create Table Guild_QQ_Binding(guild_id text primary key Not Null,"
+                    "uid integer"
+                    ");")
+                self.connection.commit()
+                logger.info(Fore.RED + "[Guild_QQ_Binding]Guild_QQ_Binding表创建成功")
+
+            except sqlite3.DatabaseError as e:
+                self.connection.rollback()
+                logger.info(Fore.RED + f"[Guild_QQ_Binding]Guild_QQ_Binding表创建失败:{e}")
         logger.info(Fore.BLUE + "[DB]数据表检查完成")
 
     # 检查表是否存在
