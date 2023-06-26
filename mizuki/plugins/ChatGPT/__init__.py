@@ -6,7 +6,7 @@
 
 from nonebot import on_message, on_command
 from nonebot.rule import *
-from nonebot.adapters.onebot.v11 import MessageEvent
+from ..Utils.GroupAndGuildMessageEvent import GroupAndGuildMessageEvent
 from ..Help.PluginInfo import PluginInfo
 
 from .SessionManager import Session, SessionManager
@@ -22,7 +22,8 @@ __plugin_info__ = [PluginInfo(
     extra={
         "author": "Hycer_Lance",
         "version": "0.2.0",
-        "priority": 2
+        "priority": 2,
+        "guild_adapted": True
     }
 ), PluginInfo(
     plugin_name="ChatGPT_rm_session",
@@ -32,14 +33,16 @@ __plugin_info__ = [PluginInfo(
     extra={
         "author": "Hycer_Lance",
         "version": "0.2.0",
-        "priority": 2
+        "priority": 2,
+        "guild_adapted": True
     }
 )]
 
 session_manager = SessionManager()
 
+
 @chat.handle()
-async def reply(event: MessageEvent):
+async def reply(event: GroupAndGuildMessageEvent):
     uid = event.get_user_id()
     # 判断当前用户会话是否存在
     if not await session_manager.is_session_exist(uid):
@@ -54,8 +57,9 @@ async def reply(event: MessageEvent):
     response = await session.get_response()
     await chat.finish(response, at_sender=True)
 
+
 @rm_session.handle()
-async def _(event: MessageEvent):
+async def _(event: GroupAndGuildMessageEvent):
     uid = event.get_user_id()
     if not await session_manager.is_session_exist(uid):
         await rm_session.finish("你还没有和我聊过天哦", at_sender=True)
