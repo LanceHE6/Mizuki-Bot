@@ -13,7 +13,7 @@ async def get_uid_by_guild_id(guid_id: str) -> int:
     :param guid_id:
     :return: uid
     """
-    sql = f'Select uid From Guild_QQ_Binding Where guild_id={guid_id};'
+    sql = f'Select uid From Guild_QQ_Binding Where guild_id="{guid_id}";'
     result = await MDB.db_query_single(sql)
     if not result:
         return 0
