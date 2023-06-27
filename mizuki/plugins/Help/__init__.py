@@ -29,5 +29,8 @@ __plugin_info__ = PluginInfo(
 
 @help_comm.handle()
 async def _(event: GroupAndGuildMessageEvent):
+    if isinstance(event, GuildMessgeEvent):
+        img_path = await draw_help_img(True)
+        await help_comm.finish(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path))
     img_path = await draw_help_img()
     await help_comm.finish(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path))
