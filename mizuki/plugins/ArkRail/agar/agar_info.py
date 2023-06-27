@@ -6,6 +6,8 @@
 
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
+from ...Utils.GroupAndGuildMessageEvent import GroupAndGuildMessageEvent, get_event_user_id
+from ...Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment
 
 from ...Help.PluginInfo import PluginInfo
 from ..DB import get_user_agar_num, get_agar_full_time
@@ -20,17 +22,20 @@ __plugin_info__ = PluginInfo(
     extra={
         "author": "HycerLance",
         "version": "0.1.0",
-        "priority": 3
+        "priority": 3,
+        "guild_adapted": True
     }
 )
 
 
 @show_agar_comm.handle()
-async def _(event: GroupMessageEvent):
-    uid = event.get_user_id()
+async def _(event: GroupAndGuildMessageEvent):
+    uid = await get_event_user_id(event)
+    if uid == 0:
+        await show_agar_comm.finish("您还没有在频道中绑定QQ账号！")
     agar_num = await get_user_agar_num(uid)
     full_time = await get_agar_full_time(uid)
-    reply = f"\n您的琼脂:\n{agar_num}/160\n"
+    reply = GroupAndGuildMessageSegment.at(event) + f"\n您的琼脂:\n{agar_num}/160\n"
     if full_time == 0:
         reply += "已满"
     else:
