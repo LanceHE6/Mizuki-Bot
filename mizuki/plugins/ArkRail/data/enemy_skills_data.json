@@ -139,7 +139,7 @@
     "rate1_plus": 0,
     "rate2": 25,
     "rate2_plus": 0,
-    "rate3": 1,
+    "rate3": 2,
     "rate3_plus": 0,
     "obj_type": 3,
     "consume": 25,
@@ -151,7 +151,7 @@
         "e_id": "-7-1",
         "e_t": 26,
         "e_p": "${r3_int}",
-        "e_d": "${r2_float}",
+        "e_d": "-${r2_float}",
         "e_l": "0",
         "e_ml": "0",
         "obj_type": 0
