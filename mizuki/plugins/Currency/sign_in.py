@@ -12,12 +12,15 @@ from colorama import Fore
 from nonebot.log import logger
 from nonebot import on_command, on_keyword
 from nonebot.rule import to_me
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import MessageSegment
 
 from ..Help.PluginInfo import PluginInfo
 from ...database.utils import MDB
-from .utils import change_user_lmc_num
-from ..Utils.GroupAndGuildMessageEvent import GroupAndGuildMessageEvent, GuildMessageEvent
+from .utils import change_user_lmc_num, change_user_sj_num
+from ..Utils.GroupAndGuildMessageSegment import (GroupAndGuildMessageEvent,
+                                                 GuildMessageEvent,
+                                                 GroupAndGuildMessageSegment)
+
 from ..GuildBinding.utils import get_uid_by_guild_id
 
 """
@@ -86,7 +89,10 @@ async def sign_func(uid: int):
         logger.info(Fore.BLUE + f"[Currency_Sign_in]{change_result}")
         reply = MessageSegment.at(uid) + f"签到成功！获得{profit}龙门币"
         if sign_days >= 3:
-            reply += f"你已连续签到{sign_days}天！"
+            sj_num = random.randint(sign_days, sign_days + 3) * 10
+            change_result = await change_user_sj_num(uid, sj_num)
+            logger.info(Fore.BLUE + f"[Currency_Sign_in]{change_result}")
+            reply += f"你已连续签到{sign_days}天！获得{sj_num}合成玉"
         return reply
 
 
@@ -96,11 +102,11 @@ async def _(event: GroupAndGuildMessageEvent):
         gid = event.get_user_id()
         uid = await get_uid_by_guild_id(gid)
         if uid == 0:
-            await sign_in_by_message.finish("您还未绑定QQ号")
+            await sign_in_by_message.finish(GroupAndGuildMessageSegment.at(event) + "您还未绑定QQ号")
     else:
         uid = int(event.get_user_id())
     reply = await sign_func(uid)
-    await sign_in_by_message.finish(reply)
+    await sign_in_by_message.finish(GroupAndGuildMessageSegment.at(event) + reply)
 
 
 @sign_in_by_command.handle()
@@ -109,8 +115,8 @@ async def _(event: GroupAndGuildMessageEvent):
         gid = event.get_user_id()
         uid = await get_uid_by_guild_id(gid)
         if uid == 0:
-            await sign_in_by_message.finish("您还未绑定QQ号")
+            await sign_in_by_message.finish(GroupAndGuildMessageSegment.at(event) + "您还未绑定QQ号")
     else:
         uid = int(event.get_user_id())
     reply = await sign_func(uid)
-    await sign_in_by_command.finish(reply)
+    await sign_in_by_command.finish(GroupAndGuildMessageSegment.at(event) + reply)
