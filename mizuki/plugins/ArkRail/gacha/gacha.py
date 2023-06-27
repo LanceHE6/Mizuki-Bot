@@ -8,13 +8,14 @@ import os
 from colorama import Fore
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 from nonebot.log import logger
 
 from ...Currency.utils import change_user_sj_num, sj_is_enough
 from .utils import gacha, draw_img_ten, draw_img_single
 from ...Help.PluginInfo import PluginInfo
 from ...Utils.CDManager import CDManager
+from ...Utils.GroupAndGuildMessageEvent import get_event_user_id
+from ...Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment, GroupAndGuildMessageEvent
 
 """
 概率：
@@ -47,13 +48,15 @@ user_cd_manager = CDManager(10)
 
 # 单抽
 @single.handle()
-async def _(event: GroupMessageEvent):
-    uid = event.get_user_id()
+async def _(event: GroupAndGuildMessageEvent):
+    uid = await get_event_user_id(event)
+    if uid == 0:
+        await single.finish("您还没有在频道中绑定QQ账号！")
     if await user_cd_manager.is_in_cd(uid):
         remain_time = await user_cd_manager.get_remaining_time(uid)
-        await single.finish(f"抽卡冷却中！\n剩余CD:{remain_time}s")
+        await single.finish(GroupAndGuildMessageSegment.at(event) + f"抽卡冷却中！\n剩余CD:{remain_time}s")
     if not await sj_is_enough(uid, num=600):
-        await single.finish(MessageSegment.at(uid) + "你的合成玉余额不足600")
+        await single.finish(GroupAndGuildMessageSegment.at(event) + "你的合成玉余额不足600")
 
     logger.info("[Gacha]开始抽卡制图")
     oid_list = await gacha(uid)
@@ -63,9 +66,9 @@ async def _(event: GroupMessageEvent):
     except IndexError:
         gacha_img = None
         logger.info(Fore.RED + "[Gacha]抽卡制图出错")
-        await single.finish(MessageSegment.at(uid) + "请先发送/干员初始化你的数据")
+        await single.finish(GroupAndGuildMessageSegment.at(event) + "请先发送/op初始化你的数据")
 
-    await single.send(MessageSegment.at(uid) + MessageSegment.image(file=gacha_img))
+    await single.send(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, gacha_img))
     await change_user_sj_num(uid, -600)
     await user_cd_manager.add_user(uid)
     os.remove(gacha_img)
@@ -74,13 +77,15 @@ async def _(event: GroupMessageEvent):
 
 # 十连
 @ten.handle()
-async def _(event: GroupMessageEvent):
-    uid = event.get_user_id()
+async def _(event: GroupAndGuildMessageEvent):
+    uid = await get_event_user_id(event)
+    if uid == 0:
+        await ten.finish("您还没有在频道中绑定QQ账号！")
     if await user_cd_manager.is_in_cd(uid):
         remain_time = await user_cd_manager.get_remaining_time(uid)
-        await ten.finish(f"抽卡冷却中！\n剩余CD:{remain_time}s")
+        await ten.finish(GroupAndGuildMessageSegment.at(event) + f"抽卡冷却中！\n剩余CD:{remain_time}s")
     if not await sj_is_enough(uid, num=6000):
-        await ten.finish(MessageSegment.at(uid) + "你的合成玉余额不足6000")
+        await ten.finish(GroupAndGuildMessageSegment.at(event) + "你的合成玉余额不足6000")
 
     logger.info("[Gacha]开始抽卡制图")
     oid_list = await gacha(uid, True)
@@ -90,8 +95,8 @@ async def _(event: GroupMessageEvent):
     except IndexError:
         gacha_img = None
         logger.info(Fore.RED + "[Gacha]抽卡制图出错")
-        await ten.finish(MessageSegment.at(uid) + "请先发送/干员初始化你的数据")
-    await ten.send(MessageSegment.at(uid) + MessageSegment.image(file=gacha_img))
+        await ten.finish(GroupAndGuildMessageSegment.at(event) + "请先发送/干员初始化你的数据")
+    await ten.send(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, gacha_img))
     await change_user_sj_num(uid, -6000)
     await user_cd_manager.add_user(uid)
     os.remove(gacha_img)
