@@ -16,6 +16,10 @@ from pathlib import Path
 from .utils import is_user_in_table, get_user_lmc_num, get_user_sj_num
 from ..Help.PluginInfo import PluginInfo
 from ..Utils.QQ import QQ
+from ..Utils.GroupAndGuildMessageSegment import (GroupAndGuildMessageSegment,
+                                                 GroupAndGuildMessageEvent,
+                                                 GuildMessageEvent)
+from ..GuildBinding.utils import get_uid_by_guild_id
 
 src_path = Path() / 'mizuki' / 'plugins' / 'Currency' / 'res'
 my_account = on_command("account", aliases={"我的账户", "账户"}, block=True, priority=2)
@@ -28,7 +32,8 @@ __plugin_info__ = PluginInfo(
     extra={
         "author": "Hycer_Lance",
         "version": "1.0.0",
-        "priority": 2
+        "priority": 2,
+        "guild_adapted": True
     }
 )
 
@@ -110,8 +115,13 @@ async def draw_img(uid: int, user_nick_name: str) -> Path:
 
 
 @my_account.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
-    uid = int(event.get_user_id())
+async def _(bot: Bot, event: GroupAndGuildMessageEvent):
+    if isinstance(event, GuildMessageEvent):
+        uid = await get_uid_by_guild_id(event.get_user_id())
+        if uid == 0:
+            await my_account.finish(GroupAndGuildMessageSegment.at(event) + "您还未绑定QQ号")
+    else:
+        uid = int(event.get_user_id())
     user_info = await bot.get_stranger_info(user_id=uid)
     nickname = user_info["nickname"]
     # 用户首次使用指令，添加信息进数据库
@@ -121,6 +131,6 @@ async def _(bot: Bot, event: GroupMessageEvent):
     logger.info("[Currency]开始绘制账户信息图片")
     img = await draw_img(uid, nickname)
     logger.info("[Currency]账户信息图片绘制完成")
-    await my_account.send(MessageSegment.at(uid) + MessageSegment.image(img))
+    await my_account.send(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img))
     os.remove(img)
     await my_account.finish()
