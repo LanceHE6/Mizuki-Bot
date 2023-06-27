@@ -17,9 +17,9 @@ from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_oid_by_
 from .operator import Operator, new_instance
 from .utils import get_op_img, get_op_model, line_break
 from ..Help.PluginInfo import PluginInfo
-from ..Utils.GroupAndGuildMessageEvent import GroupAndGuildMessageEvent, GuildMessageEvent
-from ..Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment
-from ..GuildBinding.utils import get_uid_by_guild_id
+from ..Utils.GroupAndGuildMessageEvent import get_event_user_id
+from ..Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment, GroupAndGuildMessageEvent
+
 
 op_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_images'
 info_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_info'
@@ -28,16 +28,16 @@ profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profe
 skill_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'skills'
 res_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
 
-op_info = on_command("出战", aliases={"出战干员"}, block=True, priority=2)
-op_info_all = on_command("ops", aliases={"所有角色", "所有干员", "info all", "我的干员", "干员"}, block=True, priority=2)
+op_info = on_command("op", aliases={"出战", "出战干员"}, block=True, priority=2)
+op_info_all = on_command("ops", aliases={"all", "所有角色", "所有干员", "info all", "我的干员", "干员"}, block=True, priority=2)
 op_detail = on_command("detail", aliases={"d", "干员信息", "干员详情"}, block=True, priority=2)
-map_info = on_command("level", aliases={"关卡", "关卡信息", "map"}, block=True, priority=2)
+map_info = on_command("map", aliases={"关卡", "关卡信息", "level"}, block=True, priority=2)
 
 __plugin_info__ = [PluginInfo(
     plugin_name="ArkRail_show_op_info",
     name="出战干员信息展示",
     description="查看出战干员",
-    usage="出战干员 ——查看出战干员",
+    usage="op ——查看出战干员",
     extra={
         "author": "Silence",
         "version": "0.1.0",
@@ -65,18 +65,20 @@ __plugin_info__ = [PluginInfo(
         extra={
             "author": "Silence",
             "version": "0.1.0",
-            "priority": 2
+            "priority": 2,
+            "guild_adapted": True
         }
     ),
     PluginInfo(
         plugin_name="ArkRail_show_level_info",
         name="关卡信息展示",
         description="查看关卡信息",
-        usage="level <关卡编号> ——查看关卡信息",
+        usage="map <关卡编号> ——查看关卡信息",
         extra={
             "author": "Silence",
             "version": "0.1.0",
-            "priority": 2
+            "priority": 2,
+            "guild_adapted": True
         }
     )
 ]
@@ -84,12 +86,9 @@ __plugin_info__ = [PluginInfo(
 
 @op_info.handle()
 async def _(event: GroupAndGuildMessageEvent):
-    if isinstance(event, GuildMessageEvent):
-        uid = int(await get_uid_by_guild_id(event.get_user_id()))
-        if uid == 0:
-            await op_info.finish("您还没有在频道中绑定QQ账号！")
-    else:
-        uid = int(event.get_user_id())
+    uid = await get_event_user_id(event)
+    if uid == 0:
+        await op_info.finish("您还没有在频道中绑定QQ账号！")
     if not await is_in_table(uid):
         await op_info.send(GroupAndGuildMessageSegment.at(event) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
     playing_ops = await get_user_playing_ops(uid)
@@ -107,12 +106,9 @@ async def _(event: GroupAndGuildMessageEvent):
 
 @op_info_all.handle()
 async def _(event: GroupAndGuildMessageEvent):
-    if isinstance(event, GuildMessageEvent):
-        uid = int(await get_uid_by_guild_id(event.get_user_id()))
-        if uid == 0:
-            await op_info.finish("您还没有在频道中绑定QQ账号！")
-    else:
-        uid = int(event.get_user_id())
+    uid = await get_event_user_id(event)
+    if uid == 0:
+        await op_info_all.finish("您还没有在频道中绑定QQ账号！")
     if not await is_in_table(uid):
         await op_info_all.send(
             GroupAndGuildMessageSegment.at(event) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
@@ -173,18 +169,20 @@ async def _(event: GroupAndGuildMessageEvent):
 
     save_path = res_path / f"{uid}_ops.png"
     img.save(save_path)
-    await op_info_all.send(GroupAndGuildMessageSegment.image(event, save_path), at_sender=True)
+    await op_info_all.send(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, save_path), at_sender=True)
     os.remove(save_path)
     await op_info_all.finish()
 
 
 @op_detail.handle()
-async def _(event: GroupMessageEvent, args: Message = CommandArg()):
-    uid = int(event.get_user_id())
+async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
+    uid = await get_event_user_id(event)
+    if uid == 0:
+        await op_detail.finish("您还没有在频道中绑定QQ账号！")
     if not await is_in_table(uid):
-        await op_info.send(GroupAndGuildMessageSegment.at(event) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
+        await op_detail.send(GroupAndGuildMessageSegment.at(event) + "欢迎加入方舟铁道，您已获得新手礼包(包含4名强力干员)！")
 
-    name = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
+    name = str(args)  # 获取命令后面跟着的纯文本内容
     oid = await get_oid_by_name(name)
     if oid == -1:
         await op_detail.finish(GroupAndGuildMessageSegment.at(event) + f"没有名为{name}的干员")
@@ -210,22 +208,22 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         level = 1
         op = await new_instance(oid, level, [0, 0, 0])
         # 玩家未拥有该干员
-    await op_info.send("开始绘制干员信息图片，请稍等。。。")
+    await op_detail.send("开始绘制干员信息图片，请稍等。。。")
     logger.info("[op_info]开始绘制干员信息图片")
     img_path = await draw_op_info_img(oid, level, op, uid)
     logger.info("[op_info]干员信息图片完成")
-    await op_info.send(GroupAndGuildMessageSegment.at(event) + tip + GroupAndGuildMessageSegment.image(event, img_path))
+    await op_detail.send(GroupAndGuildMessageSegment.at(event) + tip + GroupAndGuildMessageSegment.image(event, img_path))
     os.remove(img_path)
-    await op_info.finish()
+    await op_detail.finish()
 
 
 @map_info.handle()
-async def _(event: GroupMessageEvent, args: Message = CommandArg()):
-    uid = int(event.get_user_id())
-    mid = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
+async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
+    # 貌似不需要uid
+    mid = str(args)  # 获取命令后面跟着的纯文本内容
 
     if not await is_map_exist(mid):
-        await op_detail.finish(GroupAndGuildMessageSegment.at(event) + f"没有{mid}这张地图！")
+        await map_info.finish(GroupAndGuildMessageSegment.at(event) + f"没有{mid}这张地图！")
 
     reply = GroupAndGuildMessageSegment.at(event) + f"{mid}\n敌人数据"
     enemies_data_list = await get_map_attribute(mid, MapAttribute.enemies)
@@ -236,7 +234,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         reply += f"\n{e_name}    等级：{enemies_data_list[1][i]}"
     reply += f"\n\n关卡报酬：\n{reward_list[0]}\n数量：{reward_list[1]}\n领取奖励所需琼脂：{consume}"
 
-    await op_info_all.finish(reply)
+    await map_info.finish(reply)
 
 
 async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) -> Path:
