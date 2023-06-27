@@ -1,9 +1,8 @@
-from pathlib import Path
 
 from nonebot.adapters.onebot.v11 import MessageSegment as GroupMessageSegment
 from nonebot.adapters.qqguild import MessageSegment as GuildMessageSegment
 
-from .GroupAndGuildMessageEvent import GroupAndGuildMessageEvent, GuildMessageEvent, GroupMessageEvent
+from .GroupAndGuildMessageEvent import GroupAndGuildMessageEvent, GuildMessageEvent
 
 
 class GroupAndGuildMessageSegment:
