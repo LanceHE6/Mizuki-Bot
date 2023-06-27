@@ -6,7 +6,7 @@
 
 from nonebot import on_message, on_command
 from nonebot.rule import *
-from ..Utils.GroupAndGuildMessageEvent import GroupAndGuildMessageEvent
+from ..Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageEvent, GroupAndGuildMessageSegment
 from ..Help.PluginInfo import PluginInfo
 
 from .SessionManager import Session, SessionManager
@@ -55,13 +55,13 @@ async def reply(event: GroupAndGuildMessageEvent):
     user_content = str(event.get_message())
     await session.add_user_content(user_content)
     response = await session.get_response()
-    await chat.finish(response, at_sender=True)
+    await chat.finish(GroupAndGuildMessageSegment.at(event) + response)
 
 
 @rm_session.handle()
 async def _(event: GroupAndGuildMessageEvent):
     uid = event.get_user_id()
     if not await session_manager.is_session_exist(uid):
-        await rm_session.finish("你还没有和我聊过天哦", at_sender=True)
+        await rm_session.finish("你还没有和我聊过天哦")
     await session_manager.remove_session(uid)
-    await rm_session.finish("聊天已重置", at_sender=True)
+    await rm_session.finish(GroupAndGuildMessageSegment.at(event) + "聊天已重置")
