@@ -758,7 +758,7 @@ class PlayingManager:
                     message += f"\n对{atk_obj.name}造成{is_crit_str}{damage}"
                 message += f"\n点法术伤害！"
 
-        skill.count = skill.persistence + persistence
+        skill.count = int(skill.persistence) + persistence
         sub_effect_list: list[Effect] = []
         obj_effect_list: list[Effect] = []
         for e in skill.effect_list:
