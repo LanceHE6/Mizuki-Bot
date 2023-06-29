@@ -92,6 +92,7 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
             await handle.send(GroupAndGuildMessageSegment.at(event) + f"{messages[len(messages) - 1]}！{result}")
         if is_over:
             await finish_playing()
+            await handle.finish()
 
     async def is_doctor(e: GroupAndGuildMessageEvent) -> bool:  # 判断触发atk,skill,run指令的用户是否跟触发play指令的用户相同
         sub_id: int = await get_event_user_id(e)
@@ -402,7 +403,7 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
         if not await is_doctor(run_event):
             await operate_run.finish()
 
-        await operate_run.send(f"{run_event.sender.nickname}战略性撤退了！")
+        await operate_run.send(GroupAndGuildMessageSegment.at(run_event) + "你战略性撤退了！")
         await finish_playing()
 
     async def finish_playing():
@@ -410,18 +411,17 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
         结束对战的方法
         """
         playing_user.remove(uid)
-        await delete_handle(operate_run)
-        await delete_handle(operate_atk)
-        await delete_handle(operate_skill)
+        delete_handle(operate_run)
+        delete_handle(operate_atk)
+        delete_handle(operate_skill)
 
 
-async def delete_handle(obj: Type[Matcher]):
+def delete_handle(obj: Type[Matcher]):
     """
     删除响应器的方法
 
     :param obj: 要删除的响应器
     """
-    await obj.finish()
     obj.destroy()
     del obj
 
