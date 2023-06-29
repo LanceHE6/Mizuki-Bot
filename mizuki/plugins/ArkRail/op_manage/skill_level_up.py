@@ -5,7 +5,7 @@
 # @Software:PyCharm
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Message
 from nonebot.params import CommandArg, Arg
 from nonebot.typing import T_State
 
@@ -34,7 +34,8 @@ __plugin_info__ = PluginInfo(
     extra={
         "author": "Hycer_Lance",
         "version": "0.1.0",
-        "priority": 1
+        "priority": 1,
+        "guild_adapted": True
     }
 )
 
