@@ -39,7 +39,8 @@ __plugin_info__ = PluginInfo(
     extra={
         "author": "Hycer_Lance",
         "version": "0.1.0",
-        "priority": 3
+        "priority": 3,
+        "guild_adapted": True
     }
 )
 

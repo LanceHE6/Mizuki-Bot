@@ -20,6 +20,9 @@ from ..DB import (get_oid_by_name,
                   SkillAttribute)
 from ...Currency.utils import get_user_lmc_num, change_user_lmc_num
 from .utils import get_cost_skill
+from ...Utils.GroupAndGuildMessage import GroupAndGuildMessage
+from ...Utils.GroupAndGuildMessageEvent import get_event_user_id
+from ...Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment, GroupAndGuildMessageEvent
 
 skill_level_up = on_command("skill_up", aliases={"技能升级", "升级技能"}, block=True, priority=1)
 
@@ -37,11 +40,11 @@ __plugin_info__ = PluginInfo(
 
 
 @skill_level_up.handle()
-async def _(event: GroupMessageEvent, state: T_State, args: Message = CommandArg()):
+async def _(event: GroupAndGuildMessageEvent, state: T_State, args: GroupAndGuildMessage = CommandArg()):
     name = args.extract_plain_text().replace(' ', '')
     if name == '':
-        await skill_level_up.finish("请在指令后跟干员名称", at_sender=True)
-    uid = event.get_user_id()
+        await skill_level_up.finish(GroupAndGuildMessageSegment.at(event) + "请在指令后跟干员名称")
+    uid = await get_event_user_id(event)
     oid = await get_oid_by_name(name)
     op_name = await get_op_attribute(oid, OPAttribute.name)
     state["op_name"] = op_name
@@ -49,10 +52,10 @@ async def _(event: GroupMessageEvent, state: T_State, args: Message = CommandArg
     state["oid"] = oid
     # 判断干员是否存在
     if oid == -1:
-        await skill_level_up.finish(MessageSegment.at(uid) + f"没有找到名为 {name} 的干员")
+        await skill_level_up.finish(GroupAndGuildMessageSegment.at(event) + f"没有找到名为 {name} 的干员")
     # 判断用户是否拥有该干员
     if not await is_op_owned(uid, oid):
-        await skill_level_up.finish(MessageSegment.at(uid) + "您未拥有该干员")
+        await skill_level_up.finish(GroupAndGuildMessageSegment.at(event) + "您未拥有该干员")
     user_all_ops = await get_user_all_ops(uid)
     for no in user_all_ops:
         if user_all_ops[no]["oid"] == oid:
@@ -64,7 +67,7 @@ async def _(event: GroupMessageEvent, state: T_State, args: Message = CommandArg
         if skill_level == 6:
             count += 1
     if len(skill_level_list) == count:
-        await skill_level_up.finish("该干员所有技能均已满级", at_sender=True)
+        await skill_level_up.finish(GroupAndGuildMessageSegment.at(event) + "该干员所有技能均已满级")
     # 插入绘制干员等级图片函数
     user_lmc_num = await get_user_lmc_num(uid)
     state["user_lmc_num"] = user_lmc_num
@@ -83,11 +86,12 @@ async def _(event: GroupMessageEvent, state: T_State, args: Message = CommandArg
             reply += f"\n下一级所需龙门币:{next_cost}"
         count += 1
     state["skill_name_list"] = skill_name_list
-    await skill_level_up.send(reply + "\n\n请发送需要升级的技能序号以及目标等级", at_sender=True)
+    await skill_level_up.send(
+        GroupAndGuildMessageSegment.at(event) + reply + "\n\n请发送需要升级的技能序号以及目标等级")
 
 
 @skill_level_up.got("data", prompt="")
-async def got_level(state: T_State, response=Arg("data")):
+async def got_level(event: GroupAndGuildMessageEvent, state: T_State, response=Arg("data")):
     skill_number = 0
     skill_dest_level = 0
     try:
@@ -95,19 +99,19 @@ async def got_level(state: T_State, response=Arg("data")):
             skill_number = int(response.extract_plain_text().split(' ')[0])
             skill_dest_level = int(response.extract_plain_text().split(' ')[1])
     except ValueError:
-        await skill_level_up.finish("指令参数不全", at_sender=True)
+        await skill_level_up.finish("指令参数不全")
     uid = (state["uid"])
     if skill_number > len(state["skill_level_list"]) or skill_number < 1:
-        await skill_level_up.finish("非法技能序号", at_sender=True)
+        await skill_level_up.finish("非法技能序号")
     if skill_dest_level <= int(state["skill_level_list"][skill_number - 1]) or skill_dest_level > 7:
-        await skill_level_up.finish("非法等级", at_sender=True)
+        await skill_level_up.finish("非法等级")
     if int(state["skill_level_list"][skill_number - 1]) == 6:
-        await skill_level_up.finish("该技能已满级", at_sender=True)
+        await skill_level_up.finish("该技能已满级")
     cost = await get_cost_skill(state["skill_level_list"][skill_number - 1], skill_dest_level - 1)
     if cost > state["user_lmc_num"]:
-        await skill_level_up.finish("龙门币余额不足", at_sender=True)
+        await skill_level_up.finish("龙门币余额不足")
 
     await change_user_op_skill_level(uid, state["oid"], skill_number - 1, skill_dest_level - 1)
     await change_user_lmc_num(uid, -cost)
-    await skill_level_up.finish(f"已将 {state['skill_name_list'][skill_number - 1]} 升到{skill_dest_level}级\n消耗龙门币:{cost}",
-                                at_sender=True)
+    await skill_level_up.finish(GroupAndGuildMessageSegment.at(
+        event) + f"已将 {state['skill_name_list'][skill_number - 1]} 升到{skill_dest_level}级\n消耗龙门币:{cost}")
