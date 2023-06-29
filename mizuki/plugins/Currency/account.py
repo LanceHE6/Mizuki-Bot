@@ -18,7 +18,7 @@ from ..Utils.QQ import QQ
 from ..Utils.GroupAndGuildMessageSegment import (GroupAndGuildMessageSegment,
                                                  GroupAndGuildMessageEvent,
                                                  GuildMessageEvent)
-from ..GuildBinding.utils import get_uid_by_guild_id
+from ..Utils.GroupAndGuildMessageEvent import get_event_user_id
 
 src_path = Path() / 'mizuki' / 'plugins' / 'Currency' / 'res'
 my_account = on_command("account", aliases={"我的账户", "账户"}, block=True, priority=2)
@@ -116,7 +116,7 @@ async def draw_img(uid: int) -> Path:
 @my_account.handle()
 async def _(event: GroupAndGuildMessageEvent):
     if isinstance(event, GuildMessageEvent):
-        uid = await get_uid_by_guild_id(event.get_user_id())
+        uid = await get_event_user_id(event)
         if uid == 0:
             await my_account.finish(GroupAndGuildMessageSegment.at(event) + "您还未绑定QQ号")
     else:
