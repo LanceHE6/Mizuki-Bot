@@ -6,7 +6,9 @@
 
 from .PluginInfo import PluginInfo
 from .draw_img import draw_help_img
-from ..Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment, GroupAndGuildMessageEvent
+from ..Utils.GroupAndGuildMessageSegment import (GroupAndGuildMessageSegment,
+                                                 GroupAndGuildMessageEvent,
+                                                 GuildMessageEvent)
 
 from nonebot import on_command
 
@@ -28,8 +30,9 @@ __plugin_info__ = PluginInfo(
 
 @help_comm.handle()
 async def _(event: GroupAndGuildMessageEvent):
-    if isinstance(event, GuildMessgeEvent):
+    if isinstance(event, GuildMessageEvent):
         img_path = await draw_help_img(True)
-        await help_comm.finish(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path))
+        await help_comm.finish(
+            GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path))
     img_path = await draw_help_img()
     await help_comm.finish(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path))

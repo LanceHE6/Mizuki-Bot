@@ -17,28 +17,25 @@
 
 ------
 ## 目录
-  * [简介](#span-idjump1-简介-span)
-  * [项目结构](#span-idjump2-项目结构-span)
-  * [功能](#span-idjump3-功能-span)
-  * [部署](#span-idjump4-部署-span)
-    + [下载项目文件](#span-idjump4-1-下载项目文件)
-    + [修改bot配置文件](#span-idjump4-2-修改bot配置文件)
-    + [安装项目依赖](#span-idjump4-3-安装项目依赖)
-    + [下载配置go-cqhttp](#span-idjump4-4-下载配置go-cqhttp)
-    + [启动bot](#span-idjump4-5-启动bot)
-  * [更新日志](#span-idjump5-更新日志-span)
 
+* [简介](#简介)
+* [项目结构](#项目结构)
+* [功能](#功能)
+* [部署](#部署)
+    + [下载项目文件](#下载项目文件)
+    + [修改bot配置文件](#修改bot配置文件)
+    + [安装项目依赖](#安装项目依赖)
+    + [下载配置go-cqhttp](#下载配置go-cqhttp)
+    + [启动bot](#启动bot)
+* [更新日志](#更新日志)
 
-
-## <span id="jump1">简介</span>
+## [简介](#简介)
 
 ✨Mizuki-Bot 是一款基于Python第三方库Nonebot开发以学习为目的的明日方舟主题的娱乐QQ机器人✨
 
 [Nonebot官网](https://v2.nonebot.dev/)
 
-
-
-## <span id="jump2">项目结构</span>
+## [项目结构](#项目结构)
 
 ```
 ├─.env //配置文件
@@ -57,7 +54,7 @@
 |  //插件数据目录
 ```
 
-## <span id="jump3">功能</span>
+## [功能](#功能)
 ```
 √ 聊天
 √ 日常签到
@@ -72,19 +69,21 @@
 ......
 更多功能开发中
 ```
-## <span id="jump4">部署</span>
+
+## [部署](#部署)
 
 *请确保你的python环境版本>=3.8*
 
-### <span id="jump4-1">下载项目文件
+### [下载项目文件](#下载项目文件)
 
 在本地创建你的项目文件夹，并将项目clone到该文件夹
 
 `git clone https://github.com/LanceHE6/Mizuki-Bot`
 
-### <span id="jump4-2">修改bot配置文件
+### [修改bot配置文件](#修改bot配置文件)
 
 编辑.env文件并修改相应配置
+
 ```
 HOST=127.0.0.1  # 主机地址
 PORT=13570 # 监听端口号
@@ -93,6 +92,22 @@ FASTAPI_RELOAD=false
 SUPERUSERS=["2765543491"]  # 配置 NoneBot 超级用户
 NICKNAME=["Mizuki", "水月", "mizuki"]  # 配置机器人的昵称
 COMMAND_START=["/"]  # 配置命令起始字符
+
+# 频道机器人相关
+QQGUILD_BOTS='
+[
+  {
+    "id": "",
+    "token": "",
+    "secret": "",
+    "intent": {
+      "guild_messages": true,
+      "at_messages": false
+    }
+  }
+]
+'
+QQGUILD_IS_SANDBOX=false
 
 #ArkRail相关
 AUTO_CHECK_RES=false  # 启动自动检查图片资源
@@ -103,15 +118,18 @@ ENABLE_PROXY=false  # 是否启用代理
 PROXY=""  # 代理地址 https://example.com
 TIMEOUT=600  # 定时清理用户会话 xx秒
 PERSONALITY=""  # ChatGPT 人格描述
+
 ```
 
-### <span id="jump4-3">安装项目依赖
+### [安装项目依赖](#安装项目依赖)
 
 在项目文件夹中使用pip安装项目依赖
 
 `pip install -r -requirements.txt`
 
-### <span id="jump4-4">下载配置go-cqhttp（如使用插件中的go-cqhttp可忽略此项）
+### [下载配置go-cqhttp](#下载配置go-cqhttp)
+
+*（如使用插件中的go-cqhttp可忽略此项）*
 
 1.在[Releases ](https://github.com/Mrs4s/go-cqhttp/releases)页面下载对应版本并解压
 
@@ -136,7 +154,7 @@ PERSONALITY=""  # ChatGPT 人格描述
 
 4.保存并重新启动go_cqhttp
 
-### <span id="jump4-5">启动bot
+### [启动bot](#启动bot)
 
 运行项目文件的bot.py
 
@@ -144,6 +162,6 @@ PERSONALITY=""  # ChatGPT 人格描述
 
 ------
 
-## <span id="jump5">更新日志</span>
+## [更新日志](#更新日志)
 
 暂未发布第一版

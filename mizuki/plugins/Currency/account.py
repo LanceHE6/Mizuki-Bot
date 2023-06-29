@@ -6,7 +6,6 @@
 
 from nonebot import on_command
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment, Bot
 
 import os
 from colorama import Fore
@@ -69,16 +68,16 @@ def circle_corner(img: Image, radii: int) -> Image:
     return img
 
 
-async def draw_img(uid: int, user_nick_name: str) -> Path:
+async def draw_img(uid: int) -> Path:
     """
     绘制回复图片
     :param uid: 用户qq号
-    :param user_nick_name: 用户昵称
     :return 绘制好的图片地址
     """
     # 获取头像
     qq = QQ(uid)
     avatar_path = await qq.get_avatar()
+    nickname = qq.get_nickname()
 
     lmc_num = await get_user_lmc_num(uid)
     sj_num = await get_user_sj_num(uid)
@@ -98,7 +97,7 @@ async def draw_img(uid: int, user_nick_name: str) -> Path:
 
     draw = ImageDraw.Draw(img)
     draw_font = ImageFont.truetype("simhei", 80)
-    draw.text((640, 360), f"{user_nick_name}", font=draw_font)  # 用户昵称
+    draw.text((640, 360), f"{nickname}", font=draw_font)  # 用户昵称
 
     draw_font = ImageFont.truetype("simhei", 48)
     draw.text((560, 815), "龙门币", font=draw_font)
@@ -115,21 +114,19 @@ async def draw_img(uid: int, user_nick_name: str) -> Path:
 
 
 @my_account.handle()
-async def _(bot: Bot, event: GroupAndGuildMessageEvent):
+async def _(event: GroupAndGuildMessageEvent):
     if isinstance(event, GuildMessageEvent):
         uid = await get_uid_by_guild_id(event.get_user_id())
         if uid == 0:
             await my_account.finish(GroupAndGuildMessageSegment.at(event) + "您还未绑定QQ号")
     else:
         uid = int(event.get_user_id())
-    user_info = await bot.get_stranger_info(user_id=uid)
-    nickname = user_info["nickname"]
     # 用户首次使用指令，添加信息进数据库
     check = await is_user_in_table(uid)
     if not check:
         logger.info(Fore.BLUE + "[Currency_Account]新用户数据已添加")
     logger.info("[Currency]开始绘制账户信息图片")
-    img = await draw_img(uid, nickname)
+    img = await draw_img(uid)
     logger.info("[Currency]账户信息图片绘制完成")
     await my_account.send(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img))
     os.remove(img)
