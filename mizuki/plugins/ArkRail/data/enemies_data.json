@@ -1414,7 +1414,7 @@
     "crit_d_plus": 0,
     "speed": 90,
     "speed_plus": 0.1,
-    "atk_type": 2,
+    "atk_type": 0,
     "skills": [19],
     "effect_list": []
   },
@@ -1442,7 +1442,7 @@
   },
   "59": {
     "name": "“皇帝的利刃”",
-    "stars": 5,
+    "stars": 6,
     "profession": "辅助-削弱",
     "health": 50000,
     "health_plus": 0,
@@ -1456,15 +1456,15 @@
     "crit_r_plus": 0,
     "crit_d": 0.5,
     "crit_d_plus": 0,
-    "speed": 80,
+    "speed": 135,
     "speed_plus": 0,
     "atk_type": 9,
-    "skills": [25],
+    "skills": [25, 15],
     "effect_list": [
       {
         "e_id": "passive1",
-        "e_t": 20,
-        "e_p": "6",
+        "e_t": 21,
+        "e_p": "-1",
         "e_d": "0",
         "e_l": "0",
         "e_ml": "0",
@@ -1473,7 +1473,7 @@
       {
         "e_id": "passive2",
         "e_t": 25,
-        "e_p": "6",
+        "e_p": "5",
         "e_d": "0",
         "e_l": "0",
         "e_ml": "0",
