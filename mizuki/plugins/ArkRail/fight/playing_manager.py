@@ -75,6 +75,10 @@ class PlayingManager:
                     obj = self.all_enemies_list[random_num]
                     break
 
+                else:
+                    obj = None
+                    break
+
             # 条件达成则使用技能
             if len(move_op.skills_list) and random.randint(1, 100) <= 15 + (12 * move_op.stars) and \
                     self.enemy_skill_count >= move_op.skills_list[0].consume and not move_op.silent:
@@ -377,14 +381,13 @@ class PlayingManager:
                 damage = await obj1.hurt(sub, 1, damage)
                 health_amount = await sub.hurt(sub, 4, int(damage * skill.rate2))
                 objs_list.append(obj1)
-                message += f"\n对{objs_name}造成了{damage}点法术伤害并为自己恢复了{health_amount}生命值！"
+                message += f"\n对{obj1.name}造成了{damage}点法术伤害并为自己恢复了{health_amount}生命值！"
             elif sid == -23:
                 damage = int(sub.atk_p * skill.rate1)
                 damage = await obj1.hurt(sub, 1, damage)
                 objs_list.append(obj1)
-                message += f"\n对{objs_name}造成了{damage}点法术伤害并使其每回合流失{round(skill.rate2 * 100, 2)}%最大生命值！"
+                message += f"\n对{obj1.name}造成了{damage}点法术伤害并使其每回合流失{round(skill.rate2 * 100, 2)}%最大生命值！"
             elif sid == -25:
-                persistence = 1
                 for op in self.all_ops_list:
                     objs_list.append(op)
                 message += f"\n使所有敌人攻击力，防御力，法抗降低{round(skill.rate1 * 100, 2)}%！"
