@@ -433,5 +433,192 @@
     "persistence": 0,
     "persistence_plus": 0,
     "effect_list": []
+  },
+  "19": {
+    "name": "狂暴",
+    "brief_d": "自身攻击力提升，持续一段时间",
+    "detail": "自身攻击力提升${r1_float}，持续${persistence}回合",
+    "rate1": 0.5,
+    "rate1_plus": 0,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "rate3": 0,
+    "rate3_plus": 0,
+    "obj_type": 0,
+    "consume": 12,
+    "consume_plus": 0,
+    "persistence": 2,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "-19-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "${r1_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 0
+      }
+    ]
+  },
+  "20": {
+    "name": "毒性粉尘",
+    "brief_d": "使所有敌人流血，持续一段时间",
+    "detail": "使所有敌人每回合流失${r1_float}当前生命值，持续${persistence}回合",
+    "rate1": 0.1,
+    "rate1_plus": 0,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "rate3": 0,
+    "rate3_plus": 0,
+    "obj_type": 0,
+    "consume": 18,
+    "consume_plus": 0,
+    "persistence": 2,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "-20-1",
+        "e_t": 17,
+        "e_p": "${persistence}",
+        "e_d": "-${r1_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
+  },
+  "21": {
+    "name": "生命吸取",
+    "brief_d": "对一名敌人造成一定法术伤害并恢复自身生命值",
+    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的法术伤害并为自身恢复所造成伤害${r2_float}的生命值",
+    "rate1": 1.2,
+    "rate1_plus": 0,
+    "rate2": 0.8,
+    "rate2_plus": 0,
+    "rate3": 0,
+    "rate3_plus": 0,
+    "obj_type": 0,
+    "consume": 18,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0,
+    "effect_list": []
+  },
+  "22": {
+    "name": "日冕",
+    "brief_d": "对一群敌人造成大量法术伤害",
+    "detail": "对一群敌人造成相当于自身攻击力${r1_float}的法术伤害",
+    "rate1": 1.2,
+    "rate1_plus": 0,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "rate3": 0,
+    "rate3_plus": 0,
+    "obj_type": 0,
+    "consume": 20,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0,
+    "effect_list": []
+  },
+  "23": {
+    "name": "烈焚灼息",
+    "brief_d": "对一名敌人造成一定法术伤害并使其流血，持续一段时间",
+    "detail": "对一名敌人造成相当于自身攻击力${r1_float}的法术伤害并使其每回合流失${r2_float}最大生命值，持续${r3_int}回合",
+    "rate1": 1.0,
+    "rate1_plus": 0,
+    "rate2": 0.1,
+    "rate2_plus": 0,
+    "rate3": 2,
+    "rate3_plus": 0,
+    "obj_type": 0,
+    "consume": 18,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "-23-1",
+        "e_t": 14,
+        "e_p": "${r3_int}",
+        "e_d": "-${r2_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
+  },
+  "24": {
+    "name": "烈焚灼息-狂暴",
+    "brief_d": "对一群敌人造成一定法术伤害并使其流血，持续一段时间",
+    "detail": "对一群敌人造成相当于自身攻击力${r1_float}的法术伤害并使其每回合流失${r2_float}最大生命值，持续${r3_int}回合",
+    "rate1": 1.2,
+    "rate1_plus": 0,
+    "rate2": 0.1,
+    "rate2_plus": 0,
+    "rate3": 3,
+    "rate3_plus": 0,
+    "obj_type": 0,
+    "consume": 16,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "-24-1",
+        "e_t": 14,
+        "e_p": "${r3_int}",
+        "e_d": "-${r2_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
+  },
+  "25": {
+    "name": "凝视",
+    "brief_d": "使所有敌人攻击力，防御力，法抗降低，持续一段时间",
+    "detail": "使所有敌人攻击力，防御力，法抗降低${r1_float}，持续${persistence}回合",
+    "rate1": 0.35,
+    "rate1_plus": 0,
+    "rate2": 0,
+    "rate2_plus": 0,
+    "rate3": 0,
+    "rate3_plus": 0,
+    "obj_type": 0,
+    "consume": 10,
+    "consume_plus": 0,
+    "persistence": 0,
+    "persistence_plus": 0,
+    "effect_list": [
+      {
+        "e_id": "-25-1",
+        "e_t": 0,
+        "e_p": "${persistence}",
+        "e_d": "-${r1_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      },
+      {
+        "e_id": "-25-2",
+        "e_t": 1,
+        "e_p": "${persistence}",
+        "e_d": "-${r1_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      },
+      {
+        "e_id": "-25-3",
+        "e_t": 3,
+        "e_p": "${persistence}",
+        "e_d": "-${r1_float}",
+        "e_l": "0",
+        "e_ml": "0",
+        "obj_type": 1
+      }
+    ]
   }
 }

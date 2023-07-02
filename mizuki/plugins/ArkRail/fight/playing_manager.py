@@ -264,13 +264,13 @@ class PlayingManager:
         sid = skill.sid  # 技能id
         persistence: int = 0  # 是否为持续性技能
         if sid < 0:  # 小于0的为敌人技能
-            if sid in [-1, -2, -3, -5, -14, -18]:
+            if sid in [-1, -2, -3, -5, -14, -18, -22, -24]:
                 atk_type = 0
                 atk_type_str = ""
                 if sid in [-2, -3, -5, -18]:
                     atk_type = 2
                     atk_type_str = "物理"
-                elif sid in [-3, -14]:
+                elif sid in [-3, -14, -22, -24]:
                     atk_type = 3
                     atk_type_str = "法术"
                 for op in obj1.next_operators:
@@ -365,6 +365,29 @@ class PlayingManager:
                         mock_ops += f"{op.name} "
 
                 message += f"\n{mock_ops}被嘲讽了！"
+            elif sid == -19:
+                persistence = 1
+                message += f"\n自身攻击力提升{round(skill.rate1 * 100, 2)}%！"
+            elif sid == -20:
+                for op in self.all_ops_list:
+                    objs_list.append(op)
+                message += f"\n使所有敌人每回合流失{round(skill.rate1 * 100, 2)}%当前生命值！"
+            elif sid == -21:
+                damage = int(sub.atk_p * skill.rate1)
+                damage = await obj1.hurt(sub, 1, damage)
+                health_amount = await sub.hurt(sub, 4, int(damage * skill.rate2))
+                objs_list.append(obj1)
+                message += f"\n对{objs_name}造成了{damage}点法术伤害并为自己恢复了{health_amount}生命值！"
+            elif sid == -23:
+                damage = int(sub.atk_p * skill.rate1)
+                damage = await obj1.hurt(sub, 1, damage)
+                objs_list.append(obj1)
+                message += f"\n对{objs_name}造成了{damage}点法术伤害并使其每回合流失{round(skill.rate2 * 100, 2)}%最大生命值！"
+            elif sid == -25:
+                persistence = 1
+                for op in self.all_ops_list:
+                    objs_list.append(op)
+                message += f"\n使所有敌人攻击力，防御力，法抗降低{round(skill.rate1 * 100, 2)}%！"
 
         else:
             if sid == 1:
