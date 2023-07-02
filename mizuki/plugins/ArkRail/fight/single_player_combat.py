@@ -12,7 +12,8 @@ from nonebot.adapters.onebot.v11 import Message
 
 from .playing_manager import PlayingManager, new_instance, is_all_hidden
 from ...Help.PluginInfo import PluginInfo
-from ..DB import is_map_exist, get_map_attribute, MapAttribute, user_agar, get_user_level_progress, set_user_level_progress
+from ..DB import is_map_exist, get_map_attribute, MapAttribute, user_agar, get_user_level_progress, \
+    set_user_level_progress
 from ...Currency.utils import change_user_lmc_num, change_user_sj_num
 from .draw_image import draw_player_fight_image
 
@@ -20,6 +21,7 @@ from ...Utils.GroupAndGuildMessageEvent import get_event_user_id, GroupAndGuildM
 from ...Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment
 
 play = on_command("play", aliases={"作战"}, block=True, priority=1)
+mop = on_command("mop", aliases={"扫荡", "代理"}, block=True, priority=2)
 playing_user: list[int] = []  # 正在进行战斗的用户
 MAX_PLAYING_PERSON = 5  # 最大同时作战人数
 
@@ -42,6 +44,18 @@ __plugin_info__ = [
         }
     ),
     PluginInfo(
+        plugin_name="ArkRail_mop",
+        name="扫荡",
+        description="扫荡关卡，直接获取奖励",
+        usage="mop <关卡编号> ——扫荡",
+        extra={
+            "author": "Silence",
+            "version": "0.1.0",
+            "priority": 2,
+            "guild_adapted": True
+        }
+    ),
+    PluginInfo(
         plugin_name="ArkRail_play_run",
         name="逃跑",
         description="逃跑",
@@ -54,6 +68,49 @@ __plugin_info__ = [
         }
     )
 ]
+
+
+@mop.handle()
+async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
+    uid = await get_event_user_id(event)
+    if uid == 0:
+        await mop.finish(f"{GroupAndGuildMessageSegment.at(event)}您还没有在频道中绑定QQ账号！")
+    mid = str(args)  # 获取命令后面跟着的纯文本内容
+
+    if not await is_map_exist(mid):  # 判断地图是否存在
+        await mop.finish(f"{GroupAndGuildMessageSegment.at(event)}没有{mid}这张地图！")
+
+    # 判断用户关卡进度
+    map_level_progress_list = mid.split("-")
+    if len(map_level_progress_list) > 1:
+        user_level_progress_str = await get_user_level_progress(uid)
+        user_level_progress_list = user_level_progress_str.split("-")
+        user_chapter = int(user_level_progress_list[0])  # 章节
+        user_level = int(user_level_progress_list[1])  # 关卡
+        map_chapter = int(map_level_progress_list[0])
+        map_level = int(map_level_progress_list[1])
+        user_progress = user_chapter * 7 + user_level
+        map_progress = map_chapter * 7 + map_level
+
+        if user_progress >= map_progress:
+            pass
+        else:
+            await mop.finish(
+                f"{GroupAndGuildMessageSegment.at(event)}您的关卡进度为{user_level_progress_str}，还不能扫荡{mid}这张地图哦！")
+
+        consume = await get_map_attribute(mid, MapAttribute.consume)
+        if await user_agar(uid, consume):
+            reward = await get_map_attribute(mid, MapAttribute.reward)
+            #  reward[0]: str 奖励名称  reward[1]: int 奖励数量
+            if reward[0] == "龙门币":
+                await change_user_lmc_num(uid, reward[1])
+            elif reward[0] == "合成玉":
+                await change_user_sj_num(uid, reward[1])
+            else:
+                pass  # 关卡奖励干员
+            await mop.finish(f"关卡扫荡成功，消耗{consume}琼脂，获取到{reward[1]}{reward[0]}！")
+        else:
+            await mop.finish("您的琼脂不足，无法获取关卡奖励！")
 
 
 @play.handle()
@@ -129,7 +186,8 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
         if user_progress + 1 >= map_progress:
             pass
         else:
-            await play.finish(f"{GroupAndGuildMessageSegment.at(event)}您的关卡进度为{user_level_progress_str}，还不能挑战{mid}这张地图哦！")
+            await play.finish(
+                f"{GroupAndGuildMessageSegment.at(event)}您的关卡进度为{user_level_progress_str}，还不能挑战{mid}这张地图哦！")
 
     pm: PlayingManager = await new_instance(uid, mid)  # 战斗数据
     playing_user.append(uid)  # 将用户id放进战斗中的用户id列表
@@ -169,7 +227,8 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
 
         # 如果输入的参数无法转换为数字
         elif not str(atk_args).isdigit():
-            await operate_atk.finish(GroupAndGuildMessageSegment.at(atk_event) + "参数错误！\n/atk <目标序号>\ntip:不普攻的干员才可以不选目标")
+            await operate_atk.finish(
+                GroupAndGuildMessageSegment.at(atk_event) + "参数错误！\n/atk <目标序号>\ntip:不普攻的干员才可以不选目标")
 
         # 正常普攻干员的普攻逻辑在下面
         else:
@@ -189,7 +248,8 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
                 if sub.mocked and sub.mocking_obj != obj:
                     if not sub.mocking_obj.hidden:
                         await operate_atk.finish(
-                            GroupAndGuildMessageSegment.at(atk_event) + f"{sub.name}被{pm.all_enemies_list.index(sub.mocking_obj) + 1}.{sub.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                            GroupAndGuildMessageSegment.at(
+                                atk_event) + f"{sub.name}被{pm.all_enemies_list.index(sub.mocking_obj) + 1}.{sub.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
 
                 # 不能以隐匿状态下的敌人为目标
                 elif obj.hidden and not await is_all_hidden(pm.all_enemies_list):
@@ -263,7 +323,8 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
                 # 将str型参数转换为int型参数(因为skill列表索引从0开始，所以要-1)
                 parm_list.append(int(n) - 1)
             else:
-                await operate_run.finish(GroupAndGuildMessageSegment.at(skill_event) + "参数错误！\n/skill <技能序号> [目标序号1] [目标序号2/友方序号]")
+                await operate_run.finish(
+                    GroupAndGuildMessageSegment.at(skill_event) + "参数错误！\n/skill <技能序号> [目标序号1] [目标序号2/友方序号]")
 
         skill_num = parm_list[0]  # 技能序号(int)
         skill = None  # 使用的技能
@@ -298,7 +359,8 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
                 if skill.obj_type == 1 and sub.mocked and sub.mocking_obj != obj1:
                     if not sub.mocking_obj.hidden:
                         await operate_atk.finish(
-                            GroupAndGuildMessageSegment.at(skill_event) + f"{sub.name}被{pm.all_enemies_list.index(sub.mocking_obj) + 1}.{sub.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                            GroupAndGuildMessageSegment.at(
+                                skill_event) + f"{sub.name}被{pm.all_enemies_list.index(sub.mocking_obj) + 1}.{sub.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
 
                 # 不能以隐匿状态下的敌人为目标
                 elif obj1.hidden and not await is_all_hidden(pm.all_enemies_list):
@@ -310,13 +372,14 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
 
             # 参数错误则退出方法
             else:
-                await operate_run.finish(GroupAndGuildMessageSegment.at(skill_event) + "参数不足或序号错误！\n/skill <技能序号> <目标序号>")
+                await operate_run.finish(
+                    GroupAndGuildMessageSegment.at(skill_event) + "参数不足或序号错误！\n/skill <技能序号> <目标序号>")
 
         # 双目标技能(对敌或对友)
         elif skill.obj_type in [2, 5]:
             # 如果参数大于3个 且 两个目标参数不相同 且 ((对敌技能 且 两个敌方目标参数正确) 或 (对友技能 且 两个友方目标参数正确))
             if len(parm_list) >= 3 and \
-                    parm_list[1] != parm_list[2] and\
+                    parm_list[1] != parm_list[2] and \
                     ((skill.obj_type == 2 and
                       0 <= parm_list[1] < len(pm.all_enemies_list) and
                       0 <= parm_list[2] < len(pm.all_enemies_list)) or
@@ -331,16 +394,19 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
                 # 如果为对敌技能则嘲讽对象必须为目标之一
                 if skill.obj_type == 3 and sub.mocked and sub.mocking_obj != obj1 and sub.mocking_obj != obj2:
                     if not sub.mocking_obj.hidden:
-                        await operate_atk.finish(GroupAndGuildMessageSegment.at(skill_event) + f"{sub.name}被{pm.all_enemies_list.index(sub.mocking_obj) + 1}.{sub.mocking_obj.name}嘲讽了！\nta必须为攻击目标之一！")
+                        await operate_atk.finish(GroupAndGuildMessageSegment.at(
+                            skill_event) + f"{sub.name}被{pm.all_enemies_list.index(sub.mocking_obj) + 1}.{sub.mocking_obj.name}嘲讽了！\nta必须为攻击目标之一！")
 
                 elif not await is_all_hidden(pm.all_enemies_list):
                     # 不能以隐匿状态下的敌人为目标
                     if obj1.hidden:
-                        await operate_atk.finish(GroupAndGuildMessageSegment.at(skill_event) + f"{obj1.name}处于隐匿状态，无法被选中！")
+                        await operate_atk.finish(
+                            GroupAndGuildMessageSegment.at(skill_event) + f"{obj1.name}处于隐匿状态，无法被选中！")
 
                     # 不能以隐匿状态下的敌人为目标
                     elif obj2.hidden:
-                        await operate_atk.finish(GroupAndGuildMessageSegment.at(skill_event) + f"{obj2.name}处于隐匿状态，无法被选中！")
+                        await operate_atk.finish(
+                            GroupAndGuildMessageSegment.at(skill_event) + f"{obj2.name}处于隐匿状态，无法被选中！")
 
                 # 干员释放技能
                 message_skill = await pm.turn(sub, skill_num + 1, obj1, obj2)
@@ -348,7 +414,8 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
 
             # 参数错误则退出方法
             else:
-                await operate_run.finish(GroupAndGuildMessageSegment.at(skill_event) + "参数不足或序号错误！\n/skill <技能序号> <目标序号1> <目标序号2>")
+                await operate_run.finish(
+                    GroupAndGuildMessageSegment.at(skill_event) + "参数不足或序号错误！\n/skill <技能序号> <目标序号1> <目标序号2>")
 
         # 双目标技能(对敌且对友)
         elif skill.obj_type == 7:
@@ -364,7 +431,8 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
                 # 如果干员被嘲讽则只能以被嘲讽者为目标
                 if sub.mocked and sub.mocking_obj != obj1:
                     if not sub.mocking_obj.hidden:
-                        await operate_atk.finish(GroupAndGuildMessageSegment.at(skill_event) + "{sub.name}被{pm.all_enemies_list.index(sub.mocking_obj) + 1}.{sub.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
+                        await operate_atk.finish(GroupAndGuildMessageSegment.at(
+                            skill_event) + "{sub.name}被{pm.all_enemies_list.index(sub.mocking_obj) + 1}.{sub.mocking_obj.name}嘲讽了！\n只能以ta为攻击目标！")
 
                 # 不能以隐匿状态下的敌人为目标
                 elif obj1.hidden and not await is_all_hidden(pm.all_enemies_list):
@@ -376,7 +444,8 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
 
             # 参数错误则退出方法
             else:
-                await operate_run.finish(GroupAndGuildMessageSegment.at(skill_event) + "参数不足或敌人序号错误！\n/skill <技能序号> <目标序号> <友方序号>")
+                await operate_run.finish(
+                    GroupAndGuildMessageSegment.at(skill_event) + "参数不足或敌人序号错误！\n/skill <技能序号> <目标序号> <友方序号>")
 
         # 不需要指定目标的技能(全体类技能或目标是自己的技能)
         else:
