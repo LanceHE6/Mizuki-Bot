@@ -1483,9 +1483,9 @@
   },
   "60": {
     "name": "梅菲斯特-歌者",
-    "stars": 6,
+    "stars": 7,
     "profession": "医疗-群愈",
-    "health": 3000,
+    "health": 3500,
     "health_plus": 30,
     "atk": 250,
     "atk_plus": 2,
