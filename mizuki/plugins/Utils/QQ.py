@@ -14,7 +14,7 @@ class QQ:
     """
     实现获取QQ信息的一些常用功能
     """
-    __qq_api = 'https://r.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins='
+    __qq_api = 'https://users.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins='
     '''
     接口返回数据
     portraitCallBack({"2765543491":["http://qlogo4.store.qq.com/qzone/2765543491/2765543491/100",3993,-1,0,0,0,"Hycer",0]})
