@@ -82,7 +82,7 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
 
     # 判断用户关卡进度
     map_level_progress_list = mid.split("-")
-    if len(map_level_progress_list) > 1:
+    if len(map_level_progress_list) == 2:
         user_level_progress_str = await get_user_level_progress(uid)
         user_level_progress_list = user_level_progress_str.split("-")
         user_chapter = int(user_level_progress_list[0])  # 章节
@@ -93,10 +93,10 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
         map_progress = map_chapter * 7 + map_level
 
         if user_progress >= map_progress:
-            pass
+            await mop.send(GroupAndGuildMessageSegment.at(event) + f"准备扫荡{mid}！")
         else:
             await mop.finish(
-                f"{GroupAndGuildMessageSegment.at(event)}您的关卡进度为{user_level_progress_str}，还不能扫荡{mid}这张地图哦！")
+                GroupAndGuildMessageSegment.at(event) + f"您的关卡进度为{user_level_progress_str}，还不能扫荡{mid}这张地图哦！")
 
         consume = await get_map_attribute(mid, MapAttribute.consume)
         if await user_agar(uid, consume):
@@ -108,9 +108,11 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
                 await change_user_sj_num(uid, reward[1])
             else:
                 pass  # 关卡奖励干员
-            await mop.finish(f"关卡扫荡成功，消耗{consume}琼脂，获取到{reward[1]}{reward[0]}！")
+            await mop.finish(GroupAndGuildMessageSegment.at(event) + f"关卡扫荡成功，消耗{consume}琼脂，获取到{reward[1]}{reward[0]}！")
         else:
-            await mop.finish("您的琼脂不足，无法获取关卡奖励！")
+            await mop.finish(GroupAndGuildMessageSegment.at(event) + "您的琼脂不足，无法获取关卡奖励！")
+    else:
+        await mop.finish(GroupAndGuildMessageSegment.at(event) + f"{mid}这张地图并不支持扫荡哦！")
 
 
 @play.handle()
@@ -163,13 +165,13 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
 
     uid = await get_event_user_id(event)
     if uid == 0:
-        await play.finish(f"{GroupAndGuildMessageSegment.at(event)}您还没有在频道中绑定QQ账号！")
+        await play.finish("您还没有在频道中绑定QQ账号！")
     mid = str(args)  # 获取命令后面跟着的纯文本内容
 
     if not await is_map_exist(mid):  # 判断地图是否存在
-        await play.finish(f"{GroupAndGuildMessageSegment.at(event)}没有{mid}这张地图！")
+        await play.finish(GroupAndGuildMessageSegment.at(event) + f"没有{mid}这张地图！")
     if await is_playing(uid):
-        await play.finish(f"{GroupAndGuildMessageSegment.at(event)}你还有正在进行的战斗哦！")
+        await play.finish(GroupAndGuildMessageSegment.at(event) + "你还有正在进行的战斗哦！")
 
     # 判断用户关卡进度
     map_level_progress_list = mid.split("-")
@@ -187,7 +189,7 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
             pass
         else:
             await play.finish(
-                f"{GroupAndGuildMessageSegment.at(event)}您的关卡进度为{user_level_progress_str}，还不能挑战{mid}这张地图哦！")
+                GroupAndGuildMessageSegment.at(event) + f"您的关卡进度为{user_level_progress_str}，还不能挑战{mid}这张地图哦！")
 
     pm: PlayingManager = await new_instance(uid, mid)  # 战斗数据
     playing_user.append(uid)  # 将用户id放进战斗中的用户id列表
