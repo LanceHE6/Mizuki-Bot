@@ -9,7 +9,7 @@ import os
 from ..DB import get_op_attribute, OPAttribute
 from pathlib import Path
 from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11 import MessageSegment
+from ...Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment, GroupAndGuildMessageEvent
 from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.log import logger
@@ -20,8 +20,10 @@ from ...Help.PluginInfo import PluginInfo
 
 config = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'pool_config.json'
 
-change_up_6s_comm = on_command("修改up6星", aliases={"更改up6星", "up6星设置", "修改6星up"}, block=True, priority=3, permission=SUPERUSER)
-change_up_5s_comm = on_command("修改up5星", aliases={"更改up5星", "up5星设置", "修改5星up"}, block=True, priority=3, permission=SUPERUSER)
+change_up_6s_comm = on_command("修改up6星", aliases={"更改up6星", "up6星设置", "修改6星up"}, block=True, priority=3,
+                               permission=SUPERUSER)
+change_up_5s_comm = on_command("修改up5星", aliases={"更改up5星", "up5星设置", "修改5星up"}, block=True, priority=3,
+                               permission=SUPERUSER)
 pool_info = on_command("pool_info", aliases={"卡池信息", "卡池"}, block=True, priority=3)
 
 __plugin_info__ = [PluginInfo(
@@ -32,7 +34,8 @@ __plugin_info__ = [PluginInfo(
     extra={
         "author": "Hycer_Lance",
         "version": "0.1.0",
-        "priority": 3
+        "priority": 3,
+        "guild_adapted": True
     }
 ), PluginInfo(
     plugin_name="ArkRail_gacha_pool_config",
@@ -47,6 +50,7 @@ __plugin_info__ = [PluginInfo(
         "permission": "SUPERUSER"
     }
 )]
+
 
 # change_prob_improvement = on_command("")
 class Pool:
@@ -120,7 +124,6 @@ async def draw_pool_info(up_6s: list, up_5s: list) -> Path:
         stars_img = Image.open(f"{stars_img_path}/6.png").resize((350, 92))
         profession_img = Image.open(f"{profession_img_path}/{''.join(list(profession)[0:2])}.png").resize((80, 80))
         img.paste(up_6s1_img, (-350, -160), mask=up_6s1_img)  # 干员
-        os.remove(op_img)
         img.paste(stars_img, (250, 500), mask=stars_img)  # 星级
         img.paste(profession_img, (260, 590))  # 职业
         font = ImageFont.truetype('simhei', 64)
@@ -132,7 +135,6 @@ async def draw_pool_info(up_6s: list, up_5s: list) -> Path:
         up_6s2_img = Image.open(op_img).resize((1536, 1536))
         profession_img = Image.open(f"{profession_img_path}/{''.join(list(profession)[0:2])}.png").resize((80, 80))
         img.paste(up_6s2_img, (800, -160), mask=up_6s2_img)
-        os.remove(op_img)
         img.paste(stars_img, (1300, 500), mask=stars_img)  # 星级
         img.paste(profession_img, (1310, 590))  # 职业
         draw.text((1400, 600), f"{name}", font=font, fill='white')
@@ -143,8 +145,7 @@ async def draw_pool_info(up_6s: list, up_5s: list) -> Path:
             op_img = await get_op_img(up)
             up_5s_img = Image.open(op_img).resize((150, 300))
             img.paste(up_5s_img, (715 + 160 * i, 650), mask=up_5s_img)  # 每个5星之间间隔10像素
-            os.remove(op_img)
-            i +=1
+            i += 1
         stars_img = Image.open(f"{stars_img_path}/5.png").resize((350, 92))
         img.paste(stars_img, (750, 850), mask=stars_img)
 
@@ -194,7 +195,6 @@ async def draw_pool_info(up_6s: list, up_5s: list) -> Path:
         stars_img = Image.open(f"{stars_img_path}/6.png").resize((350, 92))
         profession_img = Image.open(f"{profession_img_path}/{''.join(list(profession)[0:2])}.png").resize((80, 80))
         img.paste(up_6s1_img, (-350, -160), mask=up_6s1_img)  # 干员
-        os.remove(op_img)
         img.paste(stars_img, (250, 500), mask=stars_img)  # 星级
         img.paste(profession_img, (260, 590))  # 职业
         font = ImageFont.truetype('simhei', 64)
@@ -205,24 +205,27 @@ async def draw_pool_info(up_6s: list, up_5s: list) -> Path:
         save_path = pool_img_path / 'gacha_info.png'
         img.save(save_path)
         return save_path
+
+
 @pool_info.handle()
-async def _():
+async def _(event: GroupAndGuildMessageEvent):
     logger.info("[pool_config]开始绘制卡池信息图片")
     await pool_info.send("开始绘制卡池信息，请稍等")
     try:
         img = await draw_pool_info(PoolConfig.up_6s, PoolConfig.up_5s)
         logger.info("[pool_config]卡池信息绘制完成")
-        await pool_info.send(MessageSegment.image(img))
+        await pool_info.send(GroupAndGuildMessageSegment.image(event, img))
         os.remove(img)
     except TimeoutError as e:
         await pool_info.finish(f"卡池信息绘制出错:{e}\n请联系管理员")
     await pool_info.finish()
 
+
 @change_up_6s_comm.handle()
-async def _(args: Message = CommandArg()):
+async def _(args=CommandArg()):
     """修改up6星 管理员发送的参数为up6星oid的列表"""
     try:
-        up_list = eval(args.extract_plain_text().replace(' ', ''))  # 获取命令后面跟着的纯文本内容
+        up_list = eval(str(args).replace(' ', ''))  # 获取命令后面跟着的纯文本内容
         if len(up_list) > 2:
             await change_up_6s_comm.finish("超过最大up6星数量")
     except NameError:
@@ -237,10 +240,10 @@ async def _(args: Message = CommandArg()):
 
 
 @change_up_5s_comm.handle()
-async def _(args: Message = CommandArg()):
+async def _(args=CommandArg()):
     """修改up6星 管理员发送的参数为up5星oid的列表"""
     try:
-        up_list = eval(args.extract_plain_text().replace(' ', ''))  # 获取命令后面跟着的纯文本内容
+        up_list = eval(str(args).replace(' ', ''))  # 获取命令后面跟着的纯文本内容
         if len(up_list) > 3:
             await change_up_6s_comm.finish("超过最大up5星数量")
     except NameError:
@@ -252,5 +255,3 @@ async def _(args: Message = CommandArg()):
         name = await get_op_attribute(oid, OPAttribute.name)
         reply += ' ' + name
     await change_up_5s_comm.finish(reply)
-
-
