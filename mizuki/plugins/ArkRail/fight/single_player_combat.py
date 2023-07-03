@@ -74,11 +74,11 @@ __plugin_info__ = [
 async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
     uid = await get_event_user_id(event)
     if uid == 0:
-        await mop.finish(f"{GroupAndGuildMessageSegment.at(event)}您还没有在频道中绑定QQ账号！")
+        await mop.finish("您还没有在频道中绑定QQ账号！")
     mid = str(args)  # 获取命令后面跟着的纯文本内容
 
     if not await is_map_exist(mid):  # 判断地图是否存在
-        await mop.finish(f"{GroupAndGuildMessageSegment.at(event)}没有{mid}这张地图！")
+        await mop.finish(GroupAndGuildMessageSegment.at(event) + f"没有{mid}这张地图！")
 
     # 判断用户关卡进度
     map_level_progress_list = mid.split("-")
