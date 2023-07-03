@@ -757,7 +757,7 @@ class PlayingManager:
                 persistence = 0
                 health_amount = int(sub.max_health_p - sub.health)
                 await sub.hurt(sub, 4, health_amount)
-                message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%，每回合流失{round(skill.rate2 * 100, 2)}%最大生命值！"
+                message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%，生命上限提高{round(skill.rate2 * 100, 1)}%，每回合流失{round(skill.rate3 * 100, 2)}%最大生命值！"
             elif sid == 55:
                 persistence = 1
                 message += f"\n防御力提高{round(skill.rate1 * 100, 1)}%，速度减少{round(skill.rate3, 2)}点，每回合恢复{round(skill.rate2 * 100, 2)}%最大生命值！"
