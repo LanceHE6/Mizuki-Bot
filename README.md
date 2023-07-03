@@ -85,6 +85,7 @@
 编辑.env文件并修改相应配置
 
 ```
+DRIVER=~fastapi+~httpx+~aiohttp 频道前置驱动器
 HOST=127.0.0.1  # 主机地址
 PORT=13570 # 监听端口号
 FASTAPI_RELOAD=false
