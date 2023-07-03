@@ -1,3 +1,4 @@
+nb-cli==1.1.2
 colorama==0.4.6
 Pillow==9.5.0
 requests==2.31.0
@@ -5,3 +6,4 @@ beautifulsoup4~=4.12.2
 playwright==1.35.0
 tqdm>=4.65.0
 nonebot_plugin_apscheduler==0.3
+nonebot-adapters-onebot==2.2.3
