@@ -123,9 +123,21 @@ PERSONALITY=""  # ChatGPT 人格描述
 
 ### [安装项目依赖](#安装项目依赖)
 
-在项目文件夹中使用pip安装项目依赖
+1.在项目文件夹中使用pip安装项目依赖
 
 `pip install -r -requirements.txt`
+
+2.安装playwright依赖
+
+`playwright install`
+
+3.安装频道适配器
+
+在项目中使用`nb`启动nonebot脚手架
+
+依次选择 `管理bot适配器` `安装适配器到当前项目`
+
+输入适配器名称 `QQ 频道` 安装
 
 ### [下载配置go-cqhttp](#下载配置go-cqhttp)
 
@@ -156,7 +168,9 @@ PERSONALITY=""  # ChatGPT 人格描述
 
 ### [启动bot](#启动bot)
 
-运行项目文件的bot.py
+运行项目文件的bot.py 或者使用脚手架 `nb run`启动
+
+第一次运行时会要求安装相应的驱动器如`fastapi` 根据提示安装即可
 
 不出意外的话bot就能与go-cqhttp正常连接
 
