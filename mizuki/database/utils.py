@@ -46,7 +46,7 @@ class MDataBase:
                     "Create Table Currency_UserAccount(uid integer primary key Not Null,LongMenCoin integer check ("
                     "LongMenCoin >=0), Synthetic_Jade integer check (Synthetic_Jade >=0));")
                 self.connection.commit()
-                logger.info(Fore.RED + "[Currency]Currency_UserAccount表创建成功")
+                logger.info(Fore.GREEN + "[Currency]Currency_UserAccount表创建成功")
             except sqlite3.DatabaseError as e:
                 self.connection.rollback()
                 logger.info(Fore.RED + f"[Currency]Currency_UserAccount表创建失败:{e}")
@@ -61,7 +61,7 @@ class MDataBase:
                     "Create Table Currency_UserSignIn(uid integer primary key Not Null,last_sign_in_time integer,"
                     "continuous_sign_in integer);")
                 self.connection.commit()
-                logger.info(Fore.RED + "[Currency]Currency_UserSignIn表创建成功")
+                logger.info(Fore.GREEN + "[Currency]Currency_UserSignIn表创建成功")
             except sqlite3.DatabaseError as e:
                 self.connection.rollback()
                 logger.info(Fore.RED + f"[Currency]Currency_UserSignIn表创建失败:{e}")
@@ -80,7 +80,7 @@ class MDataBase:
                     "                          level_progress text"
                     ");")
                 self.connection.commit()
-                logger.info(Fore.RED + "[ArkRail]ArkRail_User表创建成功")
+                logger.info(Fore.GREEN + "[ArkRail]ArkRail_User表创建成功")
 
             except sqlite3.DatabaseError as e:
                 self.connection.rollback()
@@ -101,7 +101,7 @@ class MDataBase:
                     "                          all_pool_5s text,"
                     "                          cur_pool_5s text);")
                 self.connection.commit()
-                logger.info(Fore.RED + "[ArkRail]ArkRail_GachaUser表创建成功")
+                logger.info(Fore.GREEN + "[ArkRail]ArkRail_GachaUser表创建成功")
 
             except sqlite3.DatabaseError as e:
                 self.connection.rollback()
@@ -120,7 +120,7 @@ class MDataBase:
                     "                          is_full integer check ( is_full==0 or is_full==1 ),"
                     "                          full_time integer);")
                 self.connection.commit()
-                logger.info(Fore.RED + "[ArkRail]ArkRail_AgarUser表创建成功")
+                logger.info(Fore.GREEN + "[ArkRail]ArkRail_AgarUser表创建成功")
 
             except sqlite3.DatabaseError as e:
                 self.connection.rollback()
@@ -137,7 +137,7 @@ class MDataBase:
                     "uid integer"
                     ");")
                 self.connection.commit()
-                logger.info(Fore.RED + "[Guild_QQ_Binding]Guild_QQ_Binding表创建成功")
+                logger.info(Fore.GREEN + "[Guild_QQ_Binding]Guild_QQ_Binding表创建成功")
 
             except sqlite3.DatabaseError as e:
                 self.connection.rollback()
