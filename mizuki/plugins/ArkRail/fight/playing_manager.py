@@ -144,14 +144,17 @@ class PlayingManager:
             if sub in self.all_ops_list:  # 我方干员回合
                 if operate == 0:
                     messages.append(await self.attack(sub, obj1))
-                    self.player_skill_count += int(5)  # 普攻回复5技力点
+                    if sub.profession != "先锋-冲锋":
+                        self.player_skill_count += int(5)  # 普攻回复5技力点
+                    else:
+                        self.player_skill_count += int(10)  # 冲锋手普攻回复10技力点
                 elif operate in [1, 2, 3]:
                     self.player_skill_count -= int(sub.skills_list[operate - 1].consume)  # 使用技能消耗技力点
                     messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
             else:  # 敌方干员回合
                 if operate == 0:
                     messages.append(await self.attack(sub, obj1))
-                    self.enemy_skill_count += int(5)  # 普攻回复5技力点
+                    self.enemy_skill_count += int(5 * (1 + (0.125 * (4 - len(self.all_enemies_list))) + ((sub.stars - 1) * 0.1)))  # 普攻回复技力点
                 elif operate in [1, 2, 3]:
                     self.enemy_skill_count -= int(sub.skills_list[operate - 1].consume)  # 使用技能消耗技力点
                     messages.append(await self.use_skill(sub, operate - 1, obj1, obj2))
@@ -757,7 +760,7 @@ class PlayingManager:
                 persistence = 0
                 health_amount = int(sub.max_health_p - sub.health)
                 await sub.hurt(sub, 4, health_amount)
-                message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%，每回合流失{round(skill.rate2 * 100, 2)}%最大生命值！"
+                message += f"\n攻击力提高{round(skill.rate1 * 100, 1)}%，生命上限提高{round(skill.rate2 * 100, 1)}%，每回合流失{round(skill.rate3 * 100, 2)}%最大生命值！"
             elif sid == 55:
                 persistence = 1
                 message += f"\n防御力提高{round(skill.rate1 * 100, 1)}%，速度减少{round(skill.rate3, 2)}点，每回合恢复{round(skill.rate2 * 100, 2)}%最大生命值！"
