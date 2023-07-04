@@ -554,7 +554,7 @@
     "speed": 100,
     "speed_plus": 0.1,
     "atk_type": 2,
-    "skills": [7,35],
+    "skills": [7, 35],
     "effect_list": []
   },
   "25": {
@@ -813,7 +813,7 @@
     "name": "风笛",
     "stars": 6,
     "profession": "先锋-冲锋",
-    "health": 1360,
+    "health": 1560,
     "health_plus": 10,
     "atk": 483,
     "atk_plus": 2,
@@ -828,7 +828,7 @@
     "speed": 105,
     "speed_plus": 0.1,
     "atk_type": 0,
-    "skills": [5,7,46],
+    "skills": [35,7,46],
     "effect_list": []
   },
   "37": {
