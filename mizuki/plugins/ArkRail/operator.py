@@ -163,7 +163,7 @@ class Operator:
             elif atk_type in [1, 3]:  # 法术伤害
                 res = self.res_p * (1 - ignore_res)
                 result = damage * ((100 - res) / 100) \
-                    if (damage * ((100 - res) / 100) > damage * 0.2) \
+                    if (damage * ((100 - res) / 100) > damage * 0.1) \
                     else int(damage * 0.1)  # 10%攻击力的保底伤害
             elif atk_type in [6, 7]:  # 真实伤害
                 result = damage
