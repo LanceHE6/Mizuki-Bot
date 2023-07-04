@@ -135,8 +135,8 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
             draw.text((x - 2 + (k - 1) * 27, y + 29), f"{persistence_str}", font=font)
 
             if e.effect_level > 0:  # 绘制效果层数
-                font = ImageFont.truetype("simhei", 14)
-                draw.text((x + 17 + (k - 1) * 27, y + 26), f"{int(e.effect_level)}", font=font)
+                font = ImageFont.truetype("simhei", 12)
+                draw.text((x + 14 + (k - 1) * 27, y + 26), f"{int(e.effect_level)}", font=font)
 
             if e.effect_degree != 0:  # 绘制效果箭头，用于判断是增益还是削弱
                 arrow_str = "" if e.effect_degree > 0 else "de"
