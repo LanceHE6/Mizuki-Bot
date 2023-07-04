@@ -405,7 +405,7 @@ class PlayingManager:
             elif sid == 3:
                 health_amount = await sub.hurt(sub, 4, int(skill.rate1 * sub.max_health_p))
                 message += f"\n恢复{health_amount}生命值！"
-            elif sid in [4, 13, 16]:
+            elif sid in [4, 13, 16, 58]:
                 rate = random.uniform(skill.rate1, skill.rate2)
                 is_crit: bool = random.randint(1, 10000) <= sub.crit_r_p * 10000  # 是否暴击
                 is_crit_str: str = "暴击并" if is_crit else ""
@@ -421,13 +421,18 @@ class PlayingManager:
                     atk_type_str = "真实"
                 if atk_type in [0, 1, 6, 8]:
                     objs_list.append(obj1)
+                    if sid == 58 and obj1.health <= 0.5 * obj1.max_health_p:
+                        damage = int(damage * (1 + skill.rate3))
                     damage_amount = total_damage = await obj1.hurt(sub, atk_type, damage)
                     message += f"\n{is_crit_str}对{obj1.name}造成了{damage_amount}点{atk_type_str}伤害！"
                 elif atk_type in [2, 3, 7]:
                     for op in obj1.next_operators:
                         if not isinstance(op, Operator):
                             continue
-                        damage_amount = await op.hurt(sub, atk_type, damage)
+                        d = damage
+                        if sid == 58 and op.health <= 0.5 * op.max_health_p:
+                            d = int(d * (1 + skill.rate3))
+                        damage_amount = await op.hurt(sub, atk_type, d)
                         total_damage += damage_amount
                         objs_list.append(op)
                         objs_name += f" {op.name}"
@@ -493,7 +498,7 @@ class PlayingManager:
                 persistence = 1
                 message += f"\n每回合回复{int(skill.rate1)}技力点，攻击力提高{round(skill.rate2 * 100, 1)}%！"
             elif sid == 10:
-                message += f"\n下次普攻必定暴击且暴击伤害增加{round(skill.rate1 * 100, 1)}%！\n"
+                message += f"\n下次普攻必定暴击且暴击伤害增加{round(skill.rate1 * 100, 1)}%！"
                 damage = int(sub.atk_p + (sub.atk_p * (sub.crit_d_p + skill.rate1)))
                 damage = await obj1.hurt(sub, 0, damage)
                 message = f"\n{sub.name}对{obj1.name}发动了普通攻击，暴击并对其造成了{damage}点物理伤害！"  # 返回的字符串
