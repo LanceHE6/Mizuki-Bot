@@ -222,10 +222,10 @@ async def _(event: GroupAndGuildMessageEvent):
 
 
 @change_up_6s_comm.handle()
-async def _(args=CommandArg()):
+async def _(args: Message = CommandArg()):
     """修改up6星 管理员发送的参数为up6星oid的列表"""
     try:
-        up_list = eval(str(args).replace(' ', ''))  # 获取命令后面跟着的纯文本内容
+        up_list = eval(args.extract_plain_text().replace(' ', ''))  # 获取命令后面跟着的纯文本内容
         if len(up_list) > 2:
             await change_up_6s_comm.finish("超过最大up6星数量")
     except NameError:
@@ -240,10 +240,10 @@ async def _(args=CommandArg()):
 
 
 @change_up_5s_comm.handle()
-async def _(args=CommandArg()):
+async def _(args: Message = CommandArg()):
     """修改up6星 管理员发送的参数为up5星oid的列表"""
     try:
-        up_list = eval(str(args).replace(' ', ''))  # 获取命令后面跟着的纯文本内容
+        up_list = eval(args.extract_plain_text().replace(' ', ''))  # 获取命令后面跟着的纯文本内容
         if len(up_list) > 3:
             await change_up_6s_comm.finish("超过最大up5星数量")
     except NameError:
