@@ -199,9 +199,9 @@ class PlayingManager:
             damage = await obj.hurt(sub, atk_type, damage)
             message = f"{sub.name}对{obj.name}发动了普通攻击，{is_crit_str}对其造成了{damage}点{atk_type_str}伤害！"  # 返回的字符串
             if sub.atk_type_p == 8 and random.randint(1, 100) < 80:  # 重装普攻大概率嘲讽敌方单位
-                message += f"\n{sub.name}嘲讽了{obj.name}！\n持续1回合！"
+                message += f"\n{sub.name}嘲讽了{obj.name}！\n持续2回合！"
                 obj.mocking_obj = sub
-                await obj.append_effect(Effect("0-1", 18, 1, 0, 0, 0, 0))
+                await obj.append_effect(Effect("0-1", 18, 2, 0, 0, 0, 0))
                 await obj.upgrade_effect()
             if await obj.is_die():
                 message += f"\n{obj.name}被{sub.name}击倒了！"
