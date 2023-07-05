@@ -169,7 +169,7 @@ async def _(event: GroupAndGuildMessageEvent):
 
     save_path = res_path / f"{uid}_ops.png"
     img.save(save_path)
-    await op_info_all.send(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, save_path), at_sender=True)
+    await op_info_all.send(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, save_path))
     os.remove(save_path)
     await op_info_all.finish()
 
