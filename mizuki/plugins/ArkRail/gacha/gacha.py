@@ -67,7 +67,7 @@ async def _(event: GroupAndGuildMessageEvent):
     except IndexError:
         gacha_img = None
         logger.info(Fore.RED + "[Gacha]抽卡制图出错")
-        await single.finish(GroupAndGuildMessageSegment.at(event) + "请先发送/op初始化你的数据")
+        await single.finish(GroupAndGuildMessageSegment.at(event) + "请先发送ops指令初始化你的数据")
 
     await single.send(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, gacha_img))
     await change_user_sj_num(uid, -600)
@@ -96,7 +96,7 @@ async def _(event: GroupAndGuildMessageEvent):
     except IndexError:
         gacha_img = None
         logger.info(Fore.RED + "[Gacha]抽卡制图出错")
-        await ten.finish(GroupAndGuildMessageSegment.at(event) + "请先发送/干员初始化你的数据")
+        await ten.finish(GroupAndGuildMessageSegment.at(event) + "请先发送ops指令初始化你的数据")
     await ten.send(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, gacha_img))
     await change_user_sj_num(uid, -6000)
     await user_cd_manager.add_user(uid)
