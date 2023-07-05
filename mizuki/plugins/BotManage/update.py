@@ -37,7 +37,7 @@ async def update():
                                          stderr=subprocess.STDOUT, encoding='utf-8').replace('\n', '')
         if output == "Already up to date.":
             await update_comm.finish("当前bot已是最新版本")
-        log_output = subprocess.check_output('git log -1 --pretty=format:"%s (%an)"', shell=True,
+        log_output = subprocess.check_output('git log -3 --pretty=format:"%s (%an)"', shell=True,
                                              stderr=subprocess.STDOUT, encoding='utf-8')
         print(log_output)
         await update_comm.send('bot已成功更新！\n\n更新日志：\n' + log_output)
