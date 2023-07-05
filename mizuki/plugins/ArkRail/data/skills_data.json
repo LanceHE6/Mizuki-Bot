@@ -30,7 +30,7 @@
     "consume": 20,
     "consume_plus": 0.4,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "2-1",
@@ -100,7 +100,7 @@
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "5-1",
@@ -117,17 +117,17 @@
     "name": "防御力增强",
     "brief_d": "自身防御力提升，持续一段时间",
     "detail": "自身防御力提升${r1_float}，持续${persistence}回合",
-    "rate1": 0.6,
+    "rate1": 0.5,
     "rate1_plus": 0.04,
     "rate2": 0,
     "rate2_plus": 0,
     "rate3": 0,
     "rate3_plus": 0,
     "obj_type": 0,
-    "consume": 25,
-    "consume_plus": 0.35,
+    "consume": 20,
+    "consume_plus": 0.25,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "6-1",
@@ -371,7 +371,7 @@
     "rate3_plus": 0,
     "obj_type": 4,
     "consume": 5,
-    "consume_plus": 0.18,
+    "consume_plus": 0.25,
     "persistence": 0,
     "persistence_plus": 0,
     "effect_list": []
@@ -390,7 +390,7 @@
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "18-1",
@@ -426,7 +426,7 @@
     "consume": 30,
     "consume_plus": 0.5,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "19-1",
@@ -470,7 +470,7 @@
     "consume": 20,
     "consume_plus": 0.25,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "21-1",
@@ -550,7 +550,7 @@
     "consume": 42,
     "consume_plus": 0.45,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "24-1",
@@ -586,7 +586,7 @@
     "consume": 40,
     "consume_plus": 0.45,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "25-1",
@@ -667,7 +667,7 @@
     "consume": 25,
     "consume_plus": 0.35,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "27-1",
@@ -833,7 +833,7 @@
     "consume": 18,
     "consume_plus": 0.25,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "34-1",
@@ -869,7 +869,7 @@
     "consume": 8,
     "consume_plus": 0.25,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "35-1",
@@ -894,7 +894,7 @@
     "rate3_plus": 0,
     "obj_type": 1,
     "consume": 0,
-    "consume_plus": 0.18,
+    "consume_plus": 0.25,
     "persistence": 0,
     "persistence_plus": 0,
     "effect_list": [
@@ -935,7 +935,7 @@
     "rate2": 12,
     "rate2_plus": 0.6,
     "rate3": 1,
-    "rate3_plus": 0.18,
+    "rate3_plus": 0.25,
     "obj_type": 1,
     "consume": 16,
     "consume_plus": 0.25,
@@ -1001,7 +1001,7 @@
     "consume": 45,
     "consume_plus": 0.55,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "41-1",
@@ -1130,7 +1130,7 @@
     "rate2": 0.8,
     "rate2_plus": 0.02,
     "rate3": 3,
-    "rate3_plus": 0.18,
+    "rate3_plus": 0.25,
     "obj_type": 3,
     "consume": 0,
     "consume_plus": 0,
@@ -1152,7 +1152,7 @@
     "consume": 40,
     "consume_plus": 0.45,
     "persistence": 1,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "46-1",
@@ -1313,7 +1313,7 @@
     "consume": 35,
     "consume_plus": 0.55,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "51-1",
@@ -1358,7 +1358,7 @@
     "consume": 0,
     "consume_plus": 0,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "52-1",
@@ -1408,8 +1408,8 @@
   },
   "54": {
     "name": "黄昏",
-    "brief_d": "立即回满生命，自身攻击力大幅增加，每回合流失一定生命值，持续时间无限",
-    "detail": "立即回满生命，自身攻击力增加${r1_float}，生命上限增加${r2_float}，每回合流失最大生命值的${r3_float}，持续${persistence}回合",
+    "brief_d": "立即回满生命，自身攻击力大幅增加，每回合损失一定生命值，持续时间无限",
+    "detail": "立即回满生命，自身攻击力增加${r1_float}，生命上限增加${r2_float}，每回合损失最大生命值的${r3_float}，持续${persistence}回合",
     "rate1": 0.7,
     "rate1_plus": 0.05,
     "rate2": 1.2,
@@ -1465,7 +1465,7 @@
     "consume": 15,
     "consume_plus": 0.35,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "55-1",
@@ -1510,7 +1510,7 @@
     "consume": 50,
     "consume_plus": 0.55,
     "persistence": 2,
-    "persistence_plus": 0.18,
+    "persistence_plus": 0.25,
     "effect_list": [
       {
         "e_id": "56-1",
