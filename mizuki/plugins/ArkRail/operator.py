@@ -476,7 +476,7 @@ class Operator:
         # 只可同时存在一个的效果
         if e.effect_type == 18:
             for i in range(len(self.effect_list)):
-                if self.effect_list[i].effect_type == 18:  # 嘲讽效果值同时存在一个
+                if self.effect_list[i].effect_type == 18:  # 嘲讽效果只同时存在一个
                     self.effect_list[i] = e
                     return
 
@@ -486,8 +486,9 @@ class Operator:
                     self.effect_list[i].persistence += 1
                     return
                 elif self.effect_list[i].effect_type == 26:  # 寒冷效果叠加变为冻结
-                    await self.append_effect(Effect(e.effect_id, 24, 1, 0, 0, 0, 0))
-                    self.effect_list.remove(self.effect_list[i])
+                    self.effect_list[i].effect_type = 24
+                    self.effect_list[i].persistence = 1
+                    self.effect_list[i].effect_degree = 0
                     return
 
         # 其他效果
@@ -639,19 +640,22 @@ class Operator:
 
         """
         if self in self.pm.all_enemies_list:
-            self.pm.all_enemies_list.remove(self)
-            await self.refresh_op_next_list()
-            for o in self.pm.all_ops_list:  # 解除嘲讽效果
-                if o.mocking_obj == self:
-                    o.mocked = 0
-                    o.mocking_obj = None
+            sub_list = self.pm.all_enemies_list
+            obj_list = self.pm.all_ops_list
         else:
-            self.pm.all_ops_list.remove(self)
-            await self.refresh_op_next_list()
-            for o in self.pm.all_enemies_list:  # 解除嘲讽效果
-                if o.mocking_obj == self:
-                    o.mocked = 0
-                    o.mocking_obj = None
+            sub_list = self.pm.all_ops_list
+            obj_list = self.pm.all_enemies_list
+
+        sub_list.remove(self)
+        await self.refresh_op_next_list()  # 刷新周围干员
+        for op in obj_list:  # 解除嘲讽效果
+            if op.mocking_obj == self:
+                for e in op.effect_list:
+                    if e.effect_type == 18:
+                        op.effect_list.remove(e)
+                        break
+                op.mocked = 0
+                op.mocking_obj = None
         self.pm.all_list.remove(self)
 
     async def refresh_op_next_list(self):
