@@ -482,12 +482,12 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
         结束对战的方法
         """
         playing_user.remove(uid)
-        delete_handle(operate_run)
-        delete_handle(operate_atk)
-        delete_handle(operate_skill)
+        await delete_handle(operate_run)
+        await delete_handle(operate_atk)
+        await delete_handle(operate_skill)
 
 
-def delete_handle(obj: Type[Matcher]):
+async def delete_handle(obj: Type[Matcher]):
     """
     删除响应器的方法
 
