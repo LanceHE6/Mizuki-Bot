@@ -12,7 +12,7 @@ from nonebot.adapters.onebot.v11 import Message
 
 from .playing_manager import PlayingManager, new_instance, is_all_hidden
 from ...Help.PluginInfo import PluginInfo
-from ..DB import is_map_exist, get_map_attribute, MapAttribute, user_agar, get_user_level_progress, \
+from ..DB import is_map_exist, get_map_attribute, MapAttribute, use_agar, get_user_level_progress, \
     set_user_level_progress
 from ...Currency.utils import change_user_lmc_num, change_user_sj_num
 from .draw_image import draw_player_fight_image
@@ -99,7 +99,7 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
                 GroupAndGuildMessageSegment.at(event) + f"您的关卡进度为{user_level_progress_str}，还不能扫荡{mid}这张地图哦！")
 
         consume = await get_map_attribute(mid, MapAttribute.consume)
-        if await user_agar(uid, consume):
+        if await use_agar(uid, consume):
             reward = await get_map_attribute(mid, MapAttribute.reward)
             #  reward[0]: str 奖励名称  reward[1]: int 奖励数量
             if reward[0] == "龙门币":
@@ -108,7 +108,8 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
                 await change_user_sj_num(uid, reward[1])
             else:
                 pass  # 关卡奖励干员
-            await mop.finish(GroupAndGuildMessageSegment.at(event) + f"关卡扫荡成功，消耗{consume}琼脂，获取到{reward[1]}{reward[0]}！")
+            await mop.finish(
+                GroupAndGuildMessageSegment.at(event) + f"关卡扫荡成功，消耗{consume}琼脂，获取到{reward[1]}{reward[0]}！")
         else:
             await mop.finish(GroupAndGuildMessageSegment.at(event) + "您的琼脂不足，无法获取关卡奖励！")
     else:
@@ -128,7 +129,7 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
         if len(messages) > 1 and (("作战失败" in messages) or ("作战成功" in messages)):  # 删除战斗信息
             if "作战成功" in messages:  # 获取奖励
                 consume = await get_map_attribute(mid, MapAttribute.consume)
-                if await user_agar(uid, consume):
+                if await use_agar(uid, consume):
                     reward = await get_map_attribute(mid, MapAttribute.reward)
                     #  reward[0]: str 奖励名称  reward[1]: int 奖励数量
                     if reward[0] == "龙门币":
