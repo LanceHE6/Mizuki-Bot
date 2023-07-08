@@ -516,7 +516,7 @@ async def get_user_agar_num(uid: str or int) -> int:
     return int(num[0])
 
 
-async def user_agar(uid: int or str, num: int) -> int:
+async def use_agar(uid: int or str, num: int) -> int:
     """
     使用体力，返回状态码
     :param uid:
@@ -526,7 +526,7 @@ async def user_agar(uid: int or str, num: int) -> int:
     user_num = await get_user_agar_num(uid)
     if user_num < num:
         return 0
-    await MDB.db_execute(f"Update ArkRail_AgarUser Set agar_num=argar_num-{num} Where uid={uid};")
+    result = await MDB.db_execute(f"Update ArkRail_AgarUser Set agar_num=agar_num-{num} Where uid={uid};")
     return 1
 
 
