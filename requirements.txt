@@ -6,4 +6,3 @@ beautifulsoup4~=4.12.2
 playwright==1.35.0
 tqdm>=4.65.0
 nonebot_plugin_apscheduler==0.3
-nonebot-adapters-onebot==2.2.3
