@@ -1,25 +1,10 @@
 FROM python:3.10
-
-WORKDIR /app
-
-COPY . /app
-
+EXPOSE 13570
+WORKDIR /Mizuki
+COPY . /Mizuki
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-
-RUN pip install nb-cli
-
 RUN pip install -r requirements.txt
-
+RUN nb plugin install nonebot-plugin-gocqhttp
 RUN playwright install
-
-RUN pip install nonebot-adapter-onebot
-
-RUN pip install nonebot-adapter-qqguild
-
-RUN pip install nonebot2[fastapi]
-
-RUN pip install nonebot2[httpx]
-
-RUN pip install nonebot2[aiohttp]
-
+RUN playwright install-deps # 安装Linux playwright依赖
 CMD ["python", "bot.py"]
