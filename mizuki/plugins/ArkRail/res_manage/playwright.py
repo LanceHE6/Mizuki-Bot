@@ -19,7 +19,7 @@ async def playwright_get_release_page():
     """
     logger.info("[ArkRail]正在访问仓库Release")
     playwright = await async_playwright().start()
-    browser = await playwright.firefox.launch(headless=True)
+    browser = await playwright.chromium.launch(headless=True)
 
     context = await browser.new_context()
     page = await context.new_page()
@@ -30,6 +30,7 @@ async def playwright_get_release_page():
     await context.close()
     await browser.close()
     await playwright.stop()  # 手动关闭playWright，否则会报警告ValueError: I/O operation on closed pipe
-    release = re.findall(r'<pre>(.*?)</pre>', page_content, re.DOTALL)
+    release = re.findall(r'<pre style="word-wrap: break-word; white-space: pre-wrap;">(.*?)</pre>',
+                         page_content, re.DOTALL)
 
     return json.loads(release[0])
