@@ -6,6 +6,7 @@
 
 from nonebot import on_command
 from nonebot.permission import SUPERUSER
+from nonebot.adapters.onebot.v11 import MessageEvent
 
 from ..Help.PluginInfo import PluginInfo
 from .reboot import reboot
@@ -29,7 +30,7 @@ __plugin_info__ = PluginInfo(
 
 
 @update_comm.handle()
-async def update():
+async def update(event: MessageEvent):
     await update_comm.send("正在从GitHub获取更新...")
     # 执行 git pull 命令拉取最新代码
     try:
@@ -43,4 +44,4 @@ async def update():
         await update_comm.send('bot已成功更新！\n\n更新日志：\n' + log_output)
     except subprocess.CalledProcessError as e:
         await update_comm.send(f'项目更新失败：{e.output}')
-    await reboot()
+    await reboot(event)

@@ -7,7 +7,7 @@
 from pathlib import Path
 from nonebot import on_command, get_bot
 from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, PrivateMessageEvent
+from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent
 
 import sys
 import asyncio
