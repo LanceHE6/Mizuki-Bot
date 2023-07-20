@@ -12,6 +12,7 @@ from nonebot import get_driver
 bg_img_path = Path() / 'mizuki' / 'plugins' / 'Help' / 'res' / 'bg.png'
 mizuki_img_path = Path() / 'mizuki' / 'plugins' / 'Help' / 'res' / 'mizuki.png'
 casual_img_path = Path() / 'mizuki' / 'plugins' / 'Help'
+FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
 
 
 async def draw_help_img(guild_command: bool = False) -> Path:
@@ -27,11 +28,11 @@ async def draw_help_img(guild_command: bool = False) -> Path:
     img.paste(bg_img, (0, 0))
     img.paste(mizuki_img, (900, 700), mask=mizuki_img)
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype("simhei", 64)
+    font = ImageFont.truetype(FONT, 64)
     draw.text((650, 100), "指令列表", font=font, fill='black')
-    font = ImageFont.truetype("simhei", 32)
+    font = ImageFont.truetype(FONT, 32)
     draw.text((1150, 140), "<>为必填,[]为选填", font=font, fill='red')
-    font = ImageFont.truetype("simhei", 24)
+    font = ImageFont.truetype(FONT, 24)
     draw.text((1150, 1120), "Create By Mizuki-bot", font=font, fill=(0, 162, 255))
     command_start = list(get_driver().config.command_start)[0]
     i = 0
@@ -39,7 +40,7 @@ async def draw_help_img(guild_command: bool = False) -> Path:
     for plugin in plugins_info_list:
         base_y = 180
         font_size = 32
-        font = ImageFont.truetype("simhei", font_size)
+        font = ImageFont.truetype(FONT, font_size)
         if isinstance(plugin.usage, list):  # 判断用法是否为列表
             for per in plugin.usage:
                 if str(per).startswith("@"):  # 判断是否为@bot

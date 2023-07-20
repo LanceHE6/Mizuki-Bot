@@ -21,6 +21,8 @@ from ..Utils.GroupAndGuildMessageSegment import (GroupAndGuildMessageSegment,
 from ..Utils.GroupAndGuildMessageEvent import get_event_user_id
 
 src_path = Path() / 'mizuki' / 'plugins' / 'Currency' / 'res'
+FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
+
 my_account = on_command("account", aliases={"我的账户", "账户"}, block=True, priority=2)
 
 __plugin_info__ = PluginInfo(
@@ -96,17 +98,17 @@ async def draw_img(uid: int) -> Path:
     img.paste(sj_img, (480, 880), mask=sj_img)
 
     draw = ImageDraw.Draw(img)
-    draw_font = ImageFont.truetype("simhei", 80)
+    draw_font = ImageFont.truetype(FONT, 80)
     draw.text((640, 360), f"{nickname}", font=draw_font)  # 用户昵称
 
-    draw_font = ImageFont.truetype("simhei", 48)
+    draw_font = ImageFont.truetype(FONT, 48)
     draw.text((560, 815), "龙门币", font=draw_font)
     draw.text((560, 1170), "合成玉", font=draw_font)
 
-    draw_font = ImageFont.truetype("simhei", 120)
+    draw_font = ImageFont.truetype(FONT, 120)
     draw.text((840, 620), f"X  {lmc_num}", font=draw_font, fill=(0, 179, 245))
     draw.text((840, 970), f"X  {sj_num}", font=draw_font, fill='red')
-    draw_font = ImageFont.truetype("simhei", 36)
+    draw_font = ImageFont.truetype(FONT, 36)
     draw.text((1210, 1220), "Create By Mizuki-Bot", font=draw_font, fill=(0, 162, 255))
     save_path = Path() / 'mizuki' / 'plugins' / 'Currency' / f'{uid}_account.png'
     img.save(save_path)

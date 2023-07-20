@@ -19,6 +19,7 @@ from ..utils import get_op_img
 from ...Help.PluginInfo import PluginInfo
 
 config = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'pool_config.json'
+FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
 
 change_up_6s_comm = on_command("修改up6星", aliases={"更改up6星", "up6星设置", "修改6星up"}, block=True, priority=3,
                                permission=SUPERUSER)
@@ -51,8 +52,6 @@ __plugin_info__ = [PluginInfo(
     }
 )]
 
-
-# change_prob_improvement = on_command("")
 class Pool:
     """卡池配置"""
 
@@ -126,7 +125,7 @@ async def draw_pool_info(up_6s: list, up_5s: list) -> Path:
         img.paste(up_6s1_img, (-350, -160), mask=up_6s1_img)  # 干员
         img.paste(stars_img, (250, 500), mask=stars_img)  # 星级
         img.paste(profession_img, (260, 590))  # 职业
-        font = ImageFont.truetype('simhei', 64)
+        font = ImageFont.truetype(FONT, 64)
         draw.text((350, 600), f"{name}", font=font, fill='white')  # 名字
 
         op_img = await get_op_img(up_6s[1], is_big=1)
@@ -183,7 +182,7 @@ async def draw_pool_info(up_6s: list, up_5s: list) -> Path:
         img.paste(profession_img2, (1665, 470))
         img.paste(profession_img3, (1190, 920))
 
-        font = ImageFont.truetype('simhei', 36)
+        font = ImageFont.truetype(FONT, 36)
         draw.text((1168, 273), f"{op_name1}", font=font, fill='white')
         draw.text((1713, 473), f"{op_name2}", font=font, fill='white')
         draw.text((1238, 923), f"{op_name3}", font=font, fill='white')
@@ -197,7 +196,7 @@ async def draw_pool_info(up_6s: list, up_5s: list) -> Path:
         img.paste(up_6s1_img, (-350, -160), mask=up_6s1_img)  # 干员
         img.paste(stars_img, (250, 500), mask=stars_img)  # 星级
         img.paste(profession_img, (260, 590))  # 职业
-        font = ImageFont.truetype('simhei', 64)
+        font = ImageFont.truetype(FONT, 64)
         draw.text((350, 600), f"{name}", font=font, fill='white')  # 名字
 
         prob_up_img = Image.open(f"{pool_img_path}/prob_up.png").resize((1050, 150))

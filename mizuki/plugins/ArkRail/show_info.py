@@ -6,7 +6,6 @@
 import asyncio
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 from nonebot.params import CommandArg
 from nonebot.log import logger
 import os
@@ -27,6 +26,7 @@ stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'stars'
 profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profession'
 skill_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'skills'
 res_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
+FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
 
 op_info = on_command("op", aliases={"出战", "出战干员"}, block=True, priority=2)
 op_info_all = on_command("ops", aliases={"all", "所有角色", "所有干员", "info all", "我的干员", "干员"}, block=True, priority=2)
@@ -130,10 +130,10 @@ async def _(event: GroupAndGuildMessageEvent):
         img.paste(op_img, (x, basic_y))
         # 名字
         if len(name) > 4:
-            font = ImageFont.truetype("simhei", 16)
+            font = ImageFont.truetype(FONT, 16)
             name_bg = Image.new("RGB", (len(name) * 16, 18), (0, 0, 0))
         else:
-            font = ImageFont.truetype("simhei", 20)
+            font = ImageFont.truetype(FONT, 20)
             name_bg = Image.new("RGB", (len(name) * 21, 22), (0, 0, 0))
         img.paste(name_bg, (x + 5, basic_y + 175))
         draw.text((x + 5, basic_y + 175), name, fill="white", font=font)
@@ -141,7 +141,7 @@ async def _(event: GroupAndGuildMessageEvent):
         # 等级
         level_img = Image.open(info_img_path / "level.png").resize((50, 50))
         img.paste(level_img, (x + 25, basic_y + 120), mask=level_img)
-        font = ImageFont.truetype("simhei", 36)
+        font = ImageFont.truetype(FONT, 36)
         if len(str(level)) == 2:
             draw.text((x + 32, basic_y + 128), str(level), font=font, fill="white", stroke_fill="black", stroke_width=2)
         else:
@@ -265,12 +265,12 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
     img.paste(crit_r_img, (400, 580))
     img.paste(crit_d_img, (400, 640))
     # 属性值
-    font = ImageFont.truetype("simhei", 100)
+    font = ImageFont.truetype(FONT, 100)
     if len(str(level)) == 2:  # 判断等级位数
         draw.text((95, 245), f"{level}", font=font, fill='white', stroke_fill='black', stroke_width=2)
     else:
         draw.text((120, 245), f"{level}", font=font, fill='white', stroke_fill='black', stroke_width=2)
-    font = ImageFont.truetype("simhei", 50)
+    font = ImageFont.truetype(FONT, 50)
     draw.text((50, 460), "属性>>", font=font, fill='black')
     draw.text((250, 515), f"{op.max_health}", font=font, fill="black")  # max_health
     draw.text((250, 575), f"{op.atk}", font=font, fill="black")  # atk
@@ -291,14 +291,14 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
     stars = await get_op_attribute(oid, OPAttribute.stars)
     stars_img = Image.open(f"{stars_img_path}/{stars}.png").resize((350, 92))  # 星级
     img.paste(stars_img, (40, 760), mask=stars_img)
-    font = ImageFont.truetype("simhei", 150)
+    font = ImageFont.truetype(FONT, 150)
     draw.text((50, 860), f"{op.name}", font=font, fill='white', stroke_fill='black', stroke_width=2)  # name
 
     profession = ''.join(list(op.profession)[0:2])
     feature = ''.join(list(op.profession)[-2:])
     pro_img = Image.open(f"{profession_img_path}/{profession}_big.png")
     img.paste(pro_img, (50, 1020))
-    font = ImageFont.truetype("simhei", 60)
+    font = ImageFont.truetype(FONT, 60)
     draw.text((240, 1020), f"{profession}", font=font, fill='white', stroke_fill='black', stroke_width=1)
     draw.text((240, 1090), f"{feature}", font=font, fill='white', stroke_fill='black', stroke_width=1)
 
@@ -314,19 +314,19 @@ async def draw_op_info_img(oid: int, level: int, op: Operator, uid: int or str) 
 
     i = 0
     for skill in op_skills_list:
-        font = ImageFont.truetype("simhei", 36)
+        font = ImageFont.truetype(FONT, 36)
         sid = skill.sid
         skill_img = Image.open(skill_img_path / f"{sid}.png").resize((120, 120))
         img.paste(skill_img, (810, 340 + i * 300), mask=skill_img)
         str_half_len = len(skill.name) if len(skill.name) < 5 else 5
         draw.text((870-(str_half_len/2)*36, 460 + i * 300), f"{skill.name}", font=font, fill='white', stroke_fill='black', stroke_width=2)
-        font = ImageFont.truetype("simhei", 48)
+        font = ImageFont.truetype(FONT, 48)
         draw.text((940, 415 + i * 300), f"LV.{skill.level + 1}", font=font, fill="white")
-        font = ImageFont.truetype("simhei", 30)
+        font = ImageFont.truetype(FONT, 30)
         skill_detail = await line_break(skill.detail, 10)
         draw.text((1100, 360 + i * 300), f"{skill_detail}", font=font, fill='white', stroke_fill='black',
                   stroke_width=2)
-        font = ImageFont.truetype("simhei", 64)
+        font = ImageFont.truetype(FONT, 64)
         draw.text((1435, 380 + i * 300), f"{int(skill.consume)}", font=font, fill='white', stroke_fill='black',
                   stroke_width=2)
         i += 1

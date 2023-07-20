@@ -12,6 +12,7 @@ from .playing_manager import PlayingManager, new_instance
 from pathlib import Path
 
 res_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
+FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
 command_start = str(list(get_driver().config.command_start)[0])  # 获取指令开头
 
 
@@ -105,7 +106,7 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
         alpha = 255  # 透明度
         j = 0
         for damage in enemy.damage_list:  # 绘制敌人受到的伤害/治疗(等于0的数值不绘制)
-            font = ImageFont.truetype("simhei", 30)
+            font = ImageFont.truetype(FONT, 30)
             if damage > 0:
                 damage_str = f"+{damage}"
                 draw.text((x + 62, y - 250 - j * 32), f"{damage_str}", font=font, fill=(0, 255, 80, alpha))
@@ -121,7 +122,7 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
         for e in enemy.effect_list:  # 绘制敌人效果
             k += 1
             if k >= 6:  # 只绘制前五个效果，超过5个效果加省略号
-                font = ImageFont.truetype("simhei", 14)
+                font = ImageFont.truetype(FONT, 14)
                 draw.text((x + 162, y + 14), "...", font=font)
                 break
             e_bg_img = Image.open(res_path / "effects/effect_bg.png").resize((22, 22))
@@ -130,12 +131,12 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
             image.paste(e_bg_img, (x + (k - 1) * 27, y + 13), mask=e_bg_img)
             image.paste(effect_img, (x + 1 + (k - 1) * 27, y + 14), mask=effect_img)
 
-            font = ImageFont.truetype("simhei", 10)  # 绘制持续回合
+            font = ImageFont.truetype(FONT, 10)  # 绘制持续回合
             persistence_str = int(e.persistence) if e.persistence >= 0 else "∞"  # 小于0的话持续时间无限
             draw.text((x - 2 + (k - 1) * 27, y + 29), f"{persistence_str}", font=font)
 
             if e.effect_level > 0:  # 绘制效果层数
-                font = ImageFont.truetype("simhei", 12)
+                font = ImageFont.truetype(FONT, 12)
                 draw.text((x + 14 + (k - 1) * 27, y + 26), f"{int(e.effect_level)}", font=font)
 
             if e.effect_degree != 0:  # 绘制效果箭头，用于判断是增益还是削弱
@@ -162,7 +163,7 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
         image.paste(op_avatar, (32, 5 + i * 89), mask=op_avatar)
         # 速度
         speed = obj.speed
-        font = ImageFont.truetype("simhei", 14)
+        font = ImageFont.truetype(FONT, 14)
         draw.text((128, 80 + i * 89), f"{speed}", font=font)
         i += 1
 
@@ -183,13 +184,13 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
         if max_width + 26 + i * 224 - width < 26 + i * 224 + max_width - 3:
             draw.rectangle((max_width + 26 + i * 224 - width, 696, 26 + i * 224 + max_width - 3, 708), fill="#252525")
         # 显示血量
-        font = ImageFont.truetype("simhei", 14)
+        font = ImageFont.truetype(FONT, 14)
         draw.text((159 + i * 224, 676), f"{int(now_health)}/{int(max_health)}", font=font)
 
         alpha = 255  # 透明度
         j = 0
         for damage in op.damage_list:  # 绘制干员受到的伤害/治疗(等于0的数值不绘制)
-            font = ImageFont.truetype("simhei", 36)
+            font = ImageFont.truetype(FONT, 36)
             if damage > 0:
                 damage_str = f"+{damage}"
                 draw.text((144 + i * 224, 633 - j * 35), f"{damage_str}", font=font, fill=(0, 255, 80, alpha))
@@ -205,7 +206,7 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
         for e in op.effect_list:  # 绘制效果
             k += 1
             if k >= 5:  # 只绘制前四个效果，超过4个效果加省略号
-                font = ImageFont.truetype("simhei", 16)
+                font = ImageFont.truetype(FONT, 16)
                 draw.text((206 + i * 224, 719), "...", font=font)
                 break
             e_bg_img = Image.open(res_path / "effects/effect_bg.png").resize((40, 40))
@@ -214,12 +215,12 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
             image.paste(e_bg_img, (23 + (k - 1) * 47 + i * 224, 711), mask=e_bg_img)
             image.paste(effect_img, (25 + (k - 1) * 47 + i * 224, 713), mask=effect_img)
 
-            font = ImageFont.truetype("simhei", 12)  # 绘制持续回合
+            font = ImageFont.truetype(FONT, 12)  # 绘制持续回合
             persistence_str = int(e.persistence) if e.persistence >= 0 else "∞"  # 小于0的话持续时间无限
             draw.text((21 + (k - 1) * 47 + i * 224, 742), f"{persistence_str}", font=font)
 
             if e.effect_level > 0:  # 绘制效果层数
-                font = ImageFont.truetype("simhei", 18)
+                font = ImageFont.truetype(FONT, 18)
                 draw.text((56 + (k - 1) * 47 + i * 224, 737), f"{int(e.effect_level)}", font=font)
 
             if e.effect_degree != 0:  # 绘制效果箭头，用于判断是增益还是削弱
@@ -251,10 +252,10 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
         else:
             d_color = (175, 100, 245)
 
-        font = ImageFont.truetype("simhei", 16)
+        font = ImageFont.truetype(FONT, 16)
         draw.text((1310 - i * 166, 723), f"{skill.obj_type_str}", font=font, fill=d_color)
 
-        font = ImageFont.truetype("simhei", 14)
+        font = ImageFont.truetype(FONT, 14)
         draw.text((1385 - i * 166, 736), f"{int(skill.consume)}", font=font, anchor="rs")
 
         if obj_type == 1:
@@ -270,7 +271,7 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
         else:
             obj_type_command = ""
 
-        font = ImageFont.truetype("simhei", 18)
+        font = ImageFont.truetype(FONT, 18)
         draw.text((1347 - i * 166, 757), f"{command_start}s {i+1}{obj_type_command}", font=font, fill=(255, 0, 0), anchor="ms")
 
         i += 1
@@ -279,7 +280,7 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
     image.paste(player_skill_count_img, (1494, 13), mask=player_skill_count_img)
     enemy_skill_count_img = Image.open(res_path / "atk_info/enemy_skill_count.png")
     image.paste(enemy_skill_count_img, (1494, 80), mask=enemy_skill_count_img)
-    font = ImageFont.truetype("simhei", 48)
+    font = ImageFont.truetype(FONT, 48)
     draw.text((1562, 23), f"{player_skill_count}", font=font)
     draw.text((1562, 92), f"{enemy_skill_count}", font=font)
 
@@ -295,12 +296,12 @@ async def draw_player_fight_image(pm: PlayingManager, message_list, uid):
     else:
         atk_type_command = ""
 
-    font = ImageFont.truetype("simhei", 20)
+    font = ImageFont.truetype(FONT, 20)
     draw.text((1550, 715), f"{command_start}a {atk_type_command}", font=font, fill=(255, 0, 0), anchor="ms")
 
     # 战斗信息
     if message_list is not None:
-        font = ImageFont.truetype("simhei", 28)
+        font = ImageFont.truetype(FONT, 28)
         draw.text((8, 764), f"{message_str}", font=font, fill=(0, 0, 0))
 
     save_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / f'{uid}_play_info.png'

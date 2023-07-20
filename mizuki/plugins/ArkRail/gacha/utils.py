@@ -32,6 +32,7 @@ gacha_record_src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'gacha' / 'r
 new_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'new.png'
 profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profession'
 stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'stars'
+FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
 
 
 async def gacha(uid, ten_type: bool = False) -> list:
@@ -109,7 +110,7 @@ async def draw_img_ten(oid_list: list, uid: int or str) -> Path:
         if stars == 5 or stars == 6:
             await add_op_to_user_db(uid, oid, stars)  # 写入获取记录表中
         if not await is_op_owned(int(uid), int(oid)):  # new标识
-            font = ImageFont.truetype('simhei', 48)
+            font = ImageFont.truetype(FONT, 48)
             draw.text((238 + i * 200, 180), "NEW", font=font, fill='red')
             await add_op_to_user(uid, oid)  # 写入数据库
         else:
@@ -121,7 +122,7 @@ async def draw_img_ten(oid_list: list, uid: int or str) -> Path:
         i += 1
 
     # 文字样式（微软雅黑），可以自定义ttf格式文字样式
-    font = ImageFont.truetype('simhei', 22)
+    font = ImageFont.truetype(FONT, 22)
     draw.text((2200, 730), f"{uid}", font=font)
     draw.text((2170, 750), f'{time.strftime("%m-%d %H:%M:%S", time.localtime())}', font=font)
     draw.text((2205, 770), "Create By", font=font, fill=(0, 162, 255))
@@ -155,10 +156,10 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
     image.paste(stars_img, (160, 550), mask=stars_img)  # 星级
     image.paste(pro_img, (320, 750))  # 职业标志
 
-    font = ImageFont.truetype('simsun', 100)
+    font = ImageFont.truetype(FONT, 100)
     draw.text((110, 790), f"{''.join(list(profession)[0:2])}", font=font, fill=(0, 0, 0), stroke_fill=(0, 0, 0),
               stroke_width=2)  # 职业文字
-    font = ImageFont.truetype('simsun', 120)
+    font = ImageFont.truetype(FONT, 120)
     draw.text((460, 765), name, font=font, stroke_fill='gray', stroke_width=1)  # 干员名字
     if stars == 5 or stars == 6:
         await add_op_to_user_db(uid, oid, stars)  # 写入获取记录表中
@@ -170,7 +171,7 @@ async def draw_img_single(oid_list: list, uid: int or str) -> Path:
         # 转换为龙门币
         await change_user_lmc_num(uid, PoolConfig.stars_values_lmc[f"{stars}"])
     # 文字样式（微软雅黑），可以自定义ttf格式文字样式
-    font = ImageFont.truetype('simhei', 22)
+    font = ImageFont.truetype(FONT, 22)
     draw.text((950, 990), f"{uid}", font=font)
     draw.text((915, 1010), f'{time.strftime("%m-%d %H:%M:%S", time.localtime())}', font=font)
     draw.text((955, 1030), "Create By", font=font, fill=(0, 162, 255))
@@ -247,7 +248,7 @@ async def draw_gacha_record(uid: int or str, nick_name: str) -> Path:
 
     avatar = await circle_corner(Image.open(avatar_path).resize((200, 200)), 100)
     img.paste(avatar, (688, 100), mask=avatar)
-    font = ImageFont.truetype("simhei", 80)
+    font = ImageFont.truetype(FONT, 80)
     draw.text((await transverse_text_center_locate(nick_name, img.width, 80), 320), f"{nick_name}", font=font,
               fill='white')
     draw.text((450, 500), "总计抽数:", font=font, fill='white', stroke_fill='black', stroke_width=1)
