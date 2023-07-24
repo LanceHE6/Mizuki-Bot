@@ -42,6 +42,6 @@ async def update(event: MessageEvent):
                                              stderr=subprocess.STDOUT, encoding='utf-8')
         print(log_output)
         await update_comm.send('bot已成功更新！\n\n更新日志：\n' + log_output)
+        await reboot(event)
     except subprocess.CalledProcessError as e:
         await update_comm.send(f'项目更新失败：{e.output}')
-    await reboot(event)
