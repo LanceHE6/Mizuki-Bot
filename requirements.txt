@@ -1,11 +1,10 @@
-nb-cli==1.2.2
 colorama==0.4.6
 Pillow==9.5.0
 requests==2.31.0
 beautifulsoup4~=4.12.2
 playwright==1.35.0
 tqdm>=4.65.0
-nonebot_plugin_apscheduler==0.3
+nonebot_plugin_apscheduler==0.3.0
 nonebot-adapter-onebot==2.2.3
 nonebot-adapter-qqguild==0.2.3
 nonebot2[aiohttp,fastapi,httpx]==2.0.0
