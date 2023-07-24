@@ -5,13 +5,12 @@
 # @Software:PyCharm
 
 from pathlib import Path
-from nonebot import on_command, get_bot
+from nonebot import on_command
 from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent
-from nonebot import get_app
+from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, Bot
+from nonebot import get_app, get_driver
 
 import sys
-import asyncio
 import json
 import os
 import time
@@ -30,7 +29,7 @@ __plugin_info__ = PluginInfo(
     usage="reboot ——重启bot",
     extra={
         "author": "Hycer_Lance",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "priority": 1,
         "permission": "SUPERUSER"
     }
@@ -38,6 +37,10 @@ __plugin_info__ = PluginInfo(
 
 
 async def restart_bot():
+    """
+    重启进程
+    :return: None
+    """
     with contextlib.suppress(Exception):
         await get_app().router.shutdown()
     reboot_arg = (
@@ -65,19 +68,30 @@ def write_boot_data():
         json.dump(boot_data, data, indent=4)
 
 
-async def check_boot_data():
+write_boot_data()
+
+driver = get_driver()
+
+
+@driver.on_bot_connect
+async def check_boot_data(bot: Bot):
+    """
+    在bot连接上后检查启动数据
+    :param bot: Bot对象
+    :return: None
+    """
     with open(boot_data_path / 'boot_data.json', 'r', encoding='utf-8') as data:
         boot_data = json.load(data)
         data.close()
-    if not boot_data["reply"]:
-        bot = get_bot()
+    if boot_data["replied"] == 0:
         if boot_data["gid"] == '':
             await bot.send_private_msg(message="重启完成", user_id=boot_data["uid"])
         else:
-            await bot.send_group_msg(message="重启完成", user_id=boot_data["uid"], group_id=boot_data["gid"])
-
-
-write_boot_data()
+            await bot.send_group_msg(message="重启完成", group_id=boot_data["gid"])
+    boot_data["replied"] = 1
+    with open(boot_data_path / 'boot_data.json', 'w', encoding='utf-8') as data:
+        json.dump(boot_data, data, indent=4)
+        data.close()
 
 @reboot_comm.handle()
 async def reboot(event: MessageEvent):
@@ -96,5 +110,5 @@ async def reboot(event: MessageEvent):
     with open(boot_data_path / 'boot_data.json', 'w', encoding='utf-8') as data:
         json.dump(boot_data, data, indent=4)
 
-    await reboot_comm.send("重启将于15s后完成")
+    await reboot_comm.send("正在重启...")
     await restart_bot()
