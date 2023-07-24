@@ -35,4 +35,4 @@ async def _(event: GroupAndGuildMessageEvent):
         await help_comm.finish(
             GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path))
     img_path = await draw_help_img()
-    await help_comm.finish(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path))
+    await help_comm.finish(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path) + "Done" )
