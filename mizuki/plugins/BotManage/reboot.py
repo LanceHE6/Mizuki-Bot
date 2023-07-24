@@ -8,12 +8,14 @@ from pathlib import Path
 from nonebot import on_command, get_bot
 from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent
+from nonebot import get_app
 
 import sys
 import asyncio
 import json
 import os
 import time
+import contextlib
 
 from ..Help.PluginInfo import PluginInfo
 
@@ -35,13 +37,20 @@ __plugin_info__ = PluginInfo(
 )
 
 
-def restart_bot():
-    os.system(f"{sys.executable} {os.getcwd()}\\mizuki\\plugins\\BotManage\\boot_script.py")
+async def restart_bot():
+    with contextlib.suppress(Exception):
+        await get_app().router.shutdown()
+    reboot_arg = (
+        [sys.executable] + sys.argv
+        if sys.argv[0].endswith('.py')
+        else [sys.executable, 'bot.py']
+    )
+    os.execv(sys.executable, reboot_arg)
 
 
 def write_boot_data():
     """
-    写入启动数据
+    每次启动bot写入启动数据
     :return: None
     """
     if not os.path.exists(boot_data_path):
@@ -57,7 +66,6 @@ def write_boot_data():
 
 
 async def check_boot_data():
-    await asyncio.sleep(10)
     with open(boot_data_path / 'boot_data.json', 'r', encoding='utf-8') as data:
         boot_data = json.load(data)
         data.close()
@@ -71,9 +79,9 @@ async def check_boot_data():
 
 write_boot_data()
 
-
 @reboot_comm.handle()
 async def reboot(event: MessageEvent):
+    # 写入启动数据中
     if isinstance(event, GroupMessageEvent):
         gid = event.group_id
     else:
@@ -82,11 +90,11 @@ async def reboot(event: MessageEvent):
     with open(boot_data_path / 'boot_data.json', 'r', encoding='utf-8') as data:
         boot_data = json.load(data)
         data.close()
+    boot_data["replied"] = 0  # 打上回复状态标签
     boot_data["gid"] = gid
     boot_data["uid"] = uid
     with open(boot_data_path / 'boot_data.json', 'w', encoding='utf-8') as data:
         json.dump(boot_data, data, indent=4)
 
-    await reboot_comm.send("正在重启...")
-    restart_bot()
-    await reboot_comm.send("重启成功")
+    await reboot_comm.send("重启将于15s后完成")
+    await restart_bot()
