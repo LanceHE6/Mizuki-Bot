@@ -8,4 +8,3 @@ nonebot_plugin_apscheduler==0.3.0
 nonebot-adapter-onebot==2.2.3
 nonebot-adapter-qqguild==0.2.3
 nonebot2[aiohttp,fastapi,httpx]==2.0.0
-2
