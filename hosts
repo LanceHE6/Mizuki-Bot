@@ -1,0 +1,31 @@
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::0	ip6-localnet
+ff00::0	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.2	18759986b528
+
+140.82.113.3 github.com
+185.199.108.154 github.githubassets.com
+185.199.109.154 github.githubassets.com
+185.199.110.154 github.githubassets.com
+185.199.111.154 github.githubassets.com
+185.199.108.154 github.githubassets.com
+185.199.109.154 github.githubassets.com
+185.199.110.154 github.githubassets.com
+185.199.111.154 github.githubassets.com
+199.232.68.133 camo.githubusercontent.com
+199.232.68.133 camo.githubusercontent.com
+199.232.68.133 github.map.fastly.net
+199.232.68.133 github.map.fastly.net
+199.232.69.194 github.global.ssl.fastly.net
+199.232.69.194 github.global.ssl.fastly.net
+140.82.113.5 api.github.com
+140.82.113.5 api.github.com
+199.232.68.133 raw.githubusercontent.com
+199.232.68.133 raw.githubusercontent.com
+199.232.68.133 user-images.githubusercontent.com
+199.232.68.133 user-images.githubusercontent.com
+199.232.68.133 favicons.githubusercontent.com
+199.232.68.133 favicons.githubusercontent.com
