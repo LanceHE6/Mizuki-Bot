@@ -180,6 +180,10 @@ PERSONALITY=""  # ChatGPT 人格描述
 
 *注意指令后面的`.`不要漏掉*
 
+或者使用下面的指令拉取已经构建好的镜像
+
+`docker pull registry.cn-hangzhou.aliyuncs.com/hycer-images-hub/mizuki-env`
+
 随后等待镜像构建完成
 
 ## 创建启动容器
