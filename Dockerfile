@@ -1,7 +1,7 @@
 FROM python:3.10.0
 EXPOSE 13570
 WORKDIR /Mizuki
-COPY . /Mizuki
+COPY requirements.txt /Mizuki
 #RUN pip config set global.index-url https://pypi.douban.com/simple
 RUN pip install nb-cli
 RUN pip install -r requirements.txt
