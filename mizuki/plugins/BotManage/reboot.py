@@ -58,12 +58,18 @@ def write_boot_data():
     """
     if not os.path.exists(boot_data_path):
         os.mkdir(boot_data_path)
-    with open(boot_data_path / 'boot_data.json', 'r', encoding='utf-8') as data:
-        boot_data = json.load(data)
-        data.close()
+    try:
+        with open(boot_data_path / 'boot_data.json', 'r', encoding='utf-8') as data:
+            boot_data = json.load(data)
+            data.close()
+    except FileNotFoundError:
+        with open(boot_data_path / 'boot_data.json', 'w', encoding='utf-8') as data:
+            boot_data = {}
+            data.close()
     cwd = os.getcwd()
     boot_data["cwd"] = cwd
     boot_data["boot_time"] = int(time.time())
+
     with open(boot_data_path / 'boot_data.json', 'w', encoding='utf-8') as data:
         json.dump(boot_data, data, indent=4)
 
@@ -83,15 +89,18 @@ async def check_boot_data(bot: Bot):
     with open(boot_data_path / 'boot_data.json', 'r', encoding='utf-8') as data:
         boot_data = json.load(data)
         data.close()
-    if boot_data["replied"] == 0:
-        if boot_data["gid"] == '':
-            await bot.send_private_msg(message="重启完成", user_id=boot_data["uid"])
-        else:
-            await bot.send_group_msg(message="重启完成", group_id=boot_data["gid"])
-    boot_data["replied"] = 1
-    with open(boot_data_path / 'boot_data.json', 'w', encoding='utf-8') as data:
-        json.dump(boot_data, data, indent=4)
-        data.close()
+    try:
+        if boot_data["replied"] == 0:
+            if boot_data["gid"] == '':
+                await bot.send_private_msg(message="重启完成", user_id=boot_data["uid"])
+            else:
+                await bot.send_group_msg(message="重启完成", group_id=boot_data["gid"])
+        boot_data["replied"] = 1
+        with open(boot_data_path / 'boot_data.json', 'w', encoding='utf-8') as data:
+            json.dump(boot_data, data, indent=4)
+            data.close()
+    except KeyError:
+        pass
 
 @reboot_comm.handle()
 async def reboot(event: MessageEvent):
