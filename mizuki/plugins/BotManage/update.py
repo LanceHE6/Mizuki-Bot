@@ -50,7 +50,7 @@ async def _(event: MessageEvent):
         log_output = subprocess.check_output('git log -3 --pretty=format:"%s (%an)"', shell=True,
                                              stderr=subprocess.STDOUT, encoding='utf-8')
         print(log_output)
-        await update_comm.send('bot已成功更新！\n\n更新日志：\n' + log_output)
+        await update_comm.send('bot已成功更新！\n\n最近更新日志：\n' + log_output)
         await reboot(event)
     except subprocess.CalledProcessError as e:
         if 'timeout' in e.output or 'unable to access' in e.output:
