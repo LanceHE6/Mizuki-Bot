@@ -42,7 +42,7 @@ async def _(event: MessageEvent):
         if output == "Already up to date.":
             await update_comm.finish("当前bot已是最新版本")
         if 'timeout' in output or 'unable to access' in output:
-            msg = '更新失败，连接git仓库超时，请重试或修改源为代理源后再重试。'
+            msg = '更新失败，连接git仓库超时。'
             await update_comm.finish(msg)
         elif ' Your local changes' in output:
             msg = f'更新失败，本地修改过文件导致冲突，请解决冲突后再更新。\n{output}'
@@ -54,7 +54,7 @@ async def _(event: MessageEvent):
         await reboot(event)
     except subprocess.CalledProcessError as e:
         if 'timeout' in e.output or 'unable to access' in e.output:
-            msg = '更新失败，连接git仓库超时，请重试或修改源为代理源后再重试。'
+            msg = '更新失败，连接git仓库超时。'
         elif ' Your local changes' in e.output:
             msg = f'更新失败，本地修改过文件导致冲突，请解决冲突后再更新。\n{e.output}'
         else:
