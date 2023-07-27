@@ -34,10 +34,8 @@ __plugin_info__ = PluginInfo(
 async def _(event: GroupAndGuildMessageEvent, new_ops=Arg('new_ops')):
     if isinstance(new_ops, GroupAndGuildMessage):
         new_ops = new_ops.extract_plain_text()
-    print(new_ops)
     uid = await get_event_user_id(event)
     new_ops_list = await str_to_list(new_ops)
-    print(new_ops_list)
     if len(new_ops_list) > 4:
         await change_comm.finish(GroupAndGuildMessageSegment.at(event) + "最多编入4名干员哦")
     if len(new_ops_list) == 0:
