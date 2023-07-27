@@ -203,3 +203,11 @@ PERSONALITY=""  # ChatGPT 人格描述
 *23/7/24*
 
 refactor.重构了重启函数
+
+#### *V1.0.2*
+
+*23/7/27*
+
+feat.新增能单条执行cmd指令模块
+feat.新增ChatGPT Dall.E绘图
+update.优化更新模块
