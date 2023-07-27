@@ -60,7 +60,8 @@ class Session:
 
             return generated_text
         else:
-
+            if "context_length_exceeded" in response.text:
+                return "您的聊天记录已达最大token上限，请发送指令重置聊天"
             return f"错误信息：{response.text}"
 
     async def add_user_content(self, content: str):
