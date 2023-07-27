@@ -7,5 +7,4 @@
 from .reboot import *
 from .update import *
 from .status import *
-
-__version__ = '1.0.1'
+from .cmd import *
