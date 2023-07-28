@@ -88,7 +88,7 @@ async def sign_func(uid: int):
         logger.info(Fore.BLUE + f"[Currency_Sign_in]{change_result}")
         reply = f"签到成功！获得{profit}龙门币"
         if sign_days >= 3:
-            sj_num = random.randint(sign_days, sign_days + 3) * 10
+            sj_num = random.randint(sign_days, sign_days + 3) * 100
             change_result = await change_user_sj_num(uid, sj_num)
             logger.info(Fore.BLUE + f"[Currency_Sign_in]{change_result}")
             reply += f"你已连续签到{sign_days}天！获得{sj_num}合成玉"
