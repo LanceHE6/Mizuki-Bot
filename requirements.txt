@@ -11,3 +11,4 @@ nonebot-adapter-qqguild==0.2.3
 nonebot2[aiohttp,fastapi,httpx]==2.0.0
 
 update test
+update test2
