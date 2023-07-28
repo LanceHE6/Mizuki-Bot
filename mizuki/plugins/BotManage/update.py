@@ -13,7 +13,9 @@ from ..Help.PluginInfo import PluginInfo
 from .reboot import reboot
 
 import subprocess
+import os
 from colorama import Fore
+from pathlib import Path
 
 update_comm = on_command("update", aliases={"更新bot", "更新"}, block=True, priority=1, permission=SUPERUSER)
 
@@ -50,8 +52,28 @@ async def _(event: MessageEvent):
         log_output = subprocess.check_output('git log -3 --pretty=format:"%s (%an)"', shell=True,
                                              stderr=subprocess.STDOUT, encoding='utf-8')
         print(log_output)
+
+        # 执行 git diff 命令检查 requirements.txt 文件是否有改动
+        try:
+            diff_output = subprocess.check_output('git diff --name-only HEAD@{1} HEAD', shell=True,
+                                                  stderr=subprocess.STDOUT, encoding='utf-8')
+            # 如果有改动，则执行 pip install 命令安装新增的依赖库
+            print(diff_output)
+            if "requirements.txt" in diff_output or "requirements.txt" == diff_output.replace('\n', ''):
+                logger.info("依赖库存在更新")
+                # 检查 requirements.txt 文件是否存在
+                if os.path.exists(Path() / 'requirements.txt'):
+                    install_output = subprocess.check_output('pip install -r requirements.txt --upgrade', shell=True,
+                                                             stderr=subprocess.STDOUT, encoding='utf-8')
+                    if install_output:
+                        logger.info('依赖库已成功更新！')
+                else:
+                    logger.info('requirements.txt 文件不存在，无法检查依赖库更新。')
+        except subprocess.CalledProcessError as e:
+            await update_comm.send(f'更新依赖库时出现错误：{e.output}')
         await update_comm.send('bot已成功更新！\n\n最近更新日志：\n' + log_output)
         await reboot(event)
+
     except subprocess.CalledProcessError as e:
         if 'timeout' in e.output or 'unable to access' in e.output:
             msg = '更新失败，连接git仓库超时。'
