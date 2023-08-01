@@ -201,6 +201,23 @@ PERSONALITY=""  # ChatGPT 人格描述
 ## [贡献者](#贡献者)
 
 <!-- readme: collaborators,contributors -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/LanceHE6">
+            <img src="https://avatars.githubusercontent.com/u/92719376?v=4" width="100;" alt="LanceHE6"/>
+            <br />
+            <sub><b>Hycer_Lance</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/CM-Silence">
+            <img src="https://avatars.githubusercontent.com/u/92719733?v=4" width="100;" alt="CM-Silence"/>
+            <br />
+            <sub><b>CM-Silence</b></sub>
+        </a>
+    </td></tr>
+</table>
 <!-- readme: collaborators,contributors -end -->
 
 ------
