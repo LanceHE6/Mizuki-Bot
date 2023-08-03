@@ -247,7 +247,7 @@ class Operator:
                 # 技能效果生效逻辑在这里
                 sid = skill.sid
                 if sid in [9, 11, 12]:  # 冲锋号令_进攻 支援号令 支援号令_治疗
-                    self.player_skill_count += int(skill.rate1)
+                    self.pm.player_skill_count += int(skill.rate1)
                     message += f"\n{skill.name}生效！回复{int(skill.rate1)}点技力点"
 
                 # 如果技能结束则将其添加进结束技能列表
