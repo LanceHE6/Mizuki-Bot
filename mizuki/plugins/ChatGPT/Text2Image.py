@@ -14,13 +14,13 @@ from .AIDraw import AIDraw
 from ..Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageEvent, GroupAndGuildMessageSegment
 from ..Help.PluginInfo import PluginInfo
 
-ai_draw_comm = on_command("ai绘图", aliases={"ai作画", "dall", "ai作图"}, priority=2, block=True)
+ai_draw_comm = on_command("chatgpt绘图", aliases={"chatgpt作画", "dall", "chatgpt作图"}, priority=2, block=True)
 
 __plugin_info__ = PluginInfo(
     plugin_name="ChatGPT_Dall_AIDraw",
     name="ChatGPT Dall绘图",
     description="根据用户发送的描述创作图片",
-    usage="ai绘图 ——ChatGPT绘图",
+    usage="dall ——ChatGPT绘图",
     extra={
         "author": "Hycer_Lance",
         "version": "0.1.0",

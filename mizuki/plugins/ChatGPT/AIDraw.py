@@ -23,7 +23,7 @@ class AIDraw:
 
     _headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {get_driver().config.api_key}"
+        "Authorization": f"Bearer {get_driver().config.chatgpt_api_key}"
     }
 
     def __init__(self, prompt: str):
@@ -33,8 +33,8 @@ class AIDraw:
         """
         # 判断是否启用代理
         self._API_ENDPOINT = "https://api.openai.com/v1/images/generations"
-        if get_driver().config.enable_proxy:
-            self._API_ENDPOINT = f"{get_driver().config.proxy}/v1/images/generations"
+        if get_driver().config.chatgpt_enable_proxy:
+            self._API_ENDPOINT = f"{get_driver().config.chatgpt_proxy}/v1/images/generations"
         self._data: dict = {
             "prompt": f"{prompt}",
             "n": 1,
@@ -42,7 +42,7 @@ class AIDraw:
         }
 
     async def get_image(self):
-        if get_driver().config.api_key == "":
+        if get_driver().config.chatgpt_api_key == "":
             logger.error("[ChatGPT]未配置API-KEY,ChatGPT无法正常提供服务")
             return "未配置API-KEY,ChatGPT无法正常提供服务"
         response = requests.post(self._API_ENDPOINT, json=self._data, headers=self._headers)

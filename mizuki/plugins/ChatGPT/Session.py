@@ -14,7 +14,7 @@ class Session:
 
     _headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {get_driver().config.api_key}"
+        "Authorization": f"Bearer {get_driver().config.chatgpt_api_key}"
     }
     _initial_message: list = []
 
@@ -24,13 +24,13 @@ class Session:
         """
         # 判断是否启用代理
         self._API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
-        if get_driver().config.enable_proxy:
-            self._API_ENDPOINT = f"{get_driver().config.proxy}/v1/chat/completions"
+        if get_driver().config.chatgpt_enable_proxy:
+            self._API_ENDPOINT = f"{get_driver().config.chatgpt_proxy}/v1/chat/completions"
 
         self._message: list = [
             {
                 "role": "system",
-                "content": get_driver().config.personality
+                "content": get_driver().config.chatgpt_personality
             }
         ]
         self._data: dict = {
@@ -44,7 +44,7 @@ class Session:
         利用现有message信息获取回复
         :return:
         """
-        if get_driver().config.api_key == "":
+        if get_driver().config.chatgpt_api_key == "":
             logger.error("[ChatGPT]未配置API-KEY,ChatGPT无法正常提供服务")
             return "未配置API-KEY,ChatGPT无法正常提供服务"
         # 发送POST请求
