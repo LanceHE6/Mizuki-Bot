@@ -125,6 +125,12 @@ PROXY=""  # 代理地址 https://example.com
 TIMEOUT=600  # 定时清理用户会话 xx秒
 PERSONALITY=""  # ChatGPT 人格描述
 
+# replicate 相关
+REPLICATE_API_TOKEN=""
+REPLICATE_ENABLE_PROXY=false  # 是否启用代理
+REPLICATE_PROXY=""  # replicate代理地址 https://example.com
+REPLICATE_DELIVERY_PROXY=""  # 图片请求代理地址
+
 ```
 
 ### [安装项目依赖](#安装项目依赖)
@@ -223,6 +229,17 @@ PERSONALITY=""  # ChatGPT 人格描述
 ------
 
 ## [更新日志](#更新日志)
+
+#### *V1.1.0*
+
+*23/8/8*
+
+feat.新增replicate ai绘图
+采用stability-ai/sdxl模型
+
+style.chatgpt绘画适配环境变量名称变更
+
+env.增加replicate相关环境变量
 
 #### *V1.0.4*
 
