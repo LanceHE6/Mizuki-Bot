@@ -230,6 +230,17 @@ REPLICATE_DELIVERY_PROXY=""  # 图片请求代理地址
 
 ## [更新日志](#更新日志)
 
+#### *V1.1.5*
+
+*23/8/9*
+
+perf.replicate接入模型配置
+
+feat.replicate增加模型配置文件
+新增模型管理功能
+
+refactor.重构replicate代码及文件结构
+
 #### *V1.1.0*
 
 *23/8/8*
