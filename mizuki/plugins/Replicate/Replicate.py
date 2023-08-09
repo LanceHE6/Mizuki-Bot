@@ -16,6 +16,8 @@ from pathlib import Path
 from nonebot.log import logger
 from nonebot import get_driver
 
+from .ModelsManager import ModelsManager
+
 casual_path = Path() / 'mizuki' / 'plugins' / 'Replicate'
 
 
@@ -45,10 +47,12 @@ class Replicate:
         :param prompt: 绘画描述
         :return: str 网络图片地址或错误提示
         """
+        models_manager = ModelsManager()
         prompt = await Replicate.prompt_translate(str(prompt))
         logger.info(f"[replicate]prompt:{prompt}")
+        current_model_version = models_manager.get_current_model_version()
         data = {
-            "version": "2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2",
+            "version": f"{current_model_version}",
             "input": {
                 "prompt": f"{prompt}"
             }
@@ -64,10 +68,13 @@ class Replicate:
 
         # 4次查询机会，间隔5秒 timeout 20s
         attempts = 1
-        while attempts <= 4:
+        max_tries = 4
+        while attempts <= max_tries:
             await asyncio.sleep(5)
             resp = json.loads(requests.get(url=query_url, headers=self.__headers).content)
-            logger.info(f'status:{resp["status"]}')
+            logger.info(f'replicate status:{resp["status"]}')
+            if resp["status"] == "starting":
+                max_tries = 6  # 增加查询次数
             if resp["status"] == "succeeded":
                 if get_driver().config.replicate_enable_proxy:
                     return str(resp["output"][0]).replace("https://replicate.delivery",
