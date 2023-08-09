@@ -35,7 +35,7 @@ class SessionManager:
         """
         self.session_map[f"{uid}"] = session
         # 创建计时器
-        timer = Timer(int(get_driver().config.chagpt_timeout))
+        timer = Timer(int(get_driver().config.chatgpt_timeout))
         asyncio.create_task(timer.start(self.remove_session, uid))
 
     async def remove_session(self, uid: int or str):
