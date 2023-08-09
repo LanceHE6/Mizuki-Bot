@@ -1,5 +1,5 @@
 # -*- coding = utf-8 -*-
-# @File:__init__.py.py
+# @File:__init__.py
 # @Author:Hycer_Lance
 # @Time:2023/6/12 19:36
 # @Software:PyCharm
