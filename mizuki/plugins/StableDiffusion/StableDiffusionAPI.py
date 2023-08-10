@@ -46,6 +46,9 @@ class StableDiffusionAPI:
             "cfg_scale": 7,
             "width": 1024,
             "height": 1024,
+            "negative_prompt": "logo,text,badhandv4,EasyNegative,ng_deepnegative_v1_75t,rev2-badprompt,"
+                               "verybadimagenegative_v1.3,negative_hand-neg,mutated hands and fingers,poorly drawn "
+                               "face,extra limb,missing limb,disconnected limbs,malformed hands,ugly",
         }
         api = StableDiffusionAPI.__base_url + "/sdapi/v1/txt2img"
         response = await StableDiffusionAPI.sd_request(api, data)
