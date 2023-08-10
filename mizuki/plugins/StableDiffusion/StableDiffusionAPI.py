@@ -57,7 +57,7 @@ class StableDiffusionAPI:
                 f.close()
             return save_path
         except KeyError:
-            return "请求错误，请稍后再试：" + response
+            return "请求错误，请稍后再试：" + str(response)
 
     @staticmethod
     async def get_progress():
