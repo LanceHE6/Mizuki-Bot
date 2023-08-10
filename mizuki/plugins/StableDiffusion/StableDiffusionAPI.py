@@ -23,7 +23,10 @@ class StableDiffusionAPI:
     }
 
     @staticmethod
-    async def sd_request(url: str, data):
+    async def sd_request(url: str, data=None):
+        if data is None:
+            response = requests.get(url=url, headers=StableDiffusionAPI.__headers)
+            return response.json()
         response = requests.post(url=url, json=data, headers=StableDiffusionAPI.__headers)
         return response.json()
 
@@ -54,4 +57,10 @@ class StableDiffusionAPI:
                 f.close()
             return save_path
         except KeyError:
-            return response
+            return "请求错误，请稍后再试：" + response
+
+    @staticmethod
+    async def get_progress():
+        api = StableDiffusionAPI.__base_url + "/sdapi/v1/progress?skip_current_image=false"
+        response = StableDiffusionAPI.sd_request(api)
+        return response["progress"]
