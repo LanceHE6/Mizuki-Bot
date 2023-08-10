@@ -230,6 +230,15 @@ REPLICATE_DELIVERY_PROXY=""  # 图片请求代理地址
 
 ## [更新日志](#更新日志)
 
+#### *V1.2.0*
+
+*23/8/10*
+
+del.废弃Replicate插件
+feat.新增StableDiffusion AI绘图模块并实现基本文生图功能
+
+----
+
 #### *V1.1.5*
 
 *23/8/9*
@@ -240,6 +249,8 @@ feat.replicate增加模型配置文件
 新增模型管理功能
 
 refactor.重构replicate代码及文件结构
+
+----
 
 #### *V1.1.0*
 
@@ -252,17 +263,23 @@ style.chatgpt绘画适配环境变量名称变更
 
 env.增加replicate相关环境变量
 
+----
+
 #### *V1.0.4*
 
 *23/8/7*
 
 feat.新增图片资源哈希比较文件完整性校验算法
 
+----
+
 #### *V1.0.3*
 
 *23/7/28*
 
 feat.update模块新增requirements更新检测及自动安装新增依赖库
+
+----
 
 #### *V1.0.2*
 
@@ -273,6 +290,8 @@ feat.新增能单条执行cmd指令模块
 feat.新增ChatGPT Dall.E绘图
 
 update.优化更新模块
+
+----
 
 #### *V1.0.1*
 

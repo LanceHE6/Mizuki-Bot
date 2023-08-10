@@ -9,7 +9,7 @@ from pathlib import Path
 from nonebot import on_command
 from nonebot.params import Arg
 
-from .StableDiffusionAPI import StableDiffusionAPI
+from .StableDiffusion import StableDiffusion
 from ..Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment, GroupAndGuildMessageEvent
 from ..Utils.GroupAndGuildMessageEvent import get_event_user_id
 from ..Help.PluginInfo import PluginInfo
@@ -31,6 +31,7 @@ __plugin_info__ = PluginInfo(
 )
 
 cd_manager = CDManager(30)
+sd = StableDiffusion()
 
 @ai_draw_comm.got("prompt", prompt="请发送作画描述")
 async def _(event: GroupAndGuildMessageEvent, prompt=Arg("prompt")):
@@ -40,7 +41,7 @@ async def _(event: GroupAndGuildMessageEvent, prompt=Arg("prompt")):
                                   f"冷却中...剩余:{await cd_manager.get_remaining_time(uid)}s")
     await ai_draw_comm.send("开始生成，请耐心等待...")
 
-    img_path = await StableDiffusionAPI.txt2img(prompt=prompt)
+    img_path = await sd.txt2img(prompt)
 
     if isinstance(img_path, Path):
         await ai_draw_comm.send(
@@ -52,3 +53,4 @@ async def _(event: GroupAndGuildMessageEvent, prompt=Arg("prompt")):
         await cd_manager.add_user(uid)
         await ai_draw_comm.finish(GroupAndGuildMessageSegment.at(event)
                                   + img_path)
+# TODO 添加模型查看功能，更改模型功能
