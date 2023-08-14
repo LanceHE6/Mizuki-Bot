@@ -4,13 +4,16 @@
 # @Time:2023/5/15 7:56
 # @Software:PyCharm
 
-from .PluginInfo import PluginInfo
+import glob
+import os
+
+from .PluginInfo import PluginInfo, plugin_info_path
 from .draw_img import draw_help_img
 from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageSegment,
                                         GroupAndGuildMessageEvent,
                                         GuildMessageEvent)
 
-from nonebot import on_command
+from nonebot import on_command, get_driver
 
 help_comm = on_command("help", aliases={"帮助", "帮助菜单", "指令"}, block=True, priority=2)
 
@@ -36,3 +39,15 @@ async def _(event: GroupAndGuildMessageEvent):
             GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path))
     img_path = await draw_help_img()
     await help_comm.finish(GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path))
+
+
+driver = get_driver()
+
+
+@driver.on_shutdown
+def _():
+    """
+    在nonebot关闭时删除data文件夹中的所有插件数据
+    """
+    for infile in glob.glob(os.path.join(plugin_info_path, '*.json')):
+        os.remove(infile)

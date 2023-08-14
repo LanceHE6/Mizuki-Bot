@@ -73,5 +73,3 @@ class PluginsInfoList:
                 plugin_info_file.close()
             plugin_meta_info = PluginMetaInfo(plugin_info)
             self.plugins_list.append(plugin_meta_info)
-
-
