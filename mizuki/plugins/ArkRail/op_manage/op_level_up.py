@@ -17,9 +17,10 @@ from ..DB import (get_oid_by_name,
                   OPAttribute)
 from ...Currency.utils import get_user_lmc_num, change_user_lmc_num
 from .utils import get_cost_op
-from ...Utils.GroupAndGuildMessage import GroupAndGuildMessage
-from ...Utils.GroupAndGuildMessageEvent import get_event_user_id
-from ...Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment, GroupAndGuildMessageEvent
+from ...Utils.GroupAndGuildUtils import (GroupAndGuildMessageEvent,
+                                         GroupAndGuildMessageSegment,
+                                         GroupAndGuildMessage,
+                                         GroupAndGuildMessageUtils)
 
 op_level_up = on_command("level_up", aliases={"干员升级", "升级", "升级干员"}, block=True, priority=1)
 
@@ -42,7 +43,7 @@ async def _(event: GroupAndGuildMessageEvent, state: T_State, args: GroupAndGuil
     name = args.extract_plain_text().replace(' ', '')  # 获取命令后面跟着的纯文本内容
     if name == '':
         await op_level_up.finish(GroupAndGuildMessageSegment.at(event) + "请在指令后跟干员名称")
-    uid = await get_event_user_id(event)
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     oid = await get_oid_by_name(name)
 
     # 判断干员是否存在

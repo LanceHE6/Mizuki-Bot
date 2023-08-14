@@ -6,9 +6,9 @@
 
 from .PluginInfo import PluginInfo
 from .draw_img import draw_help_img
-from ..Utils.GroupAndGuildMessageSegment import (GroupAndGuildMessageSegment,
-                                                 GroupAndGuildMessageEvent,
-                                                 GuildMessageEvent)
+from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageSegment,
+                                        GroupAndGuildMessageEvent,
+                                        GuildMessageEvent)
 
 from nonebot import on_command
 

@@ -16,8 +16,9 @@ from .DB import is_in_table, get_user_playing_ops, get_user_all_ops, get_oid_by_
 from .operator import Operator, new_instance
 from .utils import get_op_img, get_op_model, line_break
 from ..Help.PluginInfo import PluginInfo
-from ..Utils.GroupAndGuildMessageEvent import get_event_user_id
-from ..Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment, GroupAndGuildMessageEvent
+from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageSegment,
+                                        GroupAndGuildMessageEvent,
+                                        GroupAndGuildMessageUtils)
 
 
 op_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'op_images'
@@ -86,7 +87,7 @@ __plugin_info__ = [PluginInfo(
 
 @op_info.handle()
 async def _(event: GroupAndGuildMessageEvent):
-    uid = await get_event_user_id(event)
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     if uid == 0:
         await op_info.finish("您还没有在频道中绑定QQ账号！")
     if not await is_in_table(uid):
@@ -106,7 +107,7 @@ async def _(event: GroupAndGuildMessageEvent):
 
 @op_info_all.handle()
 async def _(event: GroupAndGuildMessageEvent):
-    uid = await get_event_user_id(event)
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     if uid == 0:
         await op_info_all.finish("您还没有在频道中绑定QQ账号！")
     if not await is_in_table(uid):
@@ -176,7 +177,7 @@ async def _(event: GroupAndGuildMessageEvent):
 
 @op_detail.handle()
 async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
-    uid = await get_event_user_id(event)
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     if uid == 0:
         await op_detail.finish("您还没有在频道中绑定QQ账号！")
     if not await is_in_table(uid):

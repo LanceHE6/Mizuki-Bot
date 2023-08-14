@@ -15,10 +15,10 @@ from pathlib import Path
 from .utils import is_user_in_table, get_user_lmc_num, get_user_sj_num
 from ..Help.PluginInfo import PluginInfo
 from ..Utils.QQ import QQ
-from ..Utils.GroupAndGuildMessageSegment import (GroupAndGuildMessageSegment,
-                                                 GroupAndGuildMessageEvent,
-                                                 GuildMessageEvent)
-from ..Utils.GroupAndGuildMessageEvent import get_event_user_id
+from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageSegment,
+                                        GroupAndGuildMessageEvent,
+                                        GuildMessageEvent,
+                                        GroupAndGuildMessageUtils)
 
 src_path = Path() / 'mizuki' / 'plugins' / 'Currency' / 'res'
 FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
@@ -118,7 +118,7 @@ async def draw_img(uid: int) -> Path:
 @my_account.handle()
 async def _(event: GroupAndGuildMessageEvent):
     if isinstance(event, GuildMessageEvent):
-        uid = await get_event_user_id(event)
+        uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
         if uid == 0:
             await my_account.finish(GroupAndGuildMessageSegment.at(event) + "您还未绑定QQ号")
     else:

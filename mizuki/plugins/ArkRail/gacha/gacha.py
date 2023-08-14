@@ -14,8 +14,9 @@ from ...Currency.utils import change_user_sj_num, sj_is_enough
 from .utils import gacha, draw_img_ten, draw_img_single
 from ...Help.PluginInfo import PluginInfo
 from ...Utils.CDManager import CDManager
-from ...Utils.GroupAndGuildMessageEvent import get_event_user_id
-from ...Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment, GroupAndGuildMessageEvent
+from ...Utils.GroupAndGuildUtils import (GroupAndGuildMessageSegment,
+                                         GroupAndGuildMessageEvent,
+                                         GroupAndGuildMessageUtils)
 
 """
 概率：
@@ -50,7 +51,7 @@ user_cd_manager = CDManager(10)
 # 单抽
 @single.handle()
 async def _(event: GroupAndGuildMessageEvent):
-    uid = await get_event_user_id(event)
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     if uid == 0:
         await single.finish("您还没有在频道中绑定QQ账号！")
     if await user_cd_manager.is_in_cd(uid):
@@ -79,7 +80,7 @@ async def _(event: GroupAndGuildMessageEvent):
 # 十连
 @ten.handle()
 async def _(event: GroupAndGuildMessageEvent):
-    uid = await get_event_user_id(event)
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     if uid == 0:
         await ten.finish("您还没有在频道中绑定QQ账号！")
     if await user_cd_manager.is_in_cd(uid):

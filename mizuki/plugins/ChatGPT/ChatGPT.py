@@ -6,7 +6,7 @@
 
 from nonebot import on_message, on_command
 from nonebot.rule import *
-from ..Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageEvent, GroupAndGuildMessageSegment
+from ..Utils.GroupAndGuildUtils import GroupAndGuildMessageEvent, GroupAndGuildMessageSegment
 from ..Help.PluginInfo import PluginInfo
 
 from .SessionManager import Session, SessionManager

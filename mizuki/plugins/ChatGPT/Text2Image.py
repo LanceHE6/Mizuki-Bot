@@ -11,7 +11,7 @@ from pathlib import Path
 import os
 
 from .AIDraw import AIDraw
-from ..Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageEvent, GroupAndGuildMessageSegment
+from ..Utils.GroupAndGuildUtils import GroupAndGuildMessageEvent, GroupAndGuildMessageSegment
 from ..Help.PluginInfo import PluginInfo
 
 ai_draw_comm = on_command("chatgpt绘图", aliases={"chatgpt作画", "dall", "chatgpt作图"}, priority=2, block=True)

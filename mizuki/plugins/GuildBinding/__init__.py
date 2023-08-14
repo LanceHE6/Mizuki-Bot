@@ -7,7 +7,7 @@
 from nonebot import on_command
 from nonebot.params import CommandArg
 
-from ..Utils.GroupAndGuildMessageEvent import GuildMessageEvent
+from nonebot.adapters.qqguild import MessageEvent as GuildMessageEvent
 from .utils import set_guild_bind
 from ..Help.PluginInfo import PluginInfo
 

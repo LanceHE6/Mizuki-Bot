@@ -7,11 +7,14 @@
 import os
 from colorama import Fore
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import MessageSegment, GroupMessageEvent, Bot
+from nonebot.adapters.onebot.v11 import Bot
 from nonebot.log import logger
 from pathlib import Path
 from .utils import draw_gacha_record
 from ...Help.PluginInfo import PluginInfo
+from ...Utils.GroupAndGuildUtils import (GroupAndGuildMessageSegment,
+                                         GroupAndGuildMessageEvent,
+                                         GroupAndGuildMessageUtils)
 
 src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'gacha' / 'res'
 
@@ -25,13 +28,15 @@ __plugin_info__ = PluginInfo(
     extra={
         "author": "Hycer_Lance",
         "version": "0.1.0",
-        "priority": 3
+        "priority": 3,
+        "guild_adapted": True
     }
 )
 
+
 @gacha_record.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
-    uid = event.get_user_id()
+async def _(bot: Bot, event: GroupAndGuildMessageEvent):
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     user_info = await bot.get_stranger_info(user_id=int(uid))
     nickname = user_info["nickname"]
     logger.info(f"[gacha_recode]开始绘制用户{uid}的抽卡记录")
@@ -40,8 +45,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
         logger.info(f"[gacha_recode]用户{uid}的抽卡记录绘制成功")
     except IndexError:
         img_path = None
-        logger.info(Fore.RED+f"[gacha_recode]用户{uid}的抽卡记录绘制失败")
-        await gacha_record.finish(MessageSegment.at(uid)+"抽卡记录绘制出错，请联系管理员")
-    await gacha_record.send(MessageSegment.at(uid)+MessageSegment.image(img_path))
+        logger.info(Fore.RED + f"[gacha_recode]用户{uid}的抽卡记录绘制失败")
+        await gacha_record.finish(GroupAndGuildMessageSegment.at(uid) + "抽卡记录绘制出错，请联系管理员")
+    await gacha_record.send(GroupAndGuildMessageSegment.at(uid) + GroupAndGuildMessageSegment.image(img_path))
     os.remove(img_path)
     await gacha_record.finish()

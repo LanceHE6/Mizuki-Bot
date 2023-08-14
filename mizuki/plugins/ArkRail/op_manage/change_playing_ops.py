@@ -10,9 +10,10 @@ from nonebot.params import Arg
 from ...Help.PluginInfo import PluginInfo
 from ..DB import get_oid_by_name, is_op_owned, change_user_playing_ops, get_op_attribute, OPAttribute
 from .utils import str_to_list
-from ...Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageEvent, GroupAndGuildMessageSegment
-from ...Utils.GroupAndGuildMessageEvent import get_event_user_id
-from ...Utils.GroupAndGuildMessage import GroupAndGuildMessage
+from ...Utils.GroupAndGuildUtils import (GroupAndGuildMessageEvent,
+                                         GroupAndGuildMessageSegment,
+                                         GroupAndGuildMessage,
+                                         GroupAndGuildMessageUtils)
 
 change_comm = on_command("修改出战干员", aliases={"更改出战干员", "编队"}, block=True, priority=3)
 
@@ -34,7 +35,7 @@ __plugin_info__ = PluginInfo(
 async def _(event: GroupAndGuildMessageEvent, new_ops=Arg('new_ops')):
     if isinstance(new_ops, GroupAndGuildMessage):
         new_ops = new_ops.extract_plain_text()
-    uid = await get_event_user_id(event)
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     new_ops_list = await str_to_list(new_ops)
     if len(new_ops_list) > 4:
         await change_comm.finish(GroupAndGuildMessageSegment.at(event) + "最多编入4名干员哦")

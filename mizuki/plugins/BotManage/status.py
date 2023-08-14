@@ -7,7 +7,7 @@
 from nonebot import on_command
 
 from datetime import datetime
-from ..Utils.GroupAndGuildMessageEvent import GroupAndGuildMessageEvent
+from ..Utils.GroupAndGuildUtils import GroupAndGuildMessageEvent
 from ..Help.PluginInfo import PluginInfo
 import psutil
 

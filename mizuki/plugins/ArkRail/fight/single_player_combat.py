@@ -8,7 +8,6 @@ from typing import Type
 from nonebot import on_command
 from nonebot.internal.matcher import Matcher
 from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import Message
 
 from .playing_manager import PlayingManager, new_instance, is_all_hidden
 from ...Help.PluginInfo import PluginInfo
@@ -17,8 +16,9 @@ from ..DB import is_map_exist, get_map_attribute, MapAttribute, use_agar, get_us
 from ...Currency.utils import change_user_lmc_num, change_user_sj_num
 from .draw_image import draw_player_fight_image
 
-from ...Utils.GroupAndGuildMessageEvent import get_event_user_id, GroupAndGuildMessageEvent
-from ...Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment
+from ...Utils.GroupAndGuildUtils import (GroupAndGuildMessageSegment,
+                                         GroupAndGuildMessageEvent,
+                                         GroupAndGuildMessageUtils)
 
 play = on_command("play", aliases={"作战"}, block=True, priority=1)
 mop = on_command("mop", aliases={"扫荡", "代理"}, block=True, priority=2)
@@ -72,7 +72,7 @@ __plugin_info__ = [
 
 @mop.handle()
 async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
-    uid = await get_event_user_id(event)
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     if uid == 0:
         await mop.finish("您还没有在频道中绑定QQ账号！")
     mid = str(args)  # 获取命令后面跟着的纯文本内容
@@ -155,7 +155,7 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
             await handle.finish()
 
     async def is_doctor(e: GroupAndGuildMessageEvent) -> bool:  # 判断触发atk,skill,run指令的用户是否跟触发play指令的用户相同
-        sub_id: int = await get_event_user_id(e)
+        sub_id: int = await GroupAndGuildMessageUtils.get_event_user_id(e)
         return sub_id == uid
 
     if len(playing_user) > MAX_PLAYING_PERSON:
@@ -164,7 +164,7 @@ async def _(event: GroupAndGuildMessageEvent, args=CommandArg()):
             playing_user_name += f"{u} "
         await play.finish(f"{GroupAndGuildMessageSegment.at(event)}当前作战人数较多，请稍后再进行作战哦！\n{playing_user_name}正在进行作战...")
 
-    uid = await get_event_user_id(event)
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     if uid == 0:
         await play.finish("您还没有在频道中绑定QQ账号！")
     mid = str(args)  # 获取命令后面跟着的纯文本内容

@@ -5,9 +5,9 @@
 # @Software:PyCharm
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import GroupMessageEvent
-from ...Utils.GroupAndGuildMessageEvent import GroupAndGuildMessageEvent, get_event_user_id
-from ...Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment
+from ...Utils.GroupAndGuildUtils import (GroupAndGuildMessageEvent,
+                                         GroupAndGuildMessageSegment,
+                                         GroupAndGuildMessageUtils)
 
 from ...Help.PluginInfo import PluginInfo
 from ..DB import get_user_agar_num, get_agar_full_time
@@ -30,7 +30,7 @@ __plugin_info__ = PluginInfo(
 
 @show_agar_comm.handle()
 async def _(event: GroupAndGuildMessageEvent):
-    uid = await get_event_user_id(event)
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     if uid == 0:
         await show_agar_comm.finish("您还没有在频道中绑定QQ账号！")
     agar_num = await get_user_agar_num(uid)

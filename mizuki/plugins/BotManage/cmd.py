@@ -11,7 +11,7 @@ from nonebot.params import CommandArg
 import os
 
 from ..Help.PluginInfo import PluginInfo
-from ..Utils.GroupAndGuildMessageEvent import GroupAndGuildMessageEvent
+from ..Utils.GroupAndGuildUtils import GroupAndGuildMessageEvent
 
 cmd = on_command("cmd", aliases={"命令行"}, block=True, priority=2, permission=SUPERUSER)
 

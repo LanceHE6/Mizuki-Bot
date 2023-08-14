@@ -16,10 +16,9 @@ from nonebot.rule import to_me
 from ..Help.PluginInfo import PluginInfo
 from ...database.utils import MDB
 from .utils import change_user_lmc_num, change_user_sj_num
-from ..Utils.GroupAndGuildMessageSegment import (GroupAndGuildMessageEvent,
-                                                 GuildMessageEvent,
-                                                 GroupAndGuildMessageSegment)
-
+from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageEvent,
+                                        GuildMessageEvent,
+                                        GroupAndGuildMessageSegment)
 from ..GuildBinding.utils import get_uid_by_guild_id
 
 """
@@ -43,6 +42,7 @@ __plugin_info__ = PluginInfo(
         "guild_adapted": True
     }
 )
+
 
 async def time_to_strftime(stamp_time):
     return time.strftime("%Y-%m-%d", time.localtime(stamp_time))

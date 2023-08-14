@@ -20,9 +20,10 @@ from ..DB import (get_oid_by_name,
                   SkillAttribute)
 from ...Currency.utils import get_user_lmc_num, change_user_lmc_num
 from .utils import get_cost_skill
-from ...Utils.GroupAndGuildMessage import GroupAndGuildMessage
-from ...Utils.GroupAndGuildMessageEvent import get_event_user_id
-from ...Utils.GroupAndGuildMessageSegment import GroupAndGuildMessageSegment, GroupAndGuildMessageEvent
+from ...Utils.GroupAndGuildUtils import (GroupAndGuildMessageEvent,
+                                         GroupAndGuildMessageSegment,
+                                         GroupAndGuildMessage,
+                                         GroupAndGuildMessageUtils)
 
 skill_level_up = on_command("skill_up", aliases={"技能升级", "升级技能"}, block=True, priority=1)
 
@@ -45,7 +46,7 @@ async def _(event: GroupAndGuildMessageEvent, state: T_State, args: GroupAndGuil
     name = args.extract_plain_text().replace(' ', '')
     if name == '':
         await skill_level_up.finish(GroupAndGuildMessageSegment.at(event) + "请在指令后跟干员名称")
-    uid = await get_event_user_id(event)
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     oid = await get_oid_by_name(name)
     op_name = await get_op_attribute(oid, OPAttribute.name)
     state["op_name"] = op_name
