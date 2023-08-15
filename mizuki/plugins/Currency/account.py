@@ -21,7 +21,7 @@ from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageSegment,
                                         GroupAndGuildMessageUtils)
 
 src_path = Path() / 'mizuki' / 'plugins' / 'Currency' / 'res'
-FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
+FONT = 'mizuki/plugins/Resource/GLOBAL.ttf'
 
 my_account = on_command("account", aliases={"我的账户", "账户"}, block=True, priority=2)
 

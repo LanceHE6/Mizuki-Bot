@@ -12,7 +12,7 @@ from nonebot import get_driver
 bg_img_path = Path() / 'mizuki' / 'plugins' / 'Help' / 'res' / 'bg.png'
 mizuki_img_path = Path() / 'mizuki' / 'plugins' / 'Help' / 'res' / 'mizuki.png'
 casual_img_path = Path() / 'mizuki' / 'plugins' / 'Help'
-FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
+FONT = 'mizuki/plugins/Resource/GLOBAL.ttf'
 
 
 async def draw_help_img(guild_command: bool = False) -> Path:

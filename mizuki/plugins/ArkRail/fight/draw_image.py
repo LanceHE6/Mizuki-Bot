@@ -12,7 +12,7 @@ from .playing_manager import PlayingManager, new_instance
 from pathlib import Path
 
 res_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
-FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
+FONT = 'mizuki/plugins/Resource/GLOBAL.ttf'
 command_start = str(list(get_driver().config.command_start)[0])  # 获取指令开头
 
 

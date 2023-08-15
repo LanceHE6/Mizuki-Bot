@@ -20,7 +20,7 @@ from ..utils import get_op_img
 from ...Help.PluginInfo import PluginInfo
 
 config = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'data' / 'pool_config.json'
-FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
+FONT = 'mizuki/plugins/Resource/GLOBAL.ttf'
 
 change_up_6s_comm = on_command("修改up6星", aliases={"更改up6星", "up6星设置", "修改6星up"}, block=True, priority=3,
                                permission=SUPERUSER)

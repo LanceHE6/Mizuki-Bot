@@ -32,7 +32,7 @@ gacha_record_src_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'gacha' / 'r
 new_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'new.png'
 profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profession'
 stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'stars'
-FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
+FONT = 'mizuki/plugins/Resource/GLOBAL.ttf'
 
 
 async def gacha(uid, ten_type: bool = False) -> list:

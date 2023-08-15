@@ -118,18 +118,12 @@ QQGUILD_IS_SANDBOX=false
 #ArkRail相关
 AUTO_CHECK_RES=false  # 启动自动检查图片资源
 
-#ChatGPT相关
-API_KEY=""  # api key sk-xxxxxx
-ENABLE_PROXY=false  # 是否启用代理
-PROXY=""  # 代理地址 https://example.com
-TIMEOUT=600  # 定时清理用户会话 xx秒
-PERSONALITY=""  # ChatGPT 人格描述
-
-# replicate 相关
-REPLICATE_API_TOKEN=""
-REPLICATE_ENABLE_PROXY=false  # 是否启用代理
-REPLICATE_PROXY=""  # replicate代理地址 https://example.com
-REPLICATE_DELIVERY_PROXY=""  # 图片请求代理地址
+# ChatGPT相关
+CHATGPT_API_KEY=""  # api key sk-xxxxxx
+CHATGPT_ENABLE_PROXY=false  # 是否启用代理
+CHATGPT_PROXY=""  # 代理地址 https://example.com
+CHATGPT_TIMEOUT=600  # 定时清理用户会话 xx秒
+CHATGPT_PERSONALITY=""
 
 ```
 

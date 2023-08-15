@@ -27,7 +27,7 @@ stars_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'stars'
 profession_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'profession'
 skill_img_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res' / 'skills'
 res_path = Path() / 'mizuki' / 'plugins' / 'ArkRail' / 'res'
-FONT = 'mizuki/plugins/Resource/GEETYPE.ttf'
+FONT = 'mizuki/plugins/Resource/GLOBAL.ttf'
 
 op_info = on_command("op", aliases={"出战", "出战干员"}, block=True, priority=2)
 op_info_all = on_command("ops", aliases={"all", "所有角色", "所有干员", "info all", "我的干员", "干员"}, block=True, priority=2)
