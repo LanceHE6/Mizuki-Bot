@@ -45,7 +45,7 @@ class Session:
         :return:
         """
         if get_driver().config.chatgpt_api_key == "":
-            logger.error("[ChatGPT]未配置API-KEY,ChatGPT无法正常提供服务")
+            logger.error("[OpenAI]未配置API-KEY,ChatGPT无法正常提供服务")
             return "未配置API-KEY,ChatGPT无法正常提供服务"
         # 发送POST请求
         response = requests.post(self._API_ENDPOINT, json=self._data, headers=self._headers)

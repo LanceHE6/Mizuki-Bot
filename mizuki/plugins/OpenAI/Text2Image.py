@@ -10,7 +10,7 @@ from nonebot.params import Arg
 from pathlib import Path
 import os
 
-from .AIDraw import AIDraw
+from .DallE import AIDraw
 from ..Utils.GroupAndGuildUtils import GroupAndGuildMessageEvent, GroupAndGuildMessageSegment
 from ..Help.PluginInfo import PluginInfo
 
@@ -18,7 +18,7 @@ ai_draw_comm = on_command("chatgpt绘图", aliases={"chatgpt作画", "dall", "ch
 
 __plugin_info__ = PluginInfo(
     plugin_name="ChatGPT_Dall_AIDraw",
-    name="ChatGPT Dall绘图",
+    name="OpenAI Dall绘图",
     description="根据用户发送的描述创作图片",
     usage="dall ——ChatGPT绘图",
     extra={

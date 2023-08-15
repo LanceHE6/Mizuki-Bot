@@ -1,5 +1,5 @@
 # -*- coding = utf-8 -*-
-# @File:ChatGPT.py
+# @File:OpenAI.py
 # @Author:Hycer_Lance
 # @Time:2023/7/27 13:52
 # @Software:PyCharm
@@ -16,8 +16,8 @@ rm_session = on_command("rm_session", aliases={"清除会话记录", "清除聊�
                         block=True)
 
 __plugin_info__ = [PluginInfo(
-    plugin_name="ChatGPT",
-    name="ChatGPT",
+    plugin_name="OpenAI",
+    name="OpenAI",
     description="与bot愉快的聊天吧",
     usage="@bot<内容> ——与bot聊天",
     extra={
