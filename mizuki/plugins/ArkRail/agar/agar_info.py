@@ -36,9 +36,7 @@ async def _(event: GroupAndGuildMessageEvent):
     agar_num = await get_user_agar_num(uid)
     full_time = await get_agar_full_time(uid)
     reply = GroupAndGuildMessageSegment.at(event) + f"\n您的琼脂:\n{agar_num}/160\n"
-    if full_time == 0:
-        reply += "已满"
-    else:
+    if not full_time == 0:
         reply += f"预计回满时间:{await minute_to_standard_str(full_time)}"
     await show_agar_comm.finish(reply, at_sender=True)
 
