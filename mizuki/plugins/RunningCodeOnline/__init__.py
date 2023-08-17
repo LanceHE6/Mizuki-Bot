@@ -20,7 +20,7 @@ __plugin_info__ = PluginInfo(
     plugin_name="RunningCodeOnline",
     name="在线运行代码",
     description="在线运行代码",
-    usage="code<代码> ——在线运行代码",
+    usage="code<语言名称> ——在线运行代码",
     extra={
         "author": "Hycer_Lance",
         "version": "0.1.0",
@@ -33,6 +33,8 @@ __plugin_info__ = PluginInfo(
 @run_code.handle()
 async def _(event: GroupAndGuildMessageEvent, state: T_State, lang: GroupAndGuildMessage = CommandArg()):
     lang = lang.extract_plain_text()
+    if lang == "":
+        await run_code.finish(GroupAndGuildMessageSegment.at(event) + "请在指令后跟语言名称")
     runcode = RunCode(str(lang))
     if "语言不支持" in runcode.lang:
         await run_code.finish(GroupAndGuildMessageSegment.at(event) + runcode.lang)
