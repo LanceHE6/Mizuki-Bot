@@ -38,7 +38,7 @@ async def _(event: GroupAndGuildMessageEvent, state: T_State, lang: GroupAndGuil
     try:
         runcode = RunCode(str(lang))
     except LanguageTypeError as e:
-        await run_code.finish(GroupAndGuildMessageSegment.at(event) + e)
+        await run_code.finish(GroupAndGuildMessageSegment.at(event) + e.text)
         return
     state["lang"] = runcode.get_language()
     state["runcode"] = runcode
