@@ -49,4 +49,4 @@ async def _(event: GroupAndGuildMessageEvent, state: T_State, lang: GroupAndGuil
 async def _(event: GroupAndGuildMessageEvent, state: T_State, code_str=Arg("code_str")):
     runcode = state["runcode"]
     result = await runcode.run(str(code_str))
-    await run_code.finish(GroupAndGuildMessageSegment.at(event) + result)
+    await run_code.finish(GroupAndGuildMessageSegment.at(event) + "\n" + result)
