@@ -5,10 +5,9 @@
 # @Software:PyCharm
 
 from nonebot import on_command
-from nonebot.params import CommandArg
+from nonebot.params import Arg
 
 from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageEvent,
-                                        GroupAndGuildMessage,
                                         GroupAndGuildMessageSegment)
 from ..Help.PluginInfo import PluginInfo
 from .RunCode import RunCode
@@ -29,9 +28,8 @@ __plugin_info__ = PluginInfo(
 )
 
 
-@run_code.handle()
-async def _(event: GroupAndGuildMessageEvent, user_input: GroupAndGuildMessage = CommandArg()):
-    user_input = user_input.extract_plain_text()
-    runcode = RunCode(user_input)
+@run_code.got("user_input", prompt="请发送语言类型及代码")
+async def _(event: GroupAndGuildMessageEvent, user_input=Arg("user_input")):
+    runcode = RunCode(str(user_input))
     result = await runcode.run()
     await run_code.finish(GroupAndGuildMessageSegment.at(event) + result)
