@@ -5,10 +5,12 @@
 # @Software:PyCharm
 
 from nonebot import on_command
-from nonebot.params import Arg
+from nonebot.params import Arg, CommandArg
+from nonebot.typing import T_State
 
 from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageEvent,
-                                        GroupAndGuildMessageSegment)
+                                        GroupAndGuildMessageSegment,
+                                        GroupAndGuildMessage)
 from ..Help.PluginInfo import PluginInfo
 from .RunCode import RunCode
 
@@ -28,8 +30,19 @@ __plugin_info__ = PluginInfo(
 )
 
 
-@run_code.got("user_input", prompt="请发送语言类型及代码")
-async def _(event: GroupAndGuildMessageEvent, user_input=Arg("user_input")):
-    runcode = RunCode(str(user_input))
-    result = await runcode.run()
+@run_code.handle()
+async def _(event: GroupAndGuildMessageEvent, state: T_State, lang: GroupAndGuildMessage = CommandArg()):
+    lang = lang.extract_plain_text()
+    runcode = RunCode(str(lang))
+    if "语言不支持" in runcode.lang:
+        await run_code.finish(GroupAndGuildMessageSegment.at(event) + runcode.lang)
+    state["lang"] = runcode.get_language()
+    state["runcode"] = runcode
+    await run_code.send(GroupAndGuildMessageSegment.at(event) + f"请发送{state['lang']}代码")
+
+
+@run_code.got("code_str")
+async def _(event: GroupAndGuildMessageEvent, state: T_State, code_str=Arg("code_str")):
+    runcode = state["runcode"]
+    result = await runcode.run(str(code_str))
     await run_code.finish(GroupAndGuildMessageSegment.at(event) + result)

@@ -59,11 +59,29 @@ class RunCode:
     _headers = {"Authorization": "Token c15c97da-f2f2-4d3f-97bf-1fd8528eb868",
                 "content-type": "application/"}
 
-    def __init__(self, user_input: str):
-        lang, code_str = RunCode.segment_parameters(user_input)
-        self._language = self._code_type[lang][0]
-        self._code_suffix = self._code_type[lang][1]
-        self._data = {
+    def __init__(self, lang: str):
+        self.lang = RunCode.check_language(lang)
+        self._language = self._code_type[self.lang][0]
+        self._code_suffix = self._code_type[self.lang][1]
+
+    @staticmethod
+    def check_language(lang: str):
+
+        try:
+            a = re.match(
+                r'(py|php|java|cpp|js|c#|c|go|asm|ats|bash|clisp|clojure|cobol|coffeescript|crystal|d|elixir|elm'
+                r'|erlang|fsharp|groovy|guide|hare|haskell|idris|julia|kotlin|lua|mercury|nim|nix|ocaml|pascal|perl'
+                r'|raku|ruby|rust|sac|scala|swift|typescript|zig|plaintext)',
+                lang)
+            lang = a.group(1)
+            return lang
+        except AttributeError:
+            return "语言不支持，目前仅支持py/php/java/cpp/js/c#/c/go/asm/ats/bash/clisp/clojure/cobol/coffeescript/crystal/d" \
+                   "/elixir/elm/erlang/fsharp/groovy/guide/hare/haskell/idris/julia/kotlin/lua/mercury/nim/nix/ocaml" \
+                   "/pascal/perl/raku/ruby/rust/sac/scala/swift/typescript/zig/plaintext"
+
+    async def run(self, code_str: str):
+        data = {
             "files": [
                 {
                     "name": f"main.{self._code_suffix}",
@@ -73,31 +91,15 @@ class RunCode:
             "stdin": "",
             "command": ""
         }
-
-    @staticmethod
-    def segment_parameters(text: str):
-
-        try:
-            a = re.match(
-                r'(py|php|java|cpp|js|c#|c|go|asm|ats|bash|clisp|clojure|cobol|coffeescript|crystal|d|elixir|elm'
-                r'|erlang|fsharp|groovy|guide|hare|haskell|idris|julia|kotlin|lua|mercury|nim|nix|ocaml|pascal|perl'
-                r'|raku|ruby|rust|sac|scala|swift|typescript|zig|plaintext)((?:.|\n)+)',
-                text)
-            lang, code = a.group(1), a.group(2)
-            return lang, code
-        except re.error:
-            return "TypeError", \
-                "语言不支持，目前仅支持py/php/java/cpp/js/c#/c/go/asm/ats/bash/clisp/clojure/cobol/coffeescript/crystal/d" \
-                "/elixir/elm/erlang/fsharp/groovy/guide/hare/haskell/idris/julia/kotlin/lua/mercury/nim/nix/ocaml" \
-                "/pascal/perl/raku/ruby/rust/sac/scala/swift/typescript/zig/plaintext"
-
-    async def run(self):
         async with httpx.AsyncClient() as client:
             res = await client.post(url=f'https://glot.io/run/{self._language}?version=latest',
                                     headers=self._headers,
-                                    json=self._data)
+                                    json=data)
         if res.status_code == 200:
             res = res.json()
             return res['stdout'] + ('\n---\n' + res['stderr'] if res['stderr'] else '')
         else:
             return '响应异常' + res.text
+
+    def get_language(self):
+        return self._language
