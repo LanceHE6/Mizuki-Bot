@@ -61,12 +61,19 @@ class RunCode:
 
     def __init__(self, lang: str):
         self.lang = RunCode.check_language(lang)
-        self._language = self._code_type[self.lang][0]
-        self._code_suffix = self._code_type[self.lang][1]
+        try:
+            self._language = self._code_type[self.lang][0]
+            self._code_suffix = self._code_type[self.lang][1]
+        except KeyError:
+            raise LanguageTypeError(f"不支持的语言:{lang}")
 
     @staticmethod
-    def check_language(lang: str):
-
+    def check_language(lang: str) -> str:
+        """
+        检查语言类型是否可用
+        :param lang: 语言名称
+        :return: 语言名称 不可用则返回TypeError
+        """
         try:
             a = re.match(
                 r'(py|php|java|cpp|js|c#|c|go|asm|ats|bash|clisp|clojure|cobol|coffeescript|crystal|d|elixir|elm'
@@ -76,11 +83,14 @@ class RunCode:
             lang = a.group(1)
             return lang
         except AttributeError:
-            return "语言不支持，目前仅支持py/php/java/cpp/js/c#/c/go/asm/ats/bash/clisp/clojure/cobol/coffeescript/crystal/d" \
-                   "/elixir/elm/erlang/fsharp/groovy/guide/hare/haskell/idris/julia/kotlin/lua/mercury/nim/nix/ocaml" \
-                   "/pascal/perl/raku/ruby/rust/sac/scala/swift/typescript/zig/plaintext"
+            return "TypeError"
 
     async def run(self, code_str: str):
+        """
+        请求api获取代码执行结果
+        :param code_str: 对应语言代码
+        :return: 请求结果
+        """
         data = {
             "files": [
                 {
@@ -103,3 +113,11 @@ class RunCode:
 
     def get_language(self):
         return self._language
+
+
+class LanguageTypeError(Exception):
+    def __init__(self, text):
+        self.text = text
+
+    def __str__(self):
+        return repr(self.text)

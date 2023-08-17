@@ -12,7 +12,7 @@ from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageEvent,
                                         GroupAndGuildMessageSegment,
                                         GroupAndGuildMessage)
 from ..Help.PluginInfo import PluginInfo
-from .RunCode import RunCode
+from .RunCode import RunCode, LanguageTypeError
 
 run_code = on_command("code", aliases={"代码", "run"}, priority=5, block=True)
 
@@ -35,9 +35,11 @@ async def _(event: GroupAndGuildMessageEvent, state: T_State, lang: GroupAndGuil
     lang = lang.extract_plain_text()
     if lang == "":
         await run_code.finish(GroupAndGuildMessageSegment.at(event) + "请在指令后跟语言名称")
-    runcode = RunCode(str(lang))
-    if "语言不支持" in runcode.lang:
-        await run_code.finish(GroupAndGuildMessageSegment.at(event) + runcode.lang)
+    try:
+        runcode = RunCode(str(lang))
+    except LanguageTypeError as e:
+        await run_code.finish(GroupAndGuildMessageSegment.at(event) + e)
+        return
     state["lang"] = runcode.get_language()
     state["runcode"] = runcode
     await run_code.send(GroupAndGuildMessageSegment.at(event) + f"请发送{state['lang']}代码")
