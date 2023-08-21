@@ -9,6 +9,7 @@ import base64
 import requests
 
 from pathlib import Path
+from typing import Optional
 
 from nonebot import get_driver
 from nonebot.log import logger
@@ -17,17 +18,24 @@ casual_img_path = Path() / 'mizuki' / 'plugins' / 'StableDiffusion' / 'outputs'
 
 
 class StableDiffusion:
-    # TODO 完善类注释级各个方法注释
+    """
+    SD管理类
+    """
 
     __base_url = get_driver().config.sdbaseurl
     __headers = {
         "Content-Type": "application/json",
         "accept": "application/json"
     }
+    # 模型列表
     models_list: list
+    # 当前模型title
     current_model_title: str
 
     def __init__(self):
+        """
+        初始化SD服务获取相关信息
+        """
         logger.info("[StableDiffusion]开始初始化StableDiffusion服务")
 
         logger.info("[StableDiffusion]正在获取模型列表...")
@@ -44,14 +52,25 @@ class StableDiffusion:
         else:
             self.current_model_title = current_model_title
 
-    def sd_request(self, url: str, data=None):
+    def sd_request(self, url: str, data: Optional):
+        """
+        请求函数
+        :param url: 接口地址
+        :param data: 请求体，为None则为get请求
+        :return: 返回json格式的请求内容
+        """
         if data is None:
             response = requests.get(url=url, headers=self.__headers)
             return response.json()
         response = requests.post(url=url, json=data, headers=self.__headers)
         return response.json()
 
-    async def txt2img(self, prompt: str):
+    async def txt2img(self, prompt: str) -> Path or str:
+        """
+        文生图函数
+        :param prompt: 图片描述
+        :return: 下载的图片本地地址
+        """
         data = {
             "enable_hr": False,
             "prompt": f"{prompt}",
@@ -85,11 +104,19 @@ class StableDiffusion:
             return "请求错误，请稍后再试：" + str(response)
 
     async def get_progress(self):
+        """
+        获取当前进行任务的执行进度
+        :return: 小数进度
+        """
         api = self.__base_url + "/sdapi/v1/progress?skip_current_image=false"
         response = self.sd_request(api)
         return response["progress"]
 
-    def get_models_list(self):
+    def get_models_list(self) -> list or str:
+        """
+        获取模型列表
+        :return: 模型列表
+        """
         api = self.__base_url + "/sdapi/v1/sd-models"
         response = self.sd_request(api)
         logger.debug(f"get_models_list->{response}")
@@ -103,7 +130,11 @@ class StableDiffusion:
         except TypeError:
             return "请求出错，请稍后再试：" + str(response)
 
-    def get_current_model_title(self):
+    def get_current_model_title(self) -> str:
+        """
+        获取当前模型title
+        :return: 模型title
+        """
         api = self.__base_url + "/sdapi/v1/options"
         response = self.sd_request(api)
         logger.debug(f"get_current_model_title->{response}")
