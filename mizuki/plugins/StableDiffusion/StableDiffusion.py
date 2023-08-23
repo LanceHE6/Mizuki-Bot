@@ -6,7 +6,7 @@
 
 import time
 import base64
-import requests
+import httpx
 
 from pathlib import Path
 
@@ -51,18 +51,33 @@ class StableDiffusion:
         else:
             self.current_model_title = current_model_title
 
-    def sd_request(self, url: str, data=None):
+    async def sd_async_request(self, url: str, data=None):
         """
-        请求函数
+        异步请求函数
         :param url: 接口地址
         :param data: 请求体，为None则为get请求
         :return: 返回json格式的请求内容
         """
-        if data is None:
-            response = requests.get(url=url, headers=self.__headers)
+        async with httpx.AsyncClient(timeout=60) as async_client:
+            if data is None:
+                response = await async_client.get(url=url, headers=self.__headers)
+                return response.json()
+            response = await async_client.post(url=url, json=data, headers=self.__headers)
             return response.json()
-        response = requests.post(url=url, json=data, headers=self.__headers)
-        return response.json()
+
+    def sd_sync_request(self, url: str, data=None):
+        """
+        同步请求函数
+        :param url: 接口地址
+        :param data: 请求体，为None则为get请求
+        :return: 返回json格式的请求内容
+        """
+        with httpx.Client() as sync_client:
+            if data is None:
+                response = sync_client.get(url=url, headers=self.__headers)
+                return response.json()
+            response = sync_client.post(url=url, json=data, headers=self.__headers)
+            return response.json()
 
     async def txt2img(self, prompt: str) -> Path or str:
         """
@@ -90,7 +105,7 @@ class StableDiffusion:
         }
         api = self.__base_url + "/sdapi/v1/txt2img"
         logger.info(f"[StableDiffusion]正在请求SDAPI prompt:{prompt}")
-        response = self.sd_request(api, data)
+        response = await self.sd_async_request(api, data)
         logger.debug(f"[StableDiffusion]Response:{response}")
         try:
             now_time = round(time.time(), 0)
@@ -108,7 +123,7 @@ class StableDiffusion:
         :return: 小数进度
         """
         api = self.__base_url + "/sdapi/v1/progress?skip_current_image=false"
-        response = self.sd_request(api)
+        response = await self.sd_async_request(api)
         return response["progress"]
 
     def get_models_list(self) -> list or str:
@@ -117,7 +132,7 @@ class StableDiffusion:
         :return: 模型列表
         """
         api = self.__base_url + "/sdapi/v1/sd-models"
-        response = self.sd_request(api)
+        response = self.sd_sync_request(api)
         logger.debug(f"get_models_list->{response}")
         models_title = []
         try:
@@ -135,7 +150,7 @@ class StableDiffusion:
         :return: 模型title
         """
         api = self.__base_url + "/sdapi/v1/options"
-        response = self.sd_request(api)
+        response = self.sd_sync_request(api)
         logger.debug(f"get_current_model_title->{response}")
         try:
             return response["sd_model_checkpoint"]
@@ -147,6 +162,6 @@ class StableDiffusion:
         data = {
             "sd_model_checkpoint": f"{model_title}"
         }
-        response = self.sd_request(url=api, data=data)
+        response = await self.sd_async_request(url=api, data=data)
         print(response)
         # TODO 待完善模型设置函数
