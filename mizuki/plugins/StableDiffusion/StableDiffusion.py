@@ -158,10 +158,17 @@ class StableDiffusion:
             return "请求出错, 请稍后再试：" + str(response)
 
     async def set_model(self, model_title):
+        """
+        设置当前套用模型
+        :param model_title: 模型title
+        :return: 0为设置成功否则返回请求返回内容
+        """
         api = self.__base_url + "/sdapi/v1/options"
         data = {
             "sd_model_checkpoint": f"{model_title}"
         }
         response = await self.sd_async_request(url=api, data=data)
-        print(response)
-        # TODO 待完善模型设置函数
+        if response is None:
+            return 0
+        else:
+            return response.json()
