@@ -9,7 +9,6 @@ import base64
 import requests
 
 from pathlib import Path
-from typing import Optional
 
 from nonebot import get_driver
 from nonebot.log import logger
@@ -52,7 +51,7 @@ class StableDiffusion:
         else:
             self.current_model_title = current_model_title
 
-    def sd_request(self, url: str, data: Optional):
+    def sd_request(self, url: str, data=None):
         """
         请求函数
         :param url: 接口地址
