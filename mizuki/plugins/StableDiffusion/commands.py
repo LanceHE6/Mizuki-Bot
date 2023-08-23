@@ -35,9 +35,8 @@ cd_manager = CDManager(30)
 sd = StableDiffusion()
 occupied = False  # 占用标签
 
-
-@ai_draw_comm.got("prompt", prompt="请发送作画描述")
-async def _(event: GroupAndGuildMessageEvent, prompt=Arg("prompt")):
+@ai_draw_comm.handle()
+async def _(event: GroupAndGuildMessageEvent):
     # CD判断
     uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     if await cd_manager.is_in_cd(uid):
@@ -51,6 +50,10 @@ async def _(event: GroupAndGuildMessageEvent, prompt=Arg("prompt")):
     else:
         await ai_draw_comm.finish(GroupAndGuildMessageSegment.at(event) + "当前有绘图任务正在进行中")
 
+@ai_draw_comm.got("prompt", prompt="请发送作画描述")
+async def _(event: GroupAndGuildMessageEvent, prompt=Arg("prompt")):
+    global occupied
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     await ai_draw_comm.send("开始生成，请耐心等待...")
 
     img_path = await sd.txt2img(prompt)
