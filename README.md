@@ -230,6 +230,8 @@ CHATGPT_PERSONALITY=""
 
 feat.新增模型查看及修改当前使用模型
 
+feat.新增prompt中文翻译及当前任务进度查询
+
 ----
 
 #### *V1.3.0*

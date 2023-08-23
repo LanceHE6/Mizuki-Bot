@@ -4,6 +4,7 @@
 # @Time:2023/8/10 10:39
 # @Software:PyCharm
 
+import re
 import time
 import base64
 import httpx
@@ -85,6 +86,7 @@ class StableDiffusion:
         :param prompt: 图片描述
         :return: 下载的图片本地地址
         """
+        prompt = StableDiffusion.prompt_translate(prompt)
         data = {
             "enable_hr": False,
             "prompt": f"{prompt}",
@@ -172,3 +174,29 @@ class StableDiffusion:
             return 0
         else:
             return response.json()
+
+    @staticmethod
+    async def prompt_translate(prompt: str) -> str:
+        """
+        利用有道翻译api将非全英文prompt翻译为英文
+        全英文则直接返回不做处理
+        :param prompt: 目标prompt
+        :return: 翻译后的英文
+        """
+        if not StableDiffusion.is_all_english(prompt):
+            data = {'doctype': 'json', 'type': 'ZH_CN2EN', 'i': f"{prompt}"}
+            with httpx.Client as client:
+                r = client.get("https://fanyi.youdao.com/translate", params=data)
+                result = r.json()
+            return result["translateResult"][0][0]["tgt"]
+        return prompt
+
+    @staticmethod
+    def is_all_english(text):
+        """
+        判断是否为全英文
+        :param text: 目标字符串
+        :return: bool
+        """
+        pattern = r'^[A-Za-z0-9]+$'
+        return re.match(pattern, text) is not None

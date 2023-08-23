@@ -20,6 +20,7 @@ from ..Utils.CDManager import CDManager
 txt2image_comm = on_command("sd文生图", aliases={"文生图", "sd作图", "sd绘图", "sd绘画"}, priority=2, block=True)
 model_manage = on_command("sd_model", aliases={"sd_models", "sd模型", "sd模型管理", "sd模型列表"}, priority=2,
                           block=True)
+get_progress = on_command("sd进度", aliases={"sd_progress"}, priority=2, block=True)
 
 __plugin_info__ = [PluginInfo(
     plugin_name="Stable-diffusion-txt2img",
@@ -37,6 +38,17 @@ __plugin_info__ = [PluginInfo(
     name="sd模型管理",
     description="sd模型管理",
     usage="sd模型 ——sd模型管理",
+    extra={
+        "author": "Hycer_Lance",
+        "version": "0.1.0",
+        "priority": 2,
+        "guild_adapted": True
+    }
+), PluginInfo(
+    plugin_name="Stable-diffusion-progress",
+    name="sd获取当前任务进度",
+    description="sd获取当前任务进度",
+    usage="sd进度 ——获取当前任务进度",
     extra={
         "author": "Hycer_Lance",
         "version": "0.1.0",
@@ -117,3 +129,11 @@ async def _(event: GroupAndGuildMessageEvent, state: T_State, model_num=Arg("mod
             result = await sd.set_model(state["model_list"][model_num - 1])
             if result == 0:
                 await model_manage.finish(f"修改成功,当前模型为{state['model_list'][model_num - 1]}")
+
+
+@get_progress.handle()
+async def _(event: GroupAndGuildMessageEvent):
+    if not occupied:
+        await get_progress.finish("当前未进行任何任务")
+    progress = await sd.get_progress()
+    await get_progress.finish(f"当前任务进度:{progress}")
