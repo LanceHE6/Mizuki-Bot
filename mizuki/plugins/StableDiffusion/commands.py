@@ -80,6 +80,7 @@ async def _(event: GroupAndGuildMessageEvent):
 
 @txt2image_comm.got("prompt", prompt="请发送作画描述")
 async def _(event: GroupAndGuildMessageEvent, prompt=Arg("prompt")):
+    prompt = str(prompt)
     global occupied
     uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
     await txt2image_comm.send("开始生成，请耐心等待...")
