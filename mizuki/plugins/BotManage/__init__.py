@@ -8,3 +8,4 @@ from .reboot import *
 from .update import *
 from .status import *
 from .cmd import *
+from .offline_reminder import *
