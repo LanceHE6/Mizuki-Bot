@@ -185,8 +185,8 @@ class StableDiffusion:
         """
         if not StableDiffusion.is_all_english(prompt):
             data = {'doctype': 'json', 'type': 'ZH_CN2EN', 'i': f"{prompt}"}
-            with httpx.Client as client:
-                r = client.get(url="https://fanyi.youdao.com/translate", params=data)
+            async with httpx.AsyncClient() as client:
+                r = await client.get(url="https://fanyi.youdao.com/translate", params=data)
                 result = r.json()
             return result["translateResult"][0][0]["tgt"]
         return prompt
