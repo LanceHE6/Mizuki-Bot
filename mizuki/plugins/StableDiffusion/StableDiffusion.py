@@ -86,7 +86,7 @@ class StableDiffusion:
         :param prompt: 图片描述
         :return: 下载的图片本地地址
         """
-        prompt = StableDiffusion.prompt_translate(prompt)
+        prompt = await StableDiffusion.prompt_translate(prompt)
         data = {
             "enable_hr": False,
             "prompt": f"{prompt}",
@@ -186,7 +186,7 @@ class StableDiffusion:
         if not StableDiffusion.is_all_english(prompt):
             data = {'doctype': 'json', 'type': 'ZH_CN2EN', 'i': f"{prompt}"}
             with httpx.Client as client:
-                r = client.get("https://fanyi.youdao.com/translate", params=data)
+                r = client.get(url="https://fanyi.youdao.com/translate", params=data)
                 result = r.json()
             return result["translateResult"][0][0]["tgt"]
         return prompt
