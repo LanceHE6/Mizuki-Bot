@@ -224,9 +224,11 @@ CHATGPT_PERSONALITY=""
 
 ## [更新日志](#更新日志)
 
-#### *V1.3.3*
+#### *V1.3.5*
 
 *23/8/28*
+
+feat.新增SD图生图功能，优化进度查询输出并适配图生图
 
 refactor.重构StableDiffusion插件结构
 
