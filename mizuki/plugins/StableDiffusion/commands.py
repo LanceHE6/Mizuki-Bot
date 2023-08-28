@@ -4,18 +4,14 @@
 # @Time:2023/8/10 10:38
 # @Software:PyCharm
 
-from pathlib import Path
-
-from nonebot import on_command
+from nonebot import on_command, Bot
 from nonebot.params import Arg
 from nonebot.typing import T_State
 
 from .StableDiffusion import StableDiffusion
 from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageSegment,
-                                        GroupAndGuildMessageEvent,
-                                        GroupAndGuildMessageUtils)
+                                        GroupAndGuildMessageEvent)
 from ..Help.PluginInfo import PluginInfo
-from ..Utils.CDManager import CDManager
 
 txt2image_comm = on_command("sd文生图", aliases={"文生图", "sd作图", "sd绘图", "sd绘画"}, priority=2, block=True)
 model_manage = on_command("sd_model", aliases={"sd_models", "sd模型", "sd模型管理", "sd模型列表"}, priority=2,
@@ -57,49 +53,17 @@ __plugin_info__ = [PluginInfo(
     }
 )]
 
-cd_manager = CDManager(30)
 sd = StableDiffusion()
-occupied = False  # 占用标签
-
-
-@txt2image_comm.handle()
-async def _(event: GroupAndGuildMessageEvent):
-    # CD判断
-    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
-    if await cd_manager.is_in_cd(uid):
-        await txt2image_comm.finish(GroupAndGuildMessageSegment.at(event) +
-                                    f"冷却中...剩余:{await cd_manager.get_remaining_time(uid)}s")
-
-    # 任务进行中判断
-    global occupied
-    if not occupied:
-        occupied = True
-    else:
-        await txt2image_comm.finish(GroupAndGuildMessageSegment.at(event) + "当前有绘图任务正在进行中")
 
 
 @txt2image_comm.got("prompt", prompt="请发送作画描述")
-async def _(event: GroupAndGuildMessageEvent, prompt=Arg("prompt")):
-    prompt = str(prompt)
-    global occupied
-    uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
-    await txt2image_comm.send("开始生成，请耐心等待...")
-
-    img_path = await sd.txt2img(prompt)
-
-    if isinstance(img_path, Path):
+async def _(event: GroupAndGuildMessageEvent, bot: Bot, prompt=Arg("prompt")):
+    if not len(sd.tasks) == 0:
         await txt2image_comm.send(
-            GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path))
-        # os.remove(img_path)
-        await cd_manager.add_user(uid)
-        occupied = False  # 解除占用
-        await txt2image_comm.finish()
-    else:
-        await cd_manager.add_user(uid)
-        occupied = False  # 解除占用
-        await txt2image_comm.finish(GroupAndGuildMessageSegment.at(event)
-                                    + img_path)
-
+            GroupAndGuildMessageSegment.at(event) + f"当前有{len(sd.tasks)}个任务正在进行中,您的任务将进行排队")
+    prompt = str(prompt)
+    await sd.add_txt2img(event, bot, prompt)
+    await sd.run()
 
 @model_manage.handle()
 async def _(event: GroupAndGuildMessageEvent, state: T_State):
@@ -134,7 +98,7 @@ async def _(event: GroupAndGuildMessageEvent, state: T_State, model_num=Arg("mod
 
 @get_progress.handle()
 async def _(event: GroupAndGuildMessageEvent):
-    if not occupied:
+    if len(sd.tasks) == 0 and (await sd.get_progress()) == 0.0:
         await get_progress.finish("当前未进行任何任务")
     progress = await sd.get_progress()
     await get_progress.finish(f"当前任务进度:{progress}")

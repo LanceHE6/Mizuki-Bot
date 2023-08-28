@@ -5,32 +5,25 @@
 # @Software:PyCharm
 
 import re
-import time
-import base64
+import os
 import httpx
 
-from pathlib import Path
-
-from nonebot import get_driver
 from nonebot.log import logger
-
-casual_img_path = Path() / 'mizuki' / 'plugins' / 'StableDiffusion' / 'outputs'
+from .SDUtils import SDUtils
+from .Text2Image import SDText2Image
+from ..Utils.GroupAndGuildUtils import GroupAndGuildMessageUtils, GroupAndGuildMessageSegment
 
 
 class StableDiffusion:
     """
     SD管理类
     """
-
-    __base_url = get_driver().config.sdbaseurl
-    __headers = {
-        "Content-Type": "application/json",
-        "accept": "application/json"
-    }
     # 模型列表
     models_list: list
     # 当前模型title
     current_model_title: str
+    # 任务列表
+    tasks: list = []
 
     def __init__(self):
         """
@@ -51,90 +44,27 @@ class StableDiffusion:
             logger.warning("[StableDiffusion]当前模型获取失败")
         else:
             self.current_model_title = current_model_title
+        if not os.path.exists(SDUtils.casual_img_path):
+            os.mkdir(SDUtils.casual_img_path)
 
-    async def sd_async_request(self, url: str, data=None):
-        """
-        异步请求函数
-        :param url: 接口地址
-        :param data: 请求体，为None则为get请求
-        :return: 返回json格式的请求内容
-        """
-        async with httpx.AsyncClient(timeout=60) as async_client:
-            if data is None:
-                response = await async_client.get(url=url, headers=self.__headers)
-                return response.json()
-            response = await async_client.post(url=url, json=data, headers=self.__headers)
-            return response.json()
-
-    def sd_sync_request(self, url: str, data=None):
-        """
-        同步请求函数
-        :param url: 接口地址
-        :param data: 请求体，为None则为get请求
-        :return: 返回json格式的请求内容
-        """
-        with httpx.Client() as sync_client:
-            if data is None:
-                response = sync_client.get(url=url, headers=self.__headers)
-                return response.json()
-            response = sync_client.post(url=url, json=data, headers=self.__headers)
-            return response.json()
-
-    async def txt2img(self, prompt: str) -> Path or str:
-        """
-        文生图函数
-        :param prompt: 图片描述
-        :return: 下载的图片本地地址
-        """
-        prompt = await StableDiffusion.prompt_translate(prompt)
-        data = {
-            "enable_hr": False,
-            "prompt": f"{prompt}",
-            "seed": -1,
-            "subseed": -1,
-            "subseed_strength": 0,
-            "seed_resize_from_h": -1,
-            "seed_resize_from_w": -1,
-            "batch_size": 1,
-            "n_iter": 1,
-            "steps": 50,
-            "cfg_scale": 7,
-            "width": 512,
-            "height": 512,
-            "negative_prompt": "logo,text,badhandv4,EasyNegative,ng_deepnegative_v1_75t,rev2-badprompt,"
-                               "verybadimagenegative_v1.3,negative_hand-neg,mutated hands and fingers,poorly drawn "
-                               "face,extra limb,missing limb,disconnected limbs,malformed hands,ugly",
-        }
-        api = self.__base_url + "/sdapi/v1/txt2img"
-        logger.info(f"[StableDiffusion]正在请求SDAPI prompt:{prompt}")
-        response = await self.sd_async_request(api, data)
-        logger.debug(f"[StableDiffusion]Response:{response}")
-        try:
-            now_time = round(time.time(), 0)
-            save_path = casual_img_path / f"{now_time}.png"
-            with open(save_path, 'wb') as f:
-                f.write(base64.b64decode(response["images"][0]))
-                f.close()
-            return save_path
-        except KeyError:
-            return "请求错误，请稍后再试：" + str(response)
-
-    async def get_progress(self):
+    @staticmethod
+    async def get_progress():
         """
         获取当前进行任务的执行进度
         :return: 小数进度
         """
-        api = self.__base_url + "/sdapi/v1/progress?skip_current_image=false"
-        response = await self.sd_async_request(api)
+        api = SDUtils.base_url + "/sdapi/v1/progress?skip_current_image=false"
+        response = await SDUtils.sd_async_request(url=api)
         return response["progress"]
 
-    def get_models_list(self) -> list or str:
+    @staticmethod
+    def get_models_list() -> list or str:
         """
         获取模型列表
         :return: 模型列表
         """
-        api = self.__base_url + "/sdapi/v1/sd-models"
-        response = self.sd_sync_request(api)
+        api = SDUtils.base_url + "/sdapi/v1/sd-models"
+        response = SDUtils.sd_sync_request(api)
         logger.debug(f"get_models_list->{response}")
         models_title = []
         try:
@@ -146,30 +76,32 @@ class StableDiffusion:
         except TypeError:
             return "请求出错，请稍后再试：" + str(response)
 
-    def get_current_model_title(self) -> str:
+    @staticmethod
+    def get_current_model_title() -> str:
         """
         获取当前模型title
         :return: 模型title
         """
-        api = self.__base_url + "/sdapi/v1/options"
-        response = self.sd_sync_request(api)
+        api = SDUtils.base_url + "/sdapi/v1/options"
+        response = SDUtils.sd_sync_request(api)
         logger.debug(f"get_current_model_title->{response}")
         try:
             return response["sd_model_checkpoint"]
         except KeyError:
             return "请求出错, 请稍后再试：" + str(response)
 
-    async def set_model(self, model_title):
+    @staticmethod
+    async def set_model(model_title):
         """
         设置当前套用模型
         :param model_title: 模型title
         :return: 0为设置成功否则返回请求返回内容
         """
-        api = self.__base_url + "/sdapi/v1/options"
+        api = SDUtils.base_url + "/sdapi/v1/options"
         data = {
             "sd_model_checkpoint": f"{model_title}"
         }
-        response = await self.sd_async_request(url=api, data=data)
+        response = await SDUtils.sd_async_request(url=api, data=data)
         if response is None:
             return 0
         else:
@@ -183,7 +115,17 @@ class StableDiffusion:
         :param prompt: 目标prompt
         :return: 翻译后的英文
         """
-        if not StableDiffusion.is_all_english(prompt):
+
+        def is_all_english(text):
+            """
+            判断是否为全英文
+            :param text: 目标字符串
+            :return: bool
+            """
+            pattern = r'^[A-Za-z0-9]+$'
+            return re.match(pattern, text) is not None
+
+        if not is_all_english(prompt):
             data = {'doctype': 'json', 'type': 'ZH_CN2EN', 'i': f"{prompt}"}
             async with httpx.AsyncClient() as client:
                 r = await client.get(url="https://fanyi.youdao.com/translate", params=data)
@@ -191,12 +133,53 @@ class StableDiffusion:
             return result["translateResult"][0][0]["tgt"]
         return prompt
 
-    @staticmethod
-    def is_all_english(text):
+    async def add_txt2img(self, event, bot, prompt: str):
         """
-        判断是否为全英文
-        :param text: 目标字符串
-        :return: bool
+        添加文生图任务
+        :param event: 触发事件event
+        :param bot: 触发事件bot
+        :param prompt: 文生图描述
+        :return: None
         """
-        pattern = r'^[A-Za-z0-9]+$'
-        return re.match(pattern, text) is not None
+        prompt = await self.prompt_translate(prompt)
+        task = SDText2Image(prompt)
+        self.tasks.append((event, bot, task))
+
+    async def run(self):
+        """
+        sd执行任务
+        :return: None
+        """
+        if len(self.tasks) == 1:
+            await self.process_task()
+
+    async def process_task(self):
+        """
+        处理任务列表中的各个任务
+        :return: None
+        """
+        event, bot, task = self.tasks[0]
+        uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
+        await bot.send(event, message=f"开始执行用户{uid}的{task.task_type}任务\nprompt:{task.prompt}")
+        # 执行任务逻辑，生成图片
+        img_path = await task.get_img()
+        # 发送结果
+        message = GroupAndGuildMessageSegment.at(event) + GroupAndGuildMessageSegment.image(event, img_path)
+        await bot.send(event, message)
+        self.tasks.pop(0)
+
+        if not len(self.tasks) == 0:
+            await self.process_task()  # 处理下一个任务
+
+    # async def img2img(self, init_image: list) -> Path or str:
+    #     """
+    #     图生图函数
+    #
+    #     :return: 下载的图片本地地址 or 请求报错信息
+    #     """
+    #     api = self.base_url + "sdapi/v1/img2img"
+    #     data = {
+    #         "init_image": [],
+    #         "denoising_strength": 0.75,
+    #         "prompt": ""
+    #     }
