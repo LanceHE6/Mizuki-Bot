@@ -12,6 +12,7 @@ from nonebot.log import logger
 from .SDUtils import SDUtils
 from .Text2Image import SDText2Image
 from ..Utils.GroupAndGuildUtils import GroupAndGuildMessageUtils, GroupAndGuildMessageSegment
+from ..Utils.QQ import QQ
 
 
 class StableDiffusion:
@@ -160,7 +161,9 @@ class StableDiffusion:
         """
         event, bot, task = self.tasks[0]
         uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
-        await bot.send(event, message=f"开始执行用户{uid}的{task.task_type}任务\nprompt:{task.prompt}")
+        qq = QQ(uid)
+        nick_name = qq.get_nickname()
+        await bot.send(event, message=f"开始执行用户{nick_name}的{task.task_type}任务\nprompt:{task.prompt}")
         # 执行任务逻辑，生成图片
         img_path = await task.get_img()
         # 发送结果

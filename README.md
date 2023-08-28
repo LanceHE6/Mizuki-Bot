@@ -224,6 +224,16 @@ CHATGPT_PERSONALITY=""
 
 ## [更新日志](#更新日志)
 
+#### *V1.3.3*
+
+*23/8/28*
+
+refactor.重构StableDiffusion插件结构
+
+feat.移除SD插件cd机制新增任务排队机制
+
+----
+
 #### *V1.3.2*
 
 *23/8/24*

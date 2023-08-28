@@ -10,8 +10,10 @@ from nonebot.typing import T_State
 
 from .StableDiffusion import StableDiffusion
 from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageSegment,
-                                        GroupAndGuildMessageEvent)
+                                        GroupAndGuildMessageEvent,
+                                        GroupAndGuildMessageUtils)
 from ..Help.PluginInfo import PluginInfo
+from ..Utils.QQ import QQ
 
 txt2image_comm = on_command("sd文生图", aliases={"文生图", "sd作图", "sd绘图", "sd绘画"}, priority=2, block=True)
 model_manage = on_command("sd_model", aliases={"sd_models", "sd模型", "sd模型管理", "sd模型列表"}, priority=2,
@@ -100,5 +102,15 @@ async def _(event: GroupAndGuildMessageEvent, state: T_State, model_num=Arg("mod
 async def _(event: GroupAndGuildMessageEvent):
     if len(sd.tasks) == 0 and (await sd.get_progress()) == 0.0:
         await get_progress.finish("当前未进行任何任务")
+    uid = await GroupAndGuildMessageUtils.get_event_user_id(sd.tasks[0][0])
+    qq = QQ(uid)
+    nick_name = qq.get_nickname()
+    current_task = sd.tasks[0][2]
+    task_type = current_task.task_type
+    task_prompt = current_task.prompt
     progress = await sd.get_progress()
-    await get_progress.finish(f"当前任务进度:{progress}")
+    await get_progress.finish(f"当前任务\n"
+                              f"用户:{nick_name}\n"
+                              f"类型:{task_type}\n"
+                              f"prompt:{task_prompt}\n"
+                              f"进度:{round(progress * 100, 1)}%")
