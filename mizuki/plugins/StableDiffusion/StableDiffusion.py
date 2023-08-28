@@ -6,11 +6,14 @@
 
 import re
 import os
+
+import httpcore
 import httpx
 
 from nonebot.log import logger
 from .SDUtils import SDUtils
 from .Text2Image import SDText2Image
+from .Image2Image import SDImage2Image
 from ..Utils.GroupAndGuildUtils import GroupAndGuildMessageUtils, GroupAndGuildMessageSegment
 from ..Utils.QQ import QQ
 
@@ -30,21 +33,28 @@ class StableDiffusion:
         """
         初始化SD服务获取相关信息
         """
-        logger.info("[StableDiffusion]开始初始化StableDiffusion服务")
+        try:
+            logger.info("[StableDiffusion]开始初始化StableDiffusion服务")
 
-        logger.info("[StableDiffusion]正在获取模型列表...")
-        models_list = self.get_models_list()
-        if "出错" in models_list:
-            logger.warning("[StableDiffusion]模型列表获取失败")
-        else:
-            self.models_list = models_list
+            logger.info("[StableDiffusion]正在获取模型列表...")
+            models_list = self.get_models_list()
+            if "出错" in models_list:
+                logger.warning("[StableDiffusion]模型列表获取失败")
+            else:
+                self.models_list = models_list
 
-        logger.info("[StableDiffusion]正在获取当前模型...")
-        current_model_title = self.get_current_model_title()
-        if "出错" in current_model_title:
-            logger.warning("[StableDiffusion]当前模型获取失败")
-        else:
-            self.current_model_title = current_model_title
+            logger.info("[StableDiffusion]正在获取当前模型...")
+            current_model_title = self.get_current_model_title()
+            if "出错" in current_model_title:
+                logger.warning("[StableDiffusion]当前模型获取失败")
+            else:
+                self.current_model_title = current_model_title
+        except TimeoutError:
+            logger.warning("[StableDiffusion]连接SD服务超时")
+        except httpcore.ConnectTimeout:
+            logger.warning("[StableDiffusion]连接SD服务超时")
+        except httpx.ConnectTimeout:
+            logger.warning("[StableDiffusion]连接SD服务超时")
         if not os.path.exists(SDUtils.casual_img_path):
             os.mkdir(SDUtils.casual_img_path)
 
@@ -146,6 +156,19 @@ class StableDiffusion:
         task = SDText2Image(prompt)
         self.tasks.append((event, bot, task))
 
+    async def add_img2img(self, event, bot, paras: dict):
+        """
+        添加文生图任务
+        :param event: 触发事件event
+        :param bot: 触发事件bot
+        :param paras: 正则匹配的参数字典
+        :return: None
+        """
+        paras["prompt"] = await self.prompt_translate(paras["prompt"]) \
+            if not paras["prompt"] is None else paras["prompt"]
+        task = SDImage2Image(paras)
+        self.tasks.append((event, bot, task))
+
     async def run(self):
         """
         sd执行任务
@@ -163,7 +186,10 @@ class StableDiffusion:
         uid = await GroupAndGuildMessageUtils.get_event_user_id(event)
         qq = QQ(uid)
         nick_name = qq.get_nickname()
-        await bot.send(event, message=f"开始执行用户{nick_name}的{task.task_type}任务\nprompt:{task.prompt}")
+        message = f"开始执行用户{nick_name}的{task.task_type}任务\nprompt:{task.prompt}"
+        if task.task_type == "图生图":
+            message += f"\nextent:{task.extent}"
+        await bot.send(event, message=message)
         # 执行任务逻辑，生成图片
         img_path = await task.get_img()
         # 发送结果
@@ -173,16 +199,3 @@ class StableDiffusion:
 
         if not len(self.tasks) == 0:
             await self.process_task()  # 处理下一个任务
-
-    # async def img2img(self, init_image: list) -> Path or str:
-    #     """
-    #     图生图函数
-    #
-    #     :return: 下载的图片本地地址 or 请求报错信息
-    #     """
-    #     api = self.base_url + "sdapi/v1/img2img"
-    #     data = {
-    #         "init_image": [],
-    #         "denoising_strength": 0.75,
-    #         "prompt": ""
-    #     }

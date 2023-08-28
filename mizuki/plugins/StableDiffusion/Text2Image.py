@@ -47,7 +47,7 @@ class SDText2Image:
         """
         logger.info(f"[StableDiffusion]正在请求SD文生图API prompt:{self.prompt}")
         response = await SDUtils.sd_async_request(url=self.api, data=self.data)
-        logger.debug(f"[StableDiffusion]Response:{response}")
+        # logger.debug(f"[StableDiffusion]Response:{response}")
         try:
             now_time = round(time.time(), 0)
             save_path = SDUtils.casual_img_path / f"{now_time}.png"

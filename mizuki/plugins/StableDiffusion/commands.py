@@ -9,13 +9,15 @@ from nonebot.params import Arg
 from nonebot.typing import T_State
 
 from .StableDiffusion import StableDiffusion
+from .SDUtils import SDUtils
 from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageSegment,
                                         GroupAndGuildMessageEvent,
-                                        GroupAndGuildMessageUtils)
+                                        GroupAndGuildMessageUtils, )
 from ..Help.PluginInfo import PluginInfo
 from ..Utils.QQ import QQ
 
 txt2image_comm = on_command("sd文生图", aliases={"文生图", "sd作图", "sd绘图", "sd绘画"}, priority=2, block=True)
+image2image_comm = on_command("sd图生图", aliases={"图生图", "sd重绘"}, priority=2, block=True)
 model_manage = on_command("sd_model", aliases={"sd_models", "sd模型", "sd模型管理", "sd模型列表"}, priority=2,
                           block=True)
 get_progress = on_command("sd进度", aliases={"sd_progress"}, priority=2, block=True)
@@ -31,17 +33,30 @@ __plugin_info__ = [PluginInfo(
         "priority": 2,
         "guild_adapted": True
     }
-), PluginInfo(
-    plugin_name="Stable-diffusion-model-manage",
-    name="sd模型管理",
-    description="sd模型管理",
-    usage="sd模型 ——sd模型管理",
-    extra={
-        "author": "Hycer_Lance",
-        "version": "0.1.0",
-        "priority": 2,
-        "guild_adapted": True
-    }
+),
+    PluginInfo(
+        plugin_name="Stable-diffusion-img2img",
+        name="sd ai 图生图",
+        description="ai根据用户发送的图片重绘图片",
+        usage="sd图生图 ——sd图生图",
+        extra={
+            "author": "Hycer_Lance",
+            "version": "0.1.0",
+            "priority": 2,
+            "guild_adapted": True
+        }
+    ),
+    PluginInfo(
+        plugin_name="Stable-diffusion-model-manage",
+        name="sd模型管理",
+        description="sd模型管理",
+        usage="sd模型 ——sd模型管理",
+        extra={
+            "author": "Hycer_Lance",
+            "version": "0.1.0",
+            "priority": 2,
+            "guild_adapted": True
+        }
 ), PluginInfo(
     plugin_name="Stable-diffusion-progress",
     name="sd获取当前任务进度",
@@ -66,6 +81,19 @@ async def _(event: GroupAndGuildMessageEvent, bot: Bot, prompt=Arg("prompt")):
     prompt = str(prompt)
     await sd.add_txt2img(event, bot, prompt)
     await sd.run()
+
+
+@image2image_comm.got("paras",
+                      prompt="请发送原图\n如需加prompt或重绘幅度请在发送图片的同时发送参数,格式如下\nprompt:xxx\nextent:0.75")
+async def _(event: GroupAndGuildMessageEvent, bot: Bot, paras=Arg("paras")):
+    if not len(sd.tasks) == 0:
+        await image2image_comm.send(
+            GroupAndGuildMessageSegment.at(event) + f"当前有{len(sd.tasks)}个任务正在进行中,您的任务将进行排队")
+    paras = await SDUtils.get_img2img_parameters(event, str(paras))
+    print(paras)
+    await sd.add_img2img(event, bot, paras)
+    await sd.run()
+
 
 @model_manage.handle()
 async def _(event: GroupAndGuildMessageEvent, state: T_State):
@@ -109,8 +137,11 @@ async def _(event: GroupAndGuildMessageEvent):
     task_type = current_task.task_type
     task_prompt = current_task.prompt
     progress = await sd.get_progress()
-    await get_progress.finish(f"当前任务\n"
-                              f"用户:{nick_name}\n"
-                              f"类型:{task_type}\n"
-                              f"prompt:{task_prompt}\n"
-                              f"进度:{round(progress * 100, 1)}%")
+    reply = f"\n当前任务\n" \
+            f"用户:{nick_name}\n" \
+            f"类型:{task_type}\n" \
+            f"prompt:{task_prompt}\n"
+    if task_type == "图生图":
+        reply += f"extent:{current_task.extent}\n"
+    reply += f"进度:{round(progress * 100, 1)}%"
+    await get_progress.finish(GroupAndGuildMessageSegment.at(event) + reply)
