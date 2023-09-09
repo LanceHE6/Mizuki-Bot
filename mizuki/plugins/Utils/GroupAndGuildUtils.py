@@ -5,13 +5,15 @@
 # @Software:PyCharm
 
 from typing import Union
+
 from nonebot.adapters.onebot.v11 import Message as GroupMessage
 from nonebot.adapters.qqguild import Message as GuildMessage
 from nonebot.adapters.qqguild import MessageEvent as GuildMessageEvent
 from nonebot.adapters.onebot.v11 import GroupMessageEvent as GroupMessageEvent
-from ..GuildBinding.utils import get_uid_by_guild_id
 from nonebot.adapters.onebot.v11 import MessageSegment as GroupMessageSegment
 from nonebot.adapters.qqguild import MessageSegment as GuildMessageSegment
+
+from ..GuildBinding.utils import get_uid_by_guild_id
 
 GroupAndGuildMessage: Union = Union[GroupMessage, GuildMessage]
 """"
