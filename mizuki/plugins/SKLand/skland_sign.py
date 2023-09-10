@@ -27,3 +27,8 @@ async def _(event: GroupAndGuildMessageEvent):
         await arknights_sign_comm.finish(GroupAndGuildMessageSegment.at(event) + "签到成功!\n" + reply)
     elif -1 in result:
         await arknights_sign_comm.finish(GroupAndGuildMessageSegment.at(event) + "您今天已经签过到了哦！")
+    elif -3 in result:
+        await arknights_sign_comm.finish(
+            GroupAndGuildMessageSegment.at(event) + "您的token已过期，请使用绑定指令更换token")
+    else:
+        await arknights_sign_comm.finish(GroupAndGuildMessageSegment.at(event) + "签到失败！\n" + str(result[1]))
