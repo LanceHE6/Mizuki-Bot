@@ -1,6 +1,6 @@
 [project]
 name = "Mizuki"
-version = "1.0.1"
+version = "1.4.1"
 description = "Mizuki"
 readme = "README.md"
 requires-python = ">=3.8, <4.0"
@@ -8,8 +8,8 @@ requires-python = ">=3.8, <4.0"
 [tool.nonebot]
 adapters = [
     { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" },
-    {name = "QQ 频道", module_name = "nonebot.adapters.qqguild"}
+    { name = "QQ 频道", module_name = "nonebot.adapters.qqguild" }
 ]
-plugins = []
+plugins = ["nonebot_plugin_gocqhttp"]
 plugin_dirs = ["mizuki/plugins"]
 builtin_plugins = []

@@ -1,4 +1,5 @@
 FROM python:3.10.0
+MAINTAINER HycerLance
 EXPOSE 13570
 WORKDIR /Mizuki
 COPY requirements.txt /Mizuki
