@@ -29,6 +29,11 @@ class SKLand:
         self.binding_arknights_role = Optional[dict]  # 当前绑定的方舟角色 为arknights_roles的一个元素
 
     async def create_by_qid(self, qid: str):
+        """
+        使用数据库中的数据构建SKLand对象
+        :param qid: 用户qq号
+        :return: SKLand对象
+        """
         if await SKLandDB.is_user_exist(qid):
             sql_sequence = f'select * from SKLand_User where qid={int(qid)};'
             data = await SKLandDB.db_query_column(sql_sequence)
@@ -75,6 +80,7 @@ class SKLand:
         :param qid: 用户qq号
         :param token: 鹰角网络凭证token
         :return: 0 绑定成功/ -1 获取cred失败/ -2 获取oauth2授权码失败/ -3 获取绑定角色列表失败
+                绑定成功会自动保存数据进数据库
         """
         self.token = token
         self.qid = qid
@@ -98,6 +104,10 @@ class SKLand:
             return -2, oauth2
 
     def __get_oauth2(self):
+        """
+        获取oauth2授权码
+        :return: 0 成功 -1 失败
+        """
         api = HyperGryphAPI.get_oauth2_by_token
         data = {
             "token": self.token,
@@ -107,14 +117,18 @@ class SKLand:
         if response["status"] == 0:
             self.oauth2 = response["data"]["code"]
             self.uid = response["data"]["uid"]
-            print("oauth2:" + self.oauth2)
-            print("uid:" + self.uid)
+            # print("oauth2:" + self.oauth2)
+            # print("uid:" + self.uid)
             return 0
         else:
-            print("获取oauth2失败" + response)
+            # print("获取oauth2失败" + response)
             return -1
 
     def __get_cred(self):
+        """
+        获取cred凭证
+        :return: 0 成功 -1 失败
+        """
         api = HyperGryphAPI.get_cred_by_oauth2
         data = {
             "kind": 1,
@@ -124,28 +138,39 @@ class SKLand:
         if response["code"] == 0:
             self.cred = response["data"]["cred"]
             self.userId = response["data"]["userId"]
-            print("cred:" + self.cred)
-            print("userId:" + self.userId)
+            # print("cred:" + self.cred)
+            # print("userId:" + self.userId)
             return 0
         else:
-            print("获取cred失败" + response)
+            # print("获取cred失败" + response)
             return -1
 
     async def save_data(self):
+        """
+        将数据保存进数据库中
+        :return: None
+        """
         if await SKLandDB.is_user_exist(self.qid):
-            sql_sequence = f'Update SKLand_User Set token="{self.token}", cred="{self.cred}", binding="{self.binding}", arknights_roles="{self.arknights_roles}", binding_arknights_role="{self.binding_arknights_role}" where qid={self.qid};'
+            sql_sequence = f'Update SKLand_User Set token="{self.token}", cred="{self.cred}", ' \
+                           f'binding="{self.binding}", arknights_roles="{self.arknights_roles}", ' \
+                           f'binding_arknights_role="{self.binding_arknights_role}" where qid={self.qid};'
             result = await SKLandDB.db_execute(sql_sequence)
-            print(f"cunzai{result}")
             if not result == "ok":
-                print(result)
+                logger.warning("[SKLand_save_data]" + result)
         else:
-            sql_sequence = f'Insert Into SKLand_User(qid, token, cred, binding, arknights_roles, binding_arknights_role) values ({self.qid}, "{self.token}", "{self.cred}", "{self.binding}", "{self.arknights_roles}", "{self.binding_arknights_role}");'
+            sql_sequence = f'Insert Into SKLand_User(qid, token, cred, binding, arknights_roles,' \
+                           f' binding_arknights_role) values ({self.qid}, "{self.token}", "{self.cred}",' \
+                           f' "{self.binding}", "{self.arknights_roles}", "{self.binding_arknights_role}");'
             result = await SKLandDB.db_execute(sql_sequence)
-            print(result)
             if not result == "ok":
-                print(result)
+                logger.warning("[SKLand_save_data]" + result)
 
     async def get_player_binding(self):
+        """
+        获取用户在鹰角下的所有绑定游戏角色
+        并设置明日方舟的默认绑定
+        :return: 0 成功 -1 失败
+        """
         api = HyperGryphAPI.get_player_binding
         headers = {
             "cred": self.cred
@@ -156,12 +181,12 @@ class SKLand:
             for app in self.binding:
                 if app["appCode"] == "arknights":
                     self.arknights_roles = app["bindingList"]
-            print("binding:")
-            print(self.binding)
+            # print("binding:")
+            # print(self.binding)
             self.binding_arknights_role = self.arknights_roles[0]
             return 0
         else:
-            print("获取binding失败" + response)
+            # print("获取binding失败" + response)
             return -1
 
     async def get_arknights_game_info(self):
@@ -183,6 +208,12 @@ class SKLand:
                 print(f"获取uid:{role['uid']}的游戏信息失败\n" + response)
 
     async def skland_sign(self):
+        """
+        森空岛签到
+        :return: 状态及结果 0为成功 -1 为重复签到 -2 为签到失败 -3 为token过期
+        """
+        if not self.token_verification():
+            return -3,
         api = HyperGryphAPI.skland_sign
         headers = {
             "cred": self.cred
@@ -193,7 +224,7 @@ class SKLand:
             "gameId": self.binding_arknights_role["channelMasterId"]
         }
         response = httpx.post(url=api, headers=headers, json=data).json()
-        print(response)
+        # print(response)
         if response["code"] == 0:
             logger.info(f"[SKLandSign]用户{self.qid}签到成功")
             return 0, response["data"]["awards"]
@@ -205,10 +236,29 @@ class SKLand:
             logger.warning(str(response))
             return -2, response
 
-# if __name__ == '__main__':
-#     phone = input("账号:>")
-#     psw = input("密码:>")
-#     skland = SKLand()
-#     skland.login_by_psw(phone_number=phone, password=psw)
-#     skland.get_arknights_game_info()
-#     skland.skland_sign()
+    def token_verification(self):
+        """
+        token有效性校验
+        :return: True有效
+        """
+        api = HyperGryphAPI.token_verification + self.token
+        result = httpx.get(url=api).json()
+        if result["status"] == 0:
+            return True
+        else:
+            return False
+
+    def cred_verification(self):
+        """
+        cred有效性检验
+        :return: True有效
+        """
+        api = HyperGryphAPI.get_cred_by_oauth2
+        headers = {
+            "cred": self.cred
+        }
+        result = httpx.post(url=api, headers=headers).json()
+        if result["code"] == 0:
+            return True
+        else:
+            return False
