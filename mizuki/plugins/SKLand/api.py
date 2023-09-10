@@ -104,3 +104,25 @@ class HyperGryphAPI:
     "id": "4003,"type": "DIAMOND_SHD","name": "合成玉","rarity": 4},"count": 500,"type": "first"},{"resource": {"id": 
     "2002","type": "CARD_EXP","name": "初级作战记录","rarity": 2},"count": 3,"type": "daily"}]}}
     """
+
+    token_verification = "https://as.hypergryph.com/user/info/v1/basic?token="
+    """
+    ---token校验---
+    /GET https://as.hypergryph.com/user/info/v1/basic?token=
+    
+    返回
+    {
+    "status": 0,
+    "type": "A",
+    "msg": "OK",
+    "data": {
+        "hgId": "",
+        "phone": "",
+        "email": null,
+        "identityNum": "",
+        "identityName": "",
+        "isMinor": false,
+        "isLatestUserAgreement": true 
+    }
+}
+    """
