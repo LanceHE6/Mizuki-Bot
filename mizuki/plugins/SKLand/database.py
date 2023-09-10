@@ -44,7 +44,7 @@ class SKLandDataBase:
             try:
                 self.cur.execute(
                     "Create Table SKLand_User(qid integer primary key Not Null, token text, cred text, binding text, "
-                    "arknights_roles text, binding_arknights_role text);")
+                    "arknights_roles text, binding_arknights_role text, is_auto_sign int default 0);")
                 self.connection.commit()
                 logger.info(Fore.GREEN + "[SKLand_User]SKLand_User表创建成功")
             except sqlite3.DatabaseError as e:
@@ -65,7 +65,7 @@ class SKLandDataBase:
             else:
                 return False
         except sqlite3.DatabaseError as e:
-            logger.info(Fore.RED + f"[DB-check_table]{e}")
+            logger.info(Fore.RED + f"[SKLandDB-check_table]{e}")
             return False
 
     # 数据库执行
