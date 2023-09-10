@@ -13,7 +13,7 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent as GroupMessageEvent
 from nonebot.adapters.onebot.v11 import MessageSegment as GroupMessageSegment
 from nonebot.adapters.qqguild import MessageSegment as GuildMessageSegment
 
-from ..GuildBinding.utils import get_uid_by_guild_id
+from ...database.utils import MDB
 
 GroupAndGuildMessage: Union = Union[GroupMessage, GuildMessage]
 """"
@@ -25,6 +25,18 @@ GroupAndGuildMessageEvent: Union = Union[GuildMessageEvent, GroupMessageEvent]
 """
 
 
+async def get_uid_by_guild_id(guid_id: str) -> int:
+    """
+    通过频道中的id获取用户QQ号
+    :param guid_id:
+    :return: uid
+    """
+    sql = f'Select uid From Guild_QQ_Binding Where guild_id="{guid_id}";'
+    result = await MDB.db_query_single(sql)
+    if not result:
+        return 0
+    else:
+        return int(result[0])
 class GroupAndGuildMessageUtils:
     """
     处理消息对象工具类
