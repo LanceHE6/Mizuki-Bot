@@ -210,7 +210,7 @@ class SKLand:
     async def skland_sign(self):
         """
         森空岛签到
-        :return: 状态及结果 0为成功 -1 为重复签到 -2 为签到失败 -3 为token过期
+        :return: 状态及结果 0为成功 -1 为重复签到 -2 为签到失败 -3 为token过期或无效
         """
         if not self.token_verification():
             return -3,
@@ -243,9 +243,12 @@ class SKLand:
         """
         api = HyperGryphAPI.token_verification + self.token
         result = httpx.get(url=api).json()
-        if result["status"] == 0:
-            return True
-        else:
+        try:
+            if result["status"] == 0:
+                return True
+            else:
+                return False
+        except KeyError:
             return False
 
     def cred_verification(self):
