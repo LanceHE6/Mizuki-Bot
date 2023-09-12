@@ -926,6 +926,7 @@ class Operator:
                 damage = int(self.atk_p + (self.atk_p * (self.crit_d_p + skill.rate1)))
                 damage = await obj1.hurt(self, 0, damage)
                 message = f"\n{self.name}对{obj1.name}发动了普通攻击，暴击并对其造成了{damage}点物理伤害！"  # 返回的字符串
+                self.pm.player_skill_count += int(10)
                 objs_list.append(obj1)
             elif sid == 11:
                 persistence = 1
