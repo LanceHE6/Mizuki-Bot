@@ -9,15 +9,28 @@ from typing import Union
 from nonebot import on_command
 from nonebot.typing import T_State
 from nonebot.params import Arg
+from nonebot.adapters.onebot.v11 import PrivateMessageEvent
 
 from ..Utils.GroupAndGuildUtils import (GroupAndGuildMessageEvent,
                                         GroupAndGuildMessageSegment,
                                         GroupAndGuildMessageUtils)
-from nonebot.adapters.onebot.v11 import PrivateMessageEvent
+from ..Help.PluginInfo import PluginInfo
 from .SKLand import SKLand
 
 binding_by_token_comm = on_command("skland绑定", aliases={"skbinding", "森空岛绑定"}, block=True, priority=3)
 
+__plugin_info__ = PluginInfo(
+    plugin_name="SKLand_binding",
+    name="森空岛绑定",
+    description="利用token绑定森空岛账号",
+    usage="森空岛绑定 ——绑定森空岛账号",
+    extra={
+        "author": "Hycer_Lance",
+        "version": "1.0.0",
+        "priority": 3,
+        "guild_adapted": True
+    }
+)
 
 @binding_by_token_comm.handle()
 async def _(event: Union[GroupAndGuildMessageEvent, PrivateMessageEvent], state: T_State):

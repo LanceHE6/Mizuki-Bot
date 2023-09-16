@@ -7,11 +7,24 @@
 from nonebot import on_command
 
 from .SKLand import SKLand
+from ..Help.PluginInfo import PluginInfo
 
 from ..Utils.GroupAndGuildUtils import GroupAndGuildMessageEvent, GroupAndGuildMessageUtils, GroupAndGuildMessageSegment
 
 arknights_sign_comm = on_command("skl_sign", aliases={"森空岛签到", "方舟签到"}, block=True, priority=2)
 
+__plugin_info__ = PluginInfo(
+    plugin_name="SKLand_sign",
+    name="森空岛签到",
+    description="森空岛签到",
+    usage="森空岛签到 ——签到",
+    extra={
+        "author": "Hycer_Lance",
+        "version": "1.0.0",
+        "priority": 2,
+        "guild_adapted": True
+    }
+)
 
 @arknights_sign_comm.handle()
 async def _(event: GroupAndGuildMessageEvent):
