@@ -4,6 +4,7 @@
 # @Time:2023/9/10 15:16
 # @Software:PyCharm
 
+from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Bot
 from nonebot_plugin_apscheduler import scheduler
 
@@ -13,8 +14,10 @@ from .database import SKLandDB
 
 @scheduler.scheduled_job("cron", hour="*/6")
 async def _(bot: Bot):
+    logger.info("[SKLand_token_verification]开始检查token有效性")
     qid_list = await SKLandDB.find_tb_by_column(table_name="SKLand_User", column="qid")
     for qid in qid_list:
         skland = await SKLand().create_by_qid(qid)
         if not skland.token_verification():
             await bot.send_private_msg(user_id=int(qid), message="您的鹰角网络凭证(token)已过期，请留意")
+    logger.info("[SKLand_token_verification]检查完成")
