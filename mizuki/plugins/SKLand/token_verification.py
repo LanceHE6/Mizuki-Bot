@@ -5,16 +5,17 @@
 # @Software:PyCharm
 
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Bot
+from nonebot import get_bot
 from nonebot_plugin_apscheduler import scheduler
 
 from .SKLand import SKLand
 from .database import SKLandDB
 
 
-@scheduler.scheduled_job("cron", hour="*/6")
-async def _(bot: Bot):
+@scheduler.scheduled_job("cron", hour="*/23")
+async def _():
     logger.info("[SKLand_token_verification]开始检查token有效性")
+    bot = get_bot()
     qid_list = await SKLandDB.find_tb_by_column(table_name="SKLand_User", column="qid")
     for qid in qid_list:
         skland = await SKLand().create_by_qid(qid)
