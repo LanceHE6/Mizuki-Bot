@@ -95,19 +95,20 @@ class SKLand:
                     return 0, 0
                 else:
                     logger.info(f"[SKLandBinding]用户{self.qid}获取绑定角色列表失败:{binding}")
-                    return -3, binding
+                    return -3, "获取绑定角色失败"
             else:
                 logger.info(f"[SKLandBinding]用户{self.qid}获取cred失败:{cred}")
-                return -1, cred
+                return -1, "获取cred凭证失败"
         else:
             logger.info(f"[SKLandBinding]用户{self.qid}获取oauth2授权码失败:{oauth2}")
-            return -2, oauth2
+            return -2, "获取oauth2授权码失败"
 
     def __get_oauth2(self):
         """
         获取oauth2授权码
         :return: 0 成功 -1 失败
         """
+        logger.info("[SKLand]正在获取oauth2授权码")
         api = HyperGryphAPI.get_oauth2_by_token
         data = {
             "token": self.token,
@@ -121,7 +122,7 @@ class SKLand:
             # print("uid:" + self.uid)
             return 0
         else:
-            # print("获取oauth2失败" + response)
+            logger.warning(f"获取oauth2失败:{response}")
             return -1
 
     def __get_cred(self):
@@ -129,6 +130,7 @@ class SKLand:
         获取cred凭证
         :return: 0 成功 -1 失败
         """
+        logger.info("[SKLand]正在获取cred凭证")
         api = HyperGryphAPI.get_cred_by_oauth2
         data = {
             "kind": 1,
@@ -138,11 +140,11 @@ class SKLand:
         if response["code"] == 0:
             self.cred = response["data"]["cred"]
             self.userId = response["data"]["userId"]
-            # print("cred:" + self.cred)
+            print("cred:" + self.cred)
             # print("userId:" + self.userId)
             return 0
         else:
-            # print("获取cred失败" + response)
+            logger.warning(f"[SKLand]cred凭证获取失败:{response}")
             return -1
 
     async def save_data(self):
@@ -186,7 +188,8 @@ class SKLand:
             self.binding_arknights_role = self.arknights_roles[0]
             return 0
         else:
-            # print("获取binding失败" + response)
+            # print("获取binding失败")
+            # print(response)
             return -1
 
     async def get_arknights_game_info(self):
