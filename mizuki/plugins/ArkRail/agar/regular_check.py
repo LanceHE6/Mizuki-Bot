@@ -11,6 +11,5 @@ from nonebot.log import logger
 
 @scheduler.scheduled_job("cron", minute="*/6")
 async def recover():
-    logger.info("[ArkRail_agar]开始检查琼脂")
+    logger.info("[ArkRail_agar]检查琼脂")
     await agar_natural_recover()
-    logger.info("[ArkRail_agar]琼脂检查完成")
