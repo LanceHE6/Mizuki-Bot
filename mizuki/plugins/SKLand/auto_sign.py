@@ -7,6 +7,7 @@
 from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot import get_bot
+from nonebot.log import logger
 
 from nonebot_plugin_apscheduler import scheduler
 
@@ -101,6 +102,7 @@ async def _(event: GroupAndGuildMessageEvent, status: GroupAndGuildMessage = Com
 
 @scheduler.scheduled_job("cron", hour="*/23")
 async def _():
+    logger.info("[SKLand_auto_sign]开始执行自动签到")
     bot = get_bot()
     qid_list = await SKLandDB.find_tb_by_column(table_name="SKLand_User", column="qid")
     for qid in qid_list:
@@ -120,3 +122,4 @@ async def _():
                     user_id=qid, message="您的token已过期，请使用绑定指令更换token")
             else:
                 await bot.send_private_msg(user_id=qid, message="签到失败！\n" + str(result[1]))
+    logger.info("[SKLand_auto_sign]自动签到执行完成")
