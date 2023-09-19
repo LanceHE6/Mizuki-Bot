@@ -56,7 +56,7 @@ async def _(event: Union[GroupAndGuildMessageEvent, PrivateMessageEvent], state:
                 f"角色:{skland.binding_arknights_role['nickName']}\n" \
                 f"服务器:{skland.binding_arknights_role['channelName']}"
     else:
-        reply = result[1]
+        reply = "绑定失败：" + result[1]
     if state["is_group"]:
-        reply += "\n当前处于公共聊天区域，为了您的账号安全建议撤回token"
+        reply += "\n\n当前处于公共聊天区域，为了您的账号安全建议撤回token"
     await binding_by_token_comm.finish(reply)
