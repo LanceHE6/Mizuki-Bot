@@ -8,6 +8,7 @@ from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot import get_bot
 from nonebot.log import logger
+from nonebot.adapters.onebot.v11.exception import ActionFailed
 
 from nonebot_plugin_apscheduler import scheduler
 
@@ -110,16 +111,19 @@ async def _():
             await bot.send_private_msg(user_id=qid, message="正在为您执行森空岛自动签到")
             skland = await SKLand().create_by_qid(qid)
             result = await skland.skland_sign()
-            if 0 in result:
-                reply = ''
-                for resource in result[1]:
-                    reply = f"获得:\n{resource['resource']['name']} x {resource['count']}"
-                await bot.send_private_msg(user_id=qid, message="签到成功!\n" + reply)
-            elif -1 in result:
-                await bot.send_private_msg(user_id=qid, message="您今天已经签过到了哦！")
-            elif -3 in result:
-                await bot.send_private_msg(
-                    user_id=qid, message="您的token已过期，请使用绑定指令更换token")
-            else:
-                await bot.send_private_msg(user_id=qid, message="签到失败！\n" + str(result[1]))
+            try:
+                if 0 in result:
+                    reply = ''
+                    for resource in result[1]:
+                        reply = f"获得:\n{resource['resource']['name']} x {resource['count']}"
+                    await bot.send_private_msg(user_id=qid, message="签到成功!\n" + reply)
+                elif -1 in result:
+                    await bot.send_private_msg(user_id=qid, message="您今天已经签过到了哦！")
+                elif -3 in result:
+                    await bot.send_private_msg(
+                        user_id=qid, message="您的token已过期，请使用绑定指令更换token")
+                else:
+                    await bot.send_private_msg(user_id=qid, message="签到失败！\n" + str(result[1]))
+            except ActionFailed:
+                logger.info("[SKLand_auto_sign]非bot好友不发送私聊提醒消息")
     logger.info("[SKLand_auto_sign]自动签到执行完成")

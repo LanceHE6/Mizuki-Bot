@@ -6,6 +6,8 @@
 
 from nonebot.log import logger
 from nonebot import get_bot
+from nonebot.adapters.onebot.v11.exception import ActionFailed
+
 from nonebot_plugin_apscheduler import scheduler
 
 from .SKLand import SKLand
@@ -19,6 +21,9 @@ async def _():
     qid_list = await SKLandDB.find_tb_by_column(table_name="SKLand_User", column="qid")
     for qid in qid_list:
         skland = await SKLand().create_by_qid(qid)
-        if not skland.token_verification():
-            await bot.send_private_msg(user_id=int(qid), message="您的鹰角网络凭证(token)已过期，请留意")
+        try:
+            if not skland.token_verification():
+                await bot.send_private_msg(user_id=int(qid), message="您的鹰角网络凭证(token)已过期，请留意")
+        except ActionFailed:
+            logger.info("[SKLand_token_verification]非bot好友不发送私聊提醒消息")
     logger.info("[SKLand_token_verification]检查完成")
