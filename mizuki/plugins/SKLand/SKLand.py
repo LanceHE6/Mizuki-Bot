@@ -115,13 +115,17 @@ class SKLand:
             "appCode": "4ca99fa6b56cc2ba",
             "type": 0}
         response = httpx.post(url=api, json=data).json()
-        if response["status"] == 0:
-            self.oauth2 = response["data"]["code"]
-            self.uid = response["data"]["uid"]
-            # print("oauth2:" + self.oauth2)
-            # print("uid:" + self.uid)
-            return 0
-        else:
+        try:
+            if response["status"] == 0:
+                self.oauth2 = response["data"]["code"]
+                self.uid = response["data"]["uid"]
+                # print("oauth2:" + self.oauth2)
+                # print("uid:" + self.uid)
+                return 0
+            else:
+                logger.warning(f"获取oauth2失败:{response}")
+                return -1
+        except KeyError:
             logger.warning(f"获取oauth2失败:{response}")
             return -1
 
@@ -137,13 +141,17 @@ class SKLand:
             "code": self.oauth2
         }
         response = httpx.post(url=api, json=data).json()
-        if response["code"] == 0:
-            self.cred = response["data"]["cred"]
-            self.userId = response["data"]["userId"]
-            print("cred:" + self.cred)
-            # print("userId:" + self.userId)
-            return 0
-        else:
+        try:
+            if response["code"] == 0:
+                self.cred = response["data"]["cred"]
+                self.userId = response["data"]["userId"]
+                print("cred:" + self.cred)
+                # print("userId:" + self.userId)
+                return 0
+            else:
+                logger.warning(f"[SKLand]cred凭证获取失败:{response}")
+                return -1
+        except KeyError:
             logger.warning(f"[SKLand]cred凭证获取失败:{response}")
             return -1
 
