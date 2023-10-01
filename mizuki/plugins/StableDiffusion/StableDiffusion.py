@@ -152,7 +152,7 @@ class StableDiffusion:
         :param prompt: 文生图描述
         :return: None
         """
-        prompt = await self.prompt_translate(prompt)
+        # prompt = await self.prompt_translate(prompt)
         task = SDText2Image(prompt)
         self.tasks.append((event, bot, task))
 
@@ -164,8 +164,8 @@ class StableDiffusion:
         :param paras: 正则匹配的参数字典
         :return: None
         """
-        paras["prompt"] = await self.prompt_translate(paras["prompt"]) \
-            if not paras["prompt"] is None else paras["prompt"]
+        # paras["prompt"] = await self.prompt_translate(paras["prompt"]) \
+        #     if not paras["prompt"] is None else paras["prompt"]
         task = SDImage2Image(paras)
         self.tasks.append((event, bot, task))
 
