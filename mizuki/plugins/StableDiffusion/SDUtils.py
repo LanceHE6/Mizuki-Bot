@@ -10,6 +10,7 @@ import httpx
 from typing import Optional
 from pathlib import Path
 from nonebot import get_driver
+from nonebot.log import logger
 
 from ..Utils.GroupAndGuildUtils import GuildMessageEvent
 
@@ -61,10 +62,10 @@ class SDUtils:
         :return: 匹配结果字典
         """
         result = {}
-        prompt_match = re.search(r"(?:prompt|p)[:：]([\w\u4e00-\u9fa5,，]+)", res, re.UNICODE)
+        prompt_match = re.search(r"(?:prompt|p)[:：]([\w\u4e00-\u9fa5,，\s*]+)", res, re.UNICODE)
         if prompt_match:
             prompt_value = prompt_match.group(1)
-            print("Prompt value:", prompt_value)
+            logger.info("[SD_img2img]Prompt value:", prompt_value)
         else:
             prompt_value = None
         result["prompt"] = prompt_value
@@ -73,7 +74,7 @@ class SDUtils:
         extent_match = re.search(r"(?:extent|e)[:：]([\d.]+)", res)
         if extent_match:
             extent_value = extent_match.group(1)
-            print("Extent value:", extent_value)
+            logger.info("[SD_img2img]Extent value:", extent_value)
         else:
             extent_value = None
         result["extent"] = extent_value
@@ -83,7 +84,7 @@ class SDUtils:
             url_match = re.search(r"<attachment:([^,]+)>", res)
             if url_match:
                 url_value = url_match.group(1)
-                print("URL value:", url_value)
+                logger.debug("[SD_img2img]URL value:", url_value)
                 result["img_url"] = "https://" + url_value
             else:
                 result["img_url"] = None
@@ -92,7 +93,7 @@ class SDUtils:
             url_match = re.search(r"url=([^,]+)", res)
             if url_match:
                 url_value = url_match.group(1)
-                print("URL value:", url_value)
+                logger.debug("[SD_img2img]URL value:", url_value)
             else:
                 url_value = None
             result["img_url"] = url_value
